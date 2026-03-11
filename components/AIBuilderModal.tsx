@@ -3,6 +3,8 @@ import React, { useState, useRef } from 'react';
 import { X, Upload, Sparkles, Loader2, Image as ImageIcon, Camera, RefreshCw, Check } from 'lucide-react';
 import { Product } from '../types';
 import { geminiService } from '../services/geminiService';
+import { uploadToAppScript } from '../services/exporter';
+import { toast } from 'sonner';
 
 interface AIBuilderModalProps {
   product: Product | null;
@@ -84,13 +86,13 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
       <div className="relative bg-[#FBFBF9] w-full max-w-5xl h-[85vh] rounded-[40px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-8 duration-500 flex flex-col md:flex-row">
-        
+
         {/* Left Panel: Preview / Viewport */}
         <div className="flex-1 bg-[#F5F5F3] flex items-center justify-center relative overflow-hidden group">
           <div className="absolute inset-0 opacity-40 pointer-events-none">
-             <div className="w-full h-full bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            <div className="w-full h-full bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:40px_40px]"></div>
           </div>
-          
+
           {showCamera ? (
             <div className="w-full h-full relative z-10">
               <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
@@ -113,13 +115,13 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
                 <p className="text-black/40 text-sm">Upload a photo or use your camera to see how our collection fits in your room.</p>
               </div>
               <div className="flex flex-col gap-3 pt-4">
-                <button 
+                <button
                   onClick={() => fileInputRef.current?.click()}
                   className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-xl"
                 >
                   <Upload size={16} /> Choose Photo
                 </button>
-                <button 
+                <button
                   onClick={startCamera}
                   className="w-full py-4 bg-white text-black border border-black/10 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-all shadow-sm"
                 >
@@ -138,7 +140,7 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
               </div>
             </>
           )}
-          
+
           {isLoading && (
             <div className="absolute inset-0 bg-white/80 backdrop-blur-xl flex flex-col items-center justify-center text-black gap-6 z-50">
               <div className="relative">
@@ -188,7 +190,7 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
                       Our neural engine will now map your environment and place the object with physics-accurate lighting.
                     </p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => { setImage(null); setResult(null); }}
                     className="w-full py-4 border border-black/5 rounded-[20px] text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black hover:border-black transition-all flex items-center justify-center gap-2"
                   >
@@ -208,13 +210,29 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <button 
+                    <button
                       onClick={() => setResult(null)}
                       className="py-4 border border-black/5 rounded-[20px] text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black hover:border-black transition-all"
                     >
                       Reset View
                     </button>
-                    <button className="py-4 bg-black text-white rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:bg-black/80 transition-all shadow-xl shadow-black/10">
+                    <button
+                      onClick={async () => {
+                        if (!result) return;
+                        const id = toast.loading("Saving design to Google Drive...");
+                        try {
+                          // Convert base64 result back to blob for the helper
+                          const resp = await fetch(result);
+                          const blob = await resp.blob();
+                          await uploadToAppScript(blob, `AI_Design_${Date.now()}.png`, 'image/png');
+                          toast.success("Design saved to Google Drive!", { id });
+                        } catch (err) {
+                          console.error("Save failed:", err);
+                          toast.error("Failed to save design", { id });
+                        }
+                      }}
+                      className="py-4 bg-black text-white rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:bg-black/80 transition-all shadow-xl shadow-black/10"
+                    >
                       Save Design
                     </button>
                   </div>
@@ -224,7 +242,7 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
           </div>
 
           <div className="space-y-6 pt-10">
-            <button 
+            <button
               onClick={runAIBuilder}
               disabled={!image || isLoading || !product || !!result}
               className="w-full py-5 bg-black text-white rounded-[28px] flex items-center justify-center gap-4 hover:bg-black/80 hover:scale-[1.01] active:scale-95 disabled:bg-black/5 disabled:text-black/20 disabled:scale-100 transition-all shadow-2xl shadow-black/20 group"
@@ -233,13 +251,13 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
               <span className="text-[11px] font-black uppercase tracking-[0.3em]">Generate Vision</span>
             </button>
             <div className="flex flex-col items-center gap-1.5 opacity-20">
-               <p className="text-[8px] font-black uppercase tracking-[0.4em]">PlanPro Spatial Engine</p>
-               <div className="w-12 h-0.5 bg-black rounded-full"></div>
+              <p className="text-[8px] font-black uppercase tracking-[0.4em]">PlanPro Spatial Engine</p>
+              <div className="w-12 h-0.5 bg-black rounded-full"></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

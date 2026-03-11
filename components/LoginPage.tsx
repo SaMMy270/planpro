@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { Layout as LayoutIcon, ArrowRight, Mail, Lock, ChevronLeft, Facebook, User } from 'lucide-react';
+import { supabase } from '../services/supabase';
+import { toast } from 'sonner';
 
 interface LoginPageProps {
   onBack: () => void;
@@ -12,13 +14,65 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success('Welcome back!');
+        onLoginSuccess();
+      } else {
+        const { error, data } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            }
+          }
+        });
+        if (error) throw error;
+
+        // Create user profile in public.User table
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('User')
+            .upsert([
+              {
+                id: data.user.id,
+                email: data.user.email,
+                name: fullName
+              }
+            ]);
+          if (profileError) console.error('Error creating profile:', profileError);
+        }
+
+        toast.success('Account created! Please check your email.');
+        // If auto-signed in, trigger success
+        if (data.session) onLoginSuccess();
+        else setIsLogin(true);
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[200] bg-[#FBFBF9] flex flex-col h-screen overflow-hidden animate-in fade-in duration-500">
-      
+
       {/* Top Header Layer - Fixed position, no blur to prevent rendering issues */}
       <div className="w-full max-w-7xl mx-auto p-4 md:p-8 flex justify-between items-center absolute top-0 left-0 right-0 z-20">
-        <button 
+        <button
           onClick={onBack}
           className="flex items-center gap-2 group transition-all"
         >
@@ -34,7 +88,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
       {/* Centered Form Content - Perfectly centered with no scroll */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-md space-y-6 md:space-y-8 animate-in slide-in-from-bottom-8 duration-700">
-          
+
           {/* Titles - Scaled for better vertical fit */}
           <div className="space-y-1 text-center">
             <h2 className="text-3xl md:text-5xl font-serif text-black tracking-tight leading-tight">
@@ -44,15 +98,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
           </div>
 
           {/* Form - Tighter spacing to fit within height */}
-          <form className="space-y-3 md:space-y-5" onSubmit={(e) => { e.preventDefault(); onLoginSuccess(); }}>
-            
+          <form className="space-y-3 md:space-y-5" onSubmit={handleSubmit}>
+
             {!isLogin && (
               <div className="space-y-1 md:space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                 <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-black/50 ml-1">FULL NAME</label>
                 <div className="relative group">
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-black transition-colors" size={16} />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
@@ -67,8 +121,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
               <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-black/50 ml-1">EMAIL ADDRESS</label>
               <div className="relative group">
                 <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-black transition-colors" size={16} />
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
@@ -82,8 +136,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
               <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-black/50 ml-1">PASSWORD</label>
               <div className="relative group">
                 <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-black transition-colors" size={16} />
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
@@ -95,20 +149,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
 
             <div className="flex items-center justify-between gap-4 text-[10px] md:text-[11px] px-1 py-1">
               <label className="flex items-center gap-2 cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  className="w-4 h-4 rounded-md border-black/10 text-black focus:ring-black/20 transition-all cursor-pointer appearance-none bg-white border checked:bg-black" 
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded-md border-black/10 text-black focus:ring-black/20 transition-all cursor-pointer appearance-none bg-white border checked:bg-black"
                 />
                 <span className="text-black/50 font-semibold group-hover:text-black transition-colors">Remember me</span>
               </label>
               <button type="button" className="font-bold text-black hover:opacity-60 transition-opacity">Forgot Password?</button>
             </div>
 
-            <button 
+            <button
               type="submit"
-              className="w-full py-3.5 md:py-4 bg-black text-white rounded-[20px] md:rounded-[24px] font-bold uppercase tracking-widest text-[10px] md:text-[11px] flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-95 transition-all shadow-xl shadow-black/10 group mt-2"
+              disabled={loading}
+              className="w-full py-3.5 md:py-4 bg-black text-white rounded-[20px] md:rounded-[24px] font-bold uppercase tracking-widest text-[10px] md:text-[11px] flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-95 transition-all shadow-xl shadow-black/10 group mt-2 disabled:opacity-50"
             >
-              {isLogin ? 'SIGN IN' : 'JOIN PLANPRO'} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              {loading ? 'PROCESSING...' : (isLogin ? 'SIGN IN' : 'JOIN PLANPRO')} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
 
@@ -116,7 +171,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
           <div className="space-y-6 md:space-y-8 pt-2">
             <p className="text-[11px] md:text-sm font-medium text-black/60 text-center">
               {isLogin ? "Don't have an account?" : "Already a member?"} {' '}
-              <button 
+              <button
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-black font-extrabold hover:underline"
               >

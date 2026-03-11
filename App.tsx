@@ -1,14 +1,16 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  ShoppingCart, Heart, Search, Menu, X, Box, Layout as LayoutIcon, Sparkles, Scale, 
-  QrCode, ArrowRight, Instagram, Twitter, Facebook, ArrowUpRight, 
+import {
+  ShoppingCart, Heart, Search, Menu, X, Box, Layout as LayoutIcon, Sparkles, Scale,
+  QrCode, ArrowRight, Instagram, Twitter, Facebook, ArrowUpRight,
   User, ChevronRight, Minus, Plus as PlusIcon, Trash2, ArrowLeft,
   Camera, Map, Compass, Star, Smartphone, Download, SlidersHorizontal, Filter, ChevronDown
 } from 'lucide-react';
 import { PRODUCTS } from './data/mockData';
 import { Product } from './types';
 import { geminiService } from './services/geminiService';
+import { supabase } from './services/supabase';
+import { Toaster } from 'sonner';
 
 // Sub-components
 import ProductCard from './components/ProductCard';
@@ -18,18 +20,23 @@ import AIBuilderModal from './components/AIBuilderModal';
 import ComparisonModal from './components/ComparisonModal';
 import BlueprintDesigner from './components/BlueprintDesigner';
 import LoginPage from './components/LoginPage';
+import CartView from './components/CartView';
+import WishlistView from './components/WishlistView';
+import CheckoutPage from './components/CheckoutPage';
+import UserProfile from './components/UserProfile';
 
-type View = 'home' | 'products' | 'blueprint' | 'login' | 'cart' | 'wishlist' | 'ar-preview' | 'comparison';
+type View = 'home' | 'products' | 'blueprint' | 'login' | 'cart' | 'wishlist' | 'ar-preview' | 'comparison' | 'checkout' | 'profile';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<View>('home');
-  const [cart, setCart] = useState<{id: string, qty: number}[]>([]);
+  const [cart, setCart] = useState<{ id: string, qty: number }[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-  
+
   const [isAIBuilderOpen, setIsAIBuilderOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [initialARViewMode, setInitialARViewMode] = useState<'qr' | 'live'>('qr');
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,10 +44,146 @@ const App: React.FC = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('All');
   const [maxPrice, setMaxPrice] = useState<number>(3000);
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  // Auth Listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) syncUserProfile(currentUser);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (event === 'SIGNED_IN' && currentUser) {
+        syncUserProfile(currentUser);
+      }
+      if (event === 'SIGNED_OUT') {
+        setActiveTab('home');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const syncUserProfile = async (authUser: any) => {
+    try {
+      const { error } = await supabase
+        .from('User')
+        .upsert({
+          id: authUser.id,
+          email: authUser.email,
+          name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0],
+          updatedAt: new Date().toISOString()
+        });
+
+      if (error) console.error('Error syncing profile:', error);
+    } catch (err) {
+      console.error('Profile sync failed:', err);
+    }
+  };
+
+  // Sync Wishlist and Cart from Supabase
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    } else {
+      setWishlist([]);
+      setCart([]);
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    if (!user) return;
+
+    // Fetch Wishlist
+    const { data: wishlistData } = await supabase
+      .from('WishlistItem')
+      .select('productId')
+      .eq('wishlistId', (await getOrCreateWishlist()).id);
+
+    if (wishlistData) {
+      setWishlist(wishlistData.map(item => item.productId));
+    }
+
+    // Fetch Cart
+    const { data: cartData } = await supabase
+      .from('CartItem')
+      .select('productId, quantity')
+      .eq('cartId', (await getOrCreateCart()).id);
+
+    if (cartData) {
+      setCart(cartData.map(item => ({ id: item.productId, qty: item.quantity })));
+    }
+  };
+
+  const getOrCreateWishlist = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const currentUserId = session?.user?.id;
+    if (!currentUserId) throw new Error('User not authenticated');
+
+    let { data: wishlist, error } = await supabase
+      .from('Wishlist')
+      .select('id')
+      .eq('userId', currentUserId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows found"
+      console.error('Error fetching wishlist:', error);
+    }
+
+    if (!wishlist) {
+      const { data: newWishlist, error: createError } = await supabase
+        .from('Wishlist')
+        .insert({ userId: currentUserId })
+        .select()
+        .single();
+
+      if (createError) {
+        console.error('Error creating wishlist:', createError);
+        throw createError;
+      }
+      wishlist = newWishlist;
+    }
+    return wishlist;
+  };
+
+  const getOrCreateCart = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const currentUserId = session?.user?.id;
+    if (!currentUserId) throw new Error('User not authenticated');
+
+    let { data: cart, error } = await supabase
+      .from('Cart')
+      .select('id')
+      .eq('userId', currentUserId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error fetching cart:', error);
+    }
+
+    if (!cart) {
+      const { data: newCart, error: createError } = await supabase
+        .from('Cart')
+        .insert({ userId: currentUserId })
+        .select()
+        .single();
+
+      if (createError) {
+        console.error('Error creating cart:', createError);
+        throw createError;
+      }
+      cart = newCart;
+    }
+    return cart;
+  };
 
   // Derive categories and subcategories automatically from data
   const mainCategories = useMemo(() => ['All', ...new Set(PRODUCTS.map(p => p.category))], []);
-  
+
   const subCategories = useMemo(() => {
     if (selectedCategory === 'All') return [];
     const subs = PRODUCTS
@@ -54,11 +197,30 @@ const App: React.FC = () => {
     setSelectedSubcategory('All');
   }, [selectedCategory]);
 
+  // Deep Link Handling for AR QR Scanner
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get('target');
+    const id = params.get('id');
+    const view = params.get('view') as 'qr' | 'live' | null;
+
+    if (target === 'ar' && id) {
+      const product = PRODUCTS.find(p => p.id === id);
+      if (product) {
+        setSelectedProduct(product);
+        if (view) setInitialARViewMode(view);
+        setActiveTab('ar-preview');
+        // Clean up URL without refreshing
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+  }, []);
+
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          p.subcategory.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.subcategory.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
       const matchesSubcategory = selectedSubcategory === 'All' || p.subcategory.toLowerCase() === selectedSubcategory.toLowerCase();
       const matchesPrice = p.price <= maxPrice;
@@ -66,11 +228,21 @@ const App: React.FC = () => {
     });
   }, [searchQuery, selectedCategory, selectedSubcategory, maxPrice]);
 
-  const toggleWishlist = (id: string) => {
-    setWishlist(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  const toggleWishlist = async (id: string) => {
+    const isAdding = !wishlist.includes(id);
+    setWishlist(prev => isAdding ? [...prev, id] : prev.filter(i => i !== id));
+
+    if (user) {
+      const wishlistObj = await getOrCreateWishlist();
+      if (isAdding) {
+        await supabase.from('WishlistItem').insert({ wishlistId: wishlistObj.id, productId: id });
+      } else {
+        await supabase.from('WishlistItem').delete().eq('wishlistId', wishlistObj.id).eq('productId', id);
+      }
+    }
   };
 
-  const addToCart = (id: string) => {
+  const addToCart = async (id: string) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === id);
       if (existing) {
@@ -78,6 +250,51 @@ const App: React.FC = () => {
       }
       return [...prev, { id, qty: 1 }];
     });
+
+    if (user) {
+      const cartObj = await getOrCreateCart();
+      const { data: existingItem } = await supabase
+        .from('CartItem')
+        .select('id, quantity')
+        .eq('cartId', cartObj.id)
+        .eq('productId', id)
+        .single();
+
+      if (existingItem) {
+        await supabase.from('CartItem').update({ quantity: existingItem.quantity + 1 }).eq('id', existingItem.id);
+      } else {
+        await supabase.from('CartItem').insert({ cartId: cartObj.id, productId: id, quantity: 1 });
+      }
+    }
+  };
+
+  const removeFromCart = async (id: string) => {
+    setCart(prev => prev.filter(item => item.id !== id));
+
+    if (user) {
+      const cartObj = await getOrCreateCart();
+      await supabase.from('CartItem').delete().eq('cartId', cartObj.id).eq('productId', id);
+    }
+  };
+
+  const updateCartQty = async (id: string, delta: number) => {
+    setCart(prev => prev.map(item =>
+      item.id === id ? { ...item, qty: Math.max(1, item.qty + delta) } : item
+    ));
+
+    if (user) {
+      const cartObj = await getOrCreateCart();
+      const { data: existingItem } = await supabase
+        .from('CartItem')
+        .select('id, quantity')
+        .eq('cartId', cartObj.id)
+        .eq('productId', id)
+        .single();
+
+      if (existingItem) {
+        await supabase.from('CartItem').update({ quantity: Math.max(1, existingItem.quantity + delta) }).eq('id', existingItem.id);
+      }
+    }
   };
 
   const openDetails = (product: Product) => {
@@ -99,8 +316,12 @@ const App: React.FC = () => {
 
   const triggerCompare = (product: Product) => {
     setSelectedProduct(product);
-    setShowDetails(false);
     setActiveTab('comparison');
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setActiveTab('home');
   };
 
   const Navbar = () => (
@@ -129,12 +350,22 @@ const App: React.FC = () => {
               <ShoppingCart size={20} />
               {cart.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />}
             </button>
+            {user && (
+              <button onClick={() => setActiveTab('profile')} className={`p-2 hover:bg-black/5 rounded-full transition-colors relative ${activeTab === 'profile' ? 'bg-black text-white' : ''}`}>
+                <User size={20} />
+              </button>
+            )}
           </div>
-          <button onClick={() => setActiveTab('login')} className="px-4 md:px-6 py-2 bg-black text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-lg">Log In</button>
+          <button
+            onClick={() => user ? handleLogout() : setActiveTab('login')}
+            className="px-4 md:px-6 py-2 bg-black text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-lg"
+          >
+            {user ? 'Log Out' : 'Log In'}
+          </button>
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2"><Menu size={20} /></button>
         </div>
       </div>
-      
+
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-black/5 p-6 space-y-6 shadow-xl animate-in slide-in-from-top-4">
@@ -142,8 +373,9 @@ const App: React.FC = () => {
           <button onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Collection</button>
           <button onClick={() => { setActiveTab('blueprint'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Architect Tool</button>
           <div className="pt-4 border-t border-black/5 flex gap-6">
-             <button onClick={() => { setActiveTab('wishlist'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><Heart size={16}/> Wishlist</button>
-             <button onClick={() => { setActiveTab('cart'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><ShoppingCart size={16}/> Cart</button>
+            <button onClick={() => { setActiveTab('wishlist'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><Heart size={16} /> Wishlist</button>
+            <button onClick={() => { setActiveTab('cart'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><ShoppingCart size={16} /> Cart</button>
+            {user && <button onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><User size={16} /> Profile</button>}
           </div>
         </div>
       )}
@@ -168,17 +400,17 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-6 pt-2 md:pt-4 animate-fade-up stagger-3">
-             <div className="flex -space-x-3">
-               {[1,2,3].map(i => (
-                 <div key={i} className="w-8 md:w-10 h-8 md:h-10 rounded-full border-2 border-white bg-black/5 overflow-hidden shadow-sm">
-                   <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="user" />
-                 </div>
-               ))}
-             </div>
-             <div>
-               <p className="text-lg md:text-xl font-bold tracking-tight">+100k</p>
-               <p className="text-[9px] md:text-[10px] font-bold text-black/30 uppercase tracking-widest">Happy clients</p>
-             </div>
+            <div className="flex -space-x-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-8 md:w-10 h-8 md:h-10 rounded-full border-2 border-white bg-black/5 overflow-hidden shadow-sm">
+                  <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" />
+                </div>
+              ))}
+            </div>
+            <div>
+              <p className="text-lg md:text-xl font-bold tracking-tight">+100k</p>
+              <p className="text-[9px] md:text-[10px] font-bold text-black/30 uppercase tracking-widest">Happy clients</p>
+            </div>
           </div>
         </div>
 
@@ -191,8 +423,8 @@ const App: React.FC = () => {
                 <div className="bg-white px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[8px] md:text-[10px] font-bold uppercase tracking-wider shadow-sm">Cozy</div>
               </div>
             </div>
-            <img 
-              src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=800" 
+            <img
+              src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=800"
               className="absolute bottom-[-10%] left-[-10%] w-[120%] rotate-[15deg] group-hover:rotate-[10deg] transition-transform duration-1000"
               alt="UI Preview"
             />
@@ -208,23 +440,23 @@ const App: React.FC = () => {
         </div>
 
         <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6">
-           <div className="bg-[#FDE7D1] p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-1 shadow-sm border border-orange-100/50">
-             <p className="text-xs md:text-sm font-bold text-black/70 mb-4">There is a little clutter,<br />but in general I feel good</p>
-             <div className="flex gap-3">
-               <div className="w-8 md:w-10 h-8 md:h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">🏠</div>
-               <div className="w-8 md:w-10 h-8 md:h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">🌿</div>
-               <div className="w-8 md:w-10 h-8 md:h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">✨</div>
-             </div>
-           </div>
+          <div className="bg-[#FDE7D1] p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-1 shadow-sm border border-orange-100/50">
+            <p className="text-xs md:text-sm font-bold text-black/70 mb-4">There is a little clutter,<br />but in general I feel good</p>
+            <div className="flex gap-3">
+              <div className="w-8 md:w-10 h-8 md:h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">🏠</div>
+              <div className="w-8 md:w-10 h-8 md:h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">🌿</div>
+              <div className="w-8 md:w-10 h-8 md:h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">✨</div>
+            </div>
+          </div>
 
-           <div className="bg-black p-6 md:p-8 rounded-[32px] md:rounded-[40px] text-white animate-fade-up stagger-2 shadow-2xl">
-             <p className="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">App Store Rating</p>
-             <h4 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4">4.9</h4>
-             <div className="flex gap-1 mb-2">
-               {[1,2,3,4,5].map(i => <Star key={i} size={14} fill="#FFD700" className="text-[#FFD700]" />)}
-             </div>
-             <p className="text-[9px] md:text-[10px] font-bold text-white/40 tracking-widest uppercase">456 REVIEWS</p>
-           </div>
+          <div className="bg-black p-6 md:p-8 rounded-[32px] md:rounded-[40px] text-white animate-fade-up stagger-2 shadow-2xl">
+            <p className="text-[9px] md:text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">App Store Rating</p>
+            <h4 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4">4.9</h4>
+            <div className="flex gap-1 mb-2">
+              {[1, 2, 3, 4, 5].map(i => <Star key={i} size={14} fill="#FFD700" className="text-[#FFD700]" />)}
+            </div>
+            <p className="text-[9px] md:text-[10px] font-bold text-white/40 tracking-widest uppercase">456 REVIEWS</p>
+          </div>
         </div>
       </div>
     </section>
@@ -245,9 +477,9 @@ const App: React.FC = () => {
             <button onClick={() => setActiveTab('products')} className="bg-white text-black px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all">Learn more</button>
           </div>
           <div className="pt-4 relative">
-             <div className="w-full aspect-square bg-[#E4E4F4] rounded-[32px] md:rounded-[40px] flex items-center justify-center rotate-[-5deg] group-hover:rotate-0 transition-transform overflow-hidden">
-               <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&q=80&w=400" className="w-3/4 drop-shadow-2xl" alt="Design" />
-             </div>
+            <div className="w-full aspect-square bg-[#E4E4F4] rounded-[32px] md:rounded-[40px] flex items-center justify-center rotate-[-5deg] group-hover:rotate-0 transition-transform overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&q=80&w=400" className="w-3/4 drop-shadow-2xl" alt="Design" />
+            </div>
           </div>
         </div>
 
@@ -257,18 +489,18 @@ const App: React.FC = () => {
             <p className="text-black/40 text-sm leading-relaxed">A full cycle of diagnostics and layout recommendations from top-tier interior experts.</p>
           </div>
           <div className="relative h-56 md:h-64 flex items-center justify-center">
-             <div className="absolute inset-0 flex items-center justify-center">
-                <Box size={100} className="md:size-[120px] text-black/5 rotate-12" />
-             </div>
-             <div className="bg-white p-5 md:p-6 rounded-2xl md:rounded-3xl shadow-xl rotate-[10deg] group-hover:rotate-0 transition-transform">
-               <div className="flex gap-2 mb-3">
-                 <div className="w-2 h-2 rounded-full bg-red-400"></div>
-                 <div className="w-2 h-2 rounded-full bg-blue-400"></div>
-                 <div className="w-2 h-2 rounded-full bg-green-400"></div>
-               </div>
-               <p className="text-[10px] font-bold text-black/30 mb-1 uppercase tracking-tighter">OCCUPANCY</p>
-               <p className="text-lg md:text-xl font-bold tracking-tight">84% Efficiency</p>
-             </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Box size={100} className="md:size-[120px] text-black/5 rotate-12" />
+            </div>
+            <div className="bg-white p-5 md:p-6 rounded-2xl md:rounded-3xl shadow-xl rotate-[10deg] group-hover:rotate-0 transition-transform">
+              <div className="flex gap-2 mb-3">
+                <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                <div className="w-2 h-2 rounded-full bg-green-400"></div>
+              </div>
+              <p className="text-[10px] font-bold text-black/30 mb-1 uppercase tracking-tighter">OCCUPANCY</p>
+              <p className="text-lg md:text-xl font-bold tracking-tight">84% Efficiency</p>
+            </div>
           </div>
         </div>
 
@@ -280,8 +512,8 @@ const App: React.FC = () => {
           <div className="bg-[#FDE7D1] rounded-[32px] md:rounded-[40px] p-6 md:p-8 aspect-square relative overflow-hidden">
             <Smartphone className="absolute bottom-[-20%] right-[-10%] w-3/4 h-3/4 text-black/10 rotate-[-15deg]" />
             <div className="absolute top-6 md:top-8 left-6 md:left-8 bg-white p-4 rounded-2xl shadow-lg rotate-[-5deg] group-hover:rotate-0 transition-transform">
-               <p className="text-[10px] font-bold text-black/30 uppercase tracking-tighter">AI SUGGESTION</p>
-               <p className="text-xs md:text-sm font-bold">Cloud Sofa fits here.</p>
+              <p className="text-[10px] font-bold text-black/30 uppercase tracking-tighter">AI SUGGESTION</p>
+              <p className="text-xs md:text-sm font-bold">Cloud Sofa fits here.</p>
             </div>
           </div>
         </div>
@@ -293,43 +525,43 @@ const App: React.FC = () => {
     <section className="py-16 md:py-20 bg-[#FBFBF9] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <h3 className="text-4xl md:text-5xl font-bold tracking-tighter text-center mb-12 md:mb-16 animate-fade-up">How it works</h3>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
           <div className="bg-white p-8 md:p-12 rounded-[40px] md:rounded-[60px] shadow-sm animate-fade-up border border-black/5 space-y-8 md:space-y-10 group">
-             <div className="space-y-4">
-               <h4 className="text-3xl md:text-4xl font-bold tracking-tight">Select your vision</h4>
-               <p className="text-black/40 text-sm md:text-base leading-relaxed">Choose styles and dimensions that accurately describe your aesthetic goal.</p>
-             </div>
-             <div className="bg-black/5 p-6 md:p-8 rounded-[32px] md:rounded-[40px] space-y-4">
-               <p className="text-[10px] font-bold text-black/30 uppercase tracking-widest">What vision is on your mind?</p>
-               <div className="bg-white p-4 rounded-2xl border border-black/5 flex items-center gap-3">
-                 <Search size={16} className="text-black/20" />
-                 <span className="text-sm font-bold opacity-20">Minimalist |</span>
-               </div>
-               <div className="flex flex-wrap gap-2">
-                 <span className="px-4 py-2 bg-white rounded-full text-[10px] font-bold border border-black/5 hover:bg-black hover:text-white transition-all cursor-pointer uppercase tracking-widest">Modern</span>
-                 <span className="px-4 py-2 bg-white rounded-full text-[10px] font-bold border border-black/5 hover:bg-black hover:text-white transition-all cursor-pointer uppercase tracking-widest">Industrial</span>
-               </div>
-             </div>
+            <div className="space-y-4">
+              <h4 className="text-3xl md:text-4xl font-bold tracking-tight">Select your vision</h4>
+              <p className="text-black/40 text-sm md:text-base leading-relaxed">Choose styles and dimensions that accurately describe your aesthetic goal.</p>
+            </div>
+            <div className="bg-black/5 p-6 md:p-8 rounded-[32px] md:rounded-[40px] space-y-4">
+              <p className="text-[10px] font-bold text-black/30 uppercase tracking-widest">What vision is on your mind?</p>
+              <div className="bg-white p-4 rounded-2xl border border-black/5 flex items-center gap-3">
+                <Search size={16} className="text-black/20" />
+                <span className="text-sm font-bold opacity-20">Minimalist |</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-4 py-2 bg-white rounded-full text-[10px] font-bold border border-black/5 hover:bg-black hover:text-white transition-all cursor-pointer uppercase tracking-widest">Modern</span>
+                <span className="px-4 py-2 bg-white rounded-full text-[10px] font-bold border border-black/5 hover:bg-black hover:text-white transition-all cursor-pointer uppercase tracking-widest">Industrial</span>
+              </div>
+            </div>
           </div>
 
           <div className="bg-[#C1EED0] p-8 md:p-12 rounded-[40px] md:rounded-[60px] animate-fade-up stagger-1 space-y-8 md:space-y-10 group overflow-hidden relative shadow-sm">
-             <div className="space-y-4 relative z-10">
-               <h4 className="text-3xl md:text-4xl font-bold tracking-tight">Describe details</h4>
-               <p className="text-black/40 text-sm md:text-base leading-relaxed">Tell us what's going on so we can find the best solution for your floor plan.</p>
-             </div>
-             <div className="relative flex justify-center h-64 md:h-72">
-                <div className="w-full bg-white/40 backdrop-blur-md rounded-[32px] md:rounded-[40px] p-6 md:p-8 flex flex-col items-center justify-center group-hover:scale-105 transition-transform shadow-inner">
-                   <LayoutIcon size={80} className="md:size-[100px] text-black/10 rotate-12 mb-6" />
-                   <div className="flex flex-wrap gap-2 justify-center">
-                      <span className="bg-black text-white px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest shadow-lg">Length</span>
-                      <span className="bg-white text-black px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest shadow-sm">Width</span>
-                      <span className="bg-white text-black px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest shadow-sm">Elevation</span>
+            <div className="space-y-4 relative z-10">
+              <h4 className="text-3xl md:text-4xl font-bold tracking-tight">Describe details</h4>
+              <p className="text-black/40 text-sm md:text-base leading-relaxed">Tell us what's going on so we can find the best solution for your floor plan.</p>
+            </div>
+            <div className="relative flex justify-center h-64 md:h-72">
+              <div className="w-full bg-white/40 backdrop-blur-md rounded-[32px] md:rounded-[40px] p-6 md:p-8 flex flex-col items-center justify-center group-hover:scale-105 transition-transform shadow-inner">
+                <LayoutIcon size={80} className="md:size-[100px] text-black/10 rotate-12 mb-6" />
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <span className="bg-black text-white px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest shadow-lg">Length</span>
+                  <span className="bg-white text-black px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest shadow-sm">Width</span>
+                  <span className="bg-white text-black px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest shadow-sm">Elevation</span>
                 </div>
-             </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </section>
   );
@@ -382,156 +614,157 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FBFBF9]">
+      <Toaster position="top-center" />
       <Navbar />
-      
+
       <main className="transition-all duration-700 ease-in-out">
         {activeTab === 'home' && (
           <div className="animate-in fade-in duration-1000">
             <Hero />
             <ServicesSection />
             <HowItWorks />
-            
+
             {/* Promo Section */}
             <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto">
-               <div className="bg-[#E4E4F4] rounded-[40px] md:rounded-[60px] overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center shadow-xl border border-indigo-50">
-                  <div className="p-8 md:p-10 space-y-10 flex flex-col items-center">
-                     <div className="relative">
-                        <Smartphone className="w-56 md:w-64 h-[400px] md:h-[450px] text-black/10" />
-                        <div className="absolute inset-0 flex items-center justify-center pt-8">
-                           <div className="w-40 md:w-48 h-[340px] md:h-[380px] bg-white rounded-[28px] md:rounded-[32px] shadow-2xl overflow-hidden p-5 md:p-6 space-y-6">
-                              <h5 className="font-bold text-[9px] md:text-[10px] uppercase tracking-widest opacity-30">Your Space</h5>
-                              <div className="bg-[#FDE7D1] p-3 md:p-4 rounded-xl shadow-sm">
-                                 <p className="text-[9px] md:text-[10px] font-bold uppercase">Cloud Sofa</p>
-                                 <p className="text-[7px] md:text-[8px] opacity-40 font-bold uppercase mt-1">Perfect corner fit.</p>
-                              </div>
-                              <div className="flex flex-wrap gap-1.5 md:gap-2">
-                                 {[1,2,3,4,5,6].map(i => <div key={i} className="w-7 md:w-8 h-7 md:h-8 rounded-lg bg-black/5"></div>)}
-                              </div>
-                           </div>
+              <div className="bg-[#E4E4F4] rounded-[40px] md:rounded-[60px] overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center shadow-xl border border-indigo-50">
+                <div className="p-8 md:p-10 space-y-10 flex flex-col items-center">
+                  <div className="relative">
+                    <Smartphone className="w-56 md:w-64 h-[400px] md:h-[450px] text-black/10" />
+                    <div className="absolute inset-0 flex items-center justify-center pt-8">
+                      <div className="w-40 md:w-48 h-[340px] md:h-[380px] bg-white rounded-[28px] md:rounded-[32px] shadow-2xl overflow-hidden p-5 md:p-6 space-y-6">
+                        <h5 className="font-bold text-[9px] md:text-[10px] uppercase tracking-widest opacity-30">Your Space</h5>
+                        <div className="bg-[#FDE7D1] p-3 md:p-4 rounded-xl shadow-sm">
+                          <p className="text-[9px] md:text-[10px] font-bold uppercase">Cloud Sofa</p>
+                          <p className="text-[7px] md:text-[8px] opacity-40 font-bold uppercase mt-1">Perfect corner fit.</p>
                         </div>
-                     </div>
+                        <div className="flex flex-wrap gap-1.5 md:gap-2">
+                          {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="w-7 md:w-8 h-7 md:h-8 rounded-lg bg-black/5"></div>)}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-10 md:p-16 space-y-6 md:space-y-8">
-                     <div className="w-10 md:w-12 h-10 md:h-12 bg-white rounded-full flex items-center justify-center shadow-lg animate-float">
-                        <LayoutIcon size={20} className="md:size-[24px] text-black" />
-                     </div>
-                     <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight">Design is easy with PlanPro app</h3>
-                     <p className="text-black/50 text-base md:text-lg leading-relaxed">We're constantly expanding our library of master artisans and growing our team of highly qualified interior planners.</p>
-                     <button onClick={() => setActiveTab('products')} className="bg-black text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl">Get Started</button>
+                </div>
+                <div className="p-10 md:p-16 space-y-6 md:space-y-8">
+                  <div className="w-10 md:w-12 h-10 md:h-12 bg-white rounded-full flex items-center justify-center shadow-lg animate-float">
+                    <LayoutIcon size={20} className="md:size-[24px] text-black" />
                   </div>
-               </div>
+                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight">Design is easy with PlanPro app</h3>
+                  <p className="text-black/50 text-base md:text-lg leading-relaxed">We're constantly expanding our library of master artisans and growing our team of highly qualified interior planners.</p>
+                  <button onClick={() => setActiveTab('products')} className="bg-black text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl">Get Started</button>
+                </div>
+              </div>
             </section>
           </div>
         )}
-        
+
         {activeTab === 'products' && (
           <div className="pt-24 min-h-screen animate-in slide-in-from-bottom-8 duration-700">
-             <div className="px-4 md:px-6 py-10 max-w-7xl mx-auto">
-               
-               {/* Collection Header */}
-               <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-12 gap-6 md:gap-8">
-                 <div className="space-y-2">
-                   <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/30 block">Catalog 2024</span>
-                   <h2 className="text-4xl md:text-6xl font-bold tracking-tighter">Featured Collection</h2>
-                 </div>
-                 
-                 <div className="flex items-center gap-3 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-72">
-                       <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20" size={18} />
-                       <input 
-                         type="text" 
-                         placeholder="Search the collection..."
-                         value={searchQuery}
-                         onChange={(e) => setSearchQuery(e.target.value)}
-                         className="w-full pl-14 pr-6 py-4 bg-white border border-black/5 rounded-[24px] text-sm font-medium focus:outline-none focus:border-black/20 focus:shadow-xl transition-all shadow-sm"
-                       />
-                    </div>
-                    <button 
-                      onClick={() => setShowFilterDrawer(true)}
-                      className="p-4 rounded-[20px] bg-white border border-black/5 hover:border-black shadow-sm transition-all relative group"
+            <div className="px-4 md:px-6 py-10 max-w-7xl mx-auto">
+
+              {/* Collection Header */}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-12 gap-6 md:gap-8">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/30 block">Catalog 2024</span>
+                  <h2 className="text-4xl md:text-6xl font-bold tracking-tighter">Featured Collection</h2>
+                </div>
+
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                  <div className="relative flex-1 md:w-72">
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20" size={18} />
+                    <input
+                      type="text"
+                      placeholder="Search the collection..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-14 pr-6 py-4 bg-white border border-black/5 rounded-[24px] text-sm font-medium focus:outline-none focus:border-black/20 focus:shadow-xl transition-all shadow-sm"
+                    />
+                  </div>
+                  <button
+                    onClick={() => setShowFilterDrawer(true)}
+                    className="p-4 rounded-[20px] bg-white border border-black/5 hover:border-black shadow-sm transition-all relative group"
+                  >
+                    <SlidersHorizontal size={22} />
+                    {(maxPrice < 3000 || searchQuery !== '') && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-black rounded-full border-2 border-white" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Filter Section Container */}
+              <div className="space-y-6 md:space-y-8 mb-12">
+                {/* Main Category Pills */}
+                <div className="flex gap-2 md:gap-3 overflow-x-auto no-scrollbar animate-fade-up">
+                  {mainCategories.map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`whitespace-nowrap px-6 md:px-8 py-3 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] transition-all border ${selectedCategory === cat ? 'bg-black border-black text-white shadow-xl scale-105' : 'bg-white border-black/5 text-black/30 hover:text-black hover:border-black/20'}`}
                     >
-                      <SlidersHorizontal size={22} />
-                      {(maxPrice < 3000 || searchQuery !== '') && (
-                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-black rounded-full border-2 border-white" />
-                      )}
+                      {cat}
                     </button>
-                 </div>
-               </div>
+                  ))}
+                </div>
 
-               {/* Filter Section Container */}
-               <div className="space-y-6 md:space-y-8 mb-12">
-                 {/* Main Category Pills */}
-                 <div className="flex gap-2 md:gap-3 overflow-x-auto no-scrollbar animate-fade-up">
-                    {mainCategories.map(cat => (
-                      <button 
-                        key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className={`whitespace-nowrap px-6 md:px-8 py-3 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] transition-all border ${selectedCategory === cat ? 'bg-black border-black text-white shadow-xl scale-105' : 'bg-white border-black/5 text-black/30 hover:text-black hover:border-black/20'}`}
-                      >
-                        {cat}
-                      </button>
+                {/* Dynamic Sub-Category Pills (Appears when a main category is selected) */}
+                {selectedCategory !== 'All' && subCategories.length > 0 && (
+                  <div className="flex flex-col gap-3 animate-in slide-in-from-top-2 duration-500">
+                    <div className="flex items-center gap-2 px-1">
+                      <ChevronDown size={14} className="text-black/20" />
+                      <span className="text-[8px] font-black uppercase tracking-[0.3em] text-black/20">Refine Selection</span>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                      {subCategories.map(sub => (
+                        <button
+                          key={sub}
+                          onClick={() => setSelectedSubcategory(sub)}
+                          className={`whitespace-nowrap px-6 py-3 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${selectedSubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-black text-white shadow-lg scale-105' : 'bg-white/50 border-black/5 text-black/40 hover:text-black hover:border-black/20'}`}
+                        >
+                          {sub}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Product Grid */}
+              <div className="animate-fade-up stagger-1">
+                {filteredProducts.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                    {filteredProducts.map(p => (
+                      <ProductCard
+                        key={p.id}
+                        product={p}
+                        onAR={triggerAR}
+                        onAI={triggerAI}
+                        onCompare={triggerCompare}
+                        onAddToCart={addToCart}
+                        onToggleWishlist={toggleWishlist}
+                        onViewDetails={openDetails}
+                        isWishlisted={wishlist.includes(p.id)}
+                      />
                     ))}
-                 </div>
-
-                 {/* Dynamic Sub-Category Pills (Appears when a main category is selected) */}
-                 {selectedCategory !== 'All' && subCategories.length > 0 && (
-                   <div className="flex flex-col gap-3 animate-in slide-in-from-top-2 duration-500">
-                     <div className="flex items-center gap-2 px-1">
-                        <ChevronDown size={14} className="text-black/20" />
-                        <span className="text-[8px] font-black uppercase tracking-[0.3em] text-black/20">Refine Selection</span>
-                     </div>
-                     <div className="flex gap-2 overflow-x-auto no-scrollbar">
-                        {subCategories.map(sub => (
-                          <button 
-                            key={sub}
-                            onClick={() => setSelectedSubcategory(sub)}
-                            className={`whitespace-nowrap px-6 py-3 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${selectedSubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-black text-white shadow-lg scale-105' : 'bg-white/50 border-black/5 text-black/40 hover:text-black hover:border-black/20'}`}
-                          >
-                            {sub}
-                          </button>
-                        ))}
-                     </div>
-                   </div>
-                 )}
-               </div>
-
-               {/* Product Grid */}
-               <div className="animate-fade-up stagger-1">
-                 {filteredProducts.length > 0 ? (
-                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                     {filteredProducts.map(p => (
-                       <ProductCard 
-                         key={p.id} 
-                         product={p} 
-                         onAR={triggerAR} 
-                         onAI={triggerAI} 
-                         onCompare={triggerCompare} 
-                         onAddToCart={addToCart} 
-                         onToggleWishlist={toggleWishlist} 
-                         onViewDetails={openDetails} 
-                         isWishlisted={wishlist.includes(p.id)} 
-                       />
-                     ))}
-                   </div>
-                 ) : (
-                   <div className="py-24 md:py-32 text-center space-y-6 bg-white rounded-[40px] md:rounded-[60px] border border-black/5">
-                      <div className="w-16 md:w-20 h-16 md:h-20 bg-black/5 rounded-full flex items-center justify-center mx-auto">
-                        <Search size={28} className="md:size-[32px] text-black/20" />
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="text-xl md:text-2xl font-serif">No matches found</h4>
-                        <p className="text-xs md:text-sm text-black/40 max-w-xs mx-auto">Try refining your search or price filters to find what you're looking for.</p>
-                      </div>
-                      <button 
-                        onClick={() => { setSelectedCategory('All'); setSelectedSubcategory('All'); setMaxPrice(3000); setSearchQuery(''); }}
-                        className="px-8 py-3 bg-black text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
-                      >
-                        Reset Filters
-                      </button>
-                   </div>
-                 )}
-               </div>
-             </div>
+                  </div>
+                ) : (
+                  <div className="py-24 md:py-32 text-center space-y-6 bg-white rounded-[40px] md:rounded-[60px] border border-black/5">
+                    <div className="w-16 md:w-20 h-16 md:h-20 bg-black/5 rounded-full flex items-center justify-center mx-auto">
+                      <Search size={28} className="md:size-[32px] text-black/20" />
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="text-xl md:text-2xl font-serif">No matches found</h4>
+                      <p className="text-xs md:text-sm text-black/40 max-w-xs mx-auto">Try refining your search or price filters to find what you're looking for.</p>
+                    </div>
+                    <button
+                      onClick={() => { setSelectedCategory('All'); setSelectedSubcategory('All'); setMaxPrice(3000); setSearchQuery(''); }}
+                      className="px-8 py-3 bg-black text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
+                    >
+                      Reset Filters
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -549,23 +782,23 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="space-y-6">
-                   <div className="flex justify-between items-end">
-                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/30">Budget Range</h4>
-                      <span className="text-lg md:text-xl font-bold tracking-tighter">${maxPrice}</span>
-                   </div>
-                   <input 
-                     type="range" 
-                     min="100" 
-                     max="3000" 
-                     step="100"
-                     value={maxPrice}
-                     onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-                     className="w-full h-1.5 bg-black/5 rounded-full appearance-none cursor-pointer accent-black"
-                   />
-                   <div className="flex justify-between text-[9px] md:text-[10px] font-bold text-black/20 uppercase tracking-widest">
-                     <span>$100</span>
-                     <span>$3,000+</span>
-                   </div>
+                  <div className="flex justify-between items-end">
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/30">Budget Range</h4>
+                    <span className="text-lg md:text-xl font-bold tracking-tighter">${maxPrice}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="100"
+                    max="3000"
+                    step="100"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(parseInt(e.target.value))}
+                    className="w-full h-1.5 bg-black/5 rounded-full appearance-none cursor-pointer accent-black"
+                  />
+                  <div className="flex justify-between text-[9px] md:text-[10px] font-bold text-black/20 uppercase tracking-widest">
+                    <span>$100</span>
+                    <span>$3,000+</span>
+                  </div>
                 </div>
 
                 <div className="space-y-6">
@@ -581,13 +814,13 @@ const App: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <button 
+                <button
                   onClick={() => setShowFilterDrawer(false)}
                   className="w-full py-4 md:py-5 bg-black text-white rounded-[20px] md:rounded-[24px] font-bold uppercase tracking-widest text-[10px] md:text-xs shadow-2xl hover:bg-black/80 transition-all"
                 >
                   Show {filteredProducts.length} Results
                 </button>
-                <button 
+                <button
                   onClick={() => { setMaxPrice(3000); setSearchQuery(''); setSelectedCategory('All'); setSelectedSubcategory('All'); }}
                   className="w-full py-4 border border-black/5 rounded-[20px] md:rounded-[24px] font-bold uppercase tracking-widest text-[9px] md:text-[10px] text-black/40 hover:text-black hover:border-black transition-all"
                 >
@@ -603,19 +836,66 @@ const App: React.FC = () => {
             <BlueprintDesigner />
           </div>
         )}
-        
-        {(activeTab === 'cart' || activeTab === 'wishlist') && (
-          <div className="pt-40 pb-20 px-4 text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tighter">{activeTab} section</h2>
-            <p className="text-black/40 text-sm">Coming soon in the full production release.</p>
-            <button onClick={() => setActiveTab('home')} className="px-8 py-3 bg-black text-white rounded-full text-xs font-bold uppercase tracking-widest">Back to Home</button>
+
+        {activeTab === 'cart' && (
+          <div className="pt-24 min-h-screen animate-in fade-in duration-700">
+            <CartView
+              cart={cart}
+              onUpdateQty={updateCartQty}
+              onRemove={removeFromCart}
+              onCheckout={() => setActiveTab('checkout')}
+              onContinueShopping={() => setActiveTab('products')}
+            />
+          </div>
+        )}
+
+        {activeTab === 'wishlist' && (
+          <div className="pt-24 min-h-screen animate-in fade-in duration-700">
+            <WishlistView
+              wishlist={wishlist}
+              onToggleWishlist={toggleWishlist}
+              onAddToCart={addToCart}
+              onViewDetails={openDetails}
+              onAR={triggerAR}
+              onAI={triggerAI}
+              onCompare={triggerCompare}
+              onContinueShopping={() => setActiveTab('products')}
+            />
+          </div>
+        )}
+
+        {activeTab === 'checkout' && (
+          <div className="animate-in fade-in duration-700">
+            <CheckoutPage
+              cart={cart}
+              onBack={() => setActiveTab('cart')}
+              onConfirm={() => {
+                alert("Order confirmed! Thank you for choosing PlanPro.");
+                setCart([]);
+                setActiveTab('home');
+              }}
+            />
+          </div>
+        )}
+
+        {activeTab === 'profile' && (
+          <div className="pt-24 min-h-screen animate-in fade-in duration-700">
+            <UserProfile
+              wishlist={wishlist}
+              onToggleWishlist={toggleWishlist}
+              onViewProduct={(product) => {
+                setSelectedProduct(product);
+                setShowDetails(true);
+              }}
+              onTabChange={setActiveTab}
+            />
           </div>
         )}
       </main>
 
       {activeTab === 'login' && (
-        <LoginPage 
-          onBack={() => setActiveTab('home')} 
+        <LoginPage
+          onBack={() => setActiveTab('home')}
           onLoginSuccess={() => setActiveTab('home')}
         />
       )}
@@ -623,7 +903,7 @@ const App: React.FC = () => {
       {activeTab !== 'blueprint' && activeTab !== 'login' && <Footer />}
 
       {showDetails && selectedProduct && (
-        <ProductDetailsModal 
+        <ProductDetailsModal
           product={selectedProduct}
           isWishlisted={wishlist.includes(selectedProduct.id)}
           onClose={() => setShowDetails(false)}
@@ -636,23 +916,24 @@ const App: React.FC = () => {
       )}
 
       {isAIBuilderOpen && (
-        <AIBuilderModal 
-          product={selectedProduct} 
-          onClose={() => setIsAIBuilderOpen(false)} 
+        <AIBuilderModal
+          product={selectedProduct}
+          onClose={() => setIsAIBuilderOpen(false)}
         />
       )}
-      
+
       {activeTab === 'comparison' && selectedProduct && (
-        <ComparisonModal 
-          product={selectedProduct} 
-          onClose={() => setActiveTab('products')} 
+        <ComparisonModal
+          product={selectedProduct}
+          onClose={() => setActiveTab('products')}
         />
       )}
-      
+
       {activeTab === 'ar-preview' && selectedProduct && (
-        <ARPreviewModal 
-          product={selectedProduct} 
-          onClose={() => setActiveTab('products')} 
+        <ARPreviewModal
+          product={selectedProduct}
+          onClose={() => { setActiveTab('products'); setInitialARViewMode('qr'); }}
+          initialViewMode={initialARViewMode}
         />
       )}
     </div>

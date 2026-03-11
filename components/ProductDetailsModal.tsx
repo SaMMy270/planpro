@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { 
-  X, Heart, ShoppingBag, Box, Sparkles, Scale, Star, Truck, 
-  ChevronRight, ChevronLeft, Minus, Plus, Share2, Facebook, 
-  Twitter, Instagram, CheckCircle2 
+import {
+  X, Heart, ShoppingBag, Box, Sparkles, Scale, Star, Truck,
+  ChevronRight, ChevronLeft, Minus, Plus, Share2, Facebook,
+  Twitter, Instagram, CheckCircle2
 } from 'lucide-react';
 import { Product } from '../types';
+import Scene3D from './Scene3D';
 
 interface ProductDetailsModalProps {
   product: Product;
@@ -29,6 +30,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
   const [activeTab, setActiveTab] = useState<Tab>('review');
   const [showStudioMenu, setShowStudioMenu] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
+  const [is3DActive, setIs3DActive] = useState(false);
 
   const gallery = product.images || [product.image];
 
@@ -79,13 +81,13 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 lg:p-12 overflow-hidden">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose} />
-      
+
       <div className="relative bg-white w-full max-w-7xl h-full md:h-auto md:max-h-[90vh] md:rounded-[40px] shadow-2xl overflow-y-auto custom-scrollbar flex flex-col animate-in slide-in-from-bottom-12 duration-500">
-        
+
         {/* Header/Close */}
         <div className="sticky top-0 right-0 p-6 flex justify-end z-50 pointer-events-none">
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="p-3 rounded-full bg-white shadow-xl hover:bg-black hover:text-white transition-all pointer-events-auto active:scale-90"
           >
             <X size={24} />
@@ -94,38 +96,38 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
 
         <div className="px-6 md:px-16 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            
+
             {/* Left: Gallery with Sliding Animation */}
             <div className="space-y-6 animate-image-reveal">
               <div className="relative aspect-square bg-[#F5F5F3] rounded-[32px] overflow-hidden group shadow-inner">
                 {/* Image Container with Sliding Transition */}
                 <div className="w-full h-full relative overflow-hidden flex">
                   {gallery.map((img, i) => (
-                    <div 
+                    <div
                       key={i}
                       className="absolute inset-0 w-full h-full transition-transform duration-700 cubic-bezier(0.22, 1, 0.36, 1)"
-                      style={{ 
+                      style={{
                         transform: `translateX(${(i - selectedImg) * 100}%)`,
                         visibility: Math.abs(i - selectedImg) > 1 ? 'hidden' : 'visible'
                       }}
                     >
-                       <img 
-                        src={img} 
-                        alt={product.name} 
+                      <img
+                        src={img}
+                        alt={product.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   ))}
                 </div>
-                
+
                 {/* Navigation Arrows */}
-                <button 
+                <button
                   onClick={prevImg}
                   className={`absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all hover:bg-black hover:text-white active:scale-90 z-20 ${controlsVisible ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'}`}
                 >
                   <ChevronLeft size={24} />
                 </button>
-                <button 
+                <button
                   onClick={nextImg}
                   className={`absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all hover:bg-black hover:text-white active:scale-90 z-20 ${controlsVisible ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'}`}
                 >
@@ -133,15 +135,32 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 </button>
 
                 {/* Badge */}
-                <div className="absolute top-6 left-6 px-4 py-1.5 bg-green-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg z-10">
+                <div className="absolute top-6 left-6 px-4 py-1.5 bg-green-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg z-10 transition-opacity" style={{ opacity: is3DActive ? 0 : 1 }}>
                   In Stock
                 </div>
+
+                {/* 3D View Over-Layer */}
+                {is3DActive && product.model && (
+                  <div className="absolute inset-0 z-40 bg-white">
+                    <Scene3D modelUrl={product.model} />
+                  </div>
+                )}
+
+                {/* 3D Model Toggle Overlay Button */}
+                {product.model && (
+                  <button
+                    onClick={() => setIs3DActive(!is3DActive)}
+                    className={`absolute bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all z-50 shadow-2xl ${is3DActive ? 'bg-black text-white' : 'bg-white/80 backdrop-blur-md text-black hover:bg-black hover:text-white'}`}
+                  >
+                    {is3DActive ? 'PHOTO VIEW' : 'VIEW IN 3D'}
+                  </button>
+                )}
               </div>
 
               {/* Thumbnails Strip */}
               <div className={`flex gap-4 overflow-x-auto no-scrollbar pb-2 transition-all duration-700 ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 {gallery.map((img, i) => (
-                  <button 
+                  <button
                     key={i}
                     onClick={() => handleImgChange(i)}
                     className={`w-24 h-24 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all duration-500 ${selectedImg === i ? 'border-black scale-105 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'}`}
@@ -157,7 +176,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-black/30 block mb-2">{product.category}</span>
                 <h2 className="text-4xl md:text-5xl font-serif leading-tight">{product.name}</h2>
-                
+
                 <div className="flex items-center gap-6 mt-4">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(5)].map((_, i) => (
@@ -183,8 +202,8 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 <div className="flex items-center gap-8">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-black/30">Quantity</span>
                   <div className="flex items-center p-1.5 bg-[#F5F5F3] border border-black/5 rounded-2xl shadow-inner">
-                    <button 
-                      onClick={() => setQuantity(q => Math.max(1, q - 1))} 
+                    <button
+                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
                       className="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm hover:bg-black hover:text-white transition-all active:scale-90 text-black/40 hover:text-white"
                       aria-label="Decrease quantity"
                     >
@@ -193,8 +212,8 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                     <span className="w-12 text-center font-bold text-sm text-black tabular-nums">
                       {quantity}
                     </span>
-                    <button 
-                      onClick={() => setQuantity(q => q + 1)} 
+                    <button
+                      onClick={() => setQuantity(q => q + 1)}
                       className="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm hover:bg-black hover:text-white transition-all active:scale-90 text-black/40 hover:text-white"
                       aria-label="Increase quantity"
                     >
@@ -204,19 +223,19 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 </div>
 
                 <div className="flex flex-wrap gap-4">
-                  <button 
+                  <button
                     onClick={() => onAddToCart(product.id)}
                     className="flex-1 min-w-[140px] py-4 bg-black text-white rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-black/80 transition-all active:scale-95 shadow-xl shadow-black/10"
                   >
                     Add To Cart
                   </button>
-                  <button 
+                  <button
                     onClick={() => onAR(product)}
                     className="flex-1 min-w-[140px] py-4 border-2 border-black text-black rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-all active:scale-95 shadow-lg group"
                   >
                     <Box size={18} className="group-hover:rotate-12 transition-transform" /> AR PREVIEW
                   </button>
-                  <button 
+                  <button
                     onClick={() => onToggleWishlist(product.id)}
                     className={`p-4 rounded-2xl border transition-all active:scale-90 ${isWishlisted ? 'bg-red-50 border-red-100 text-red-500' : 'bg-white border-black/10 hover:border-black text-black/40'}`}
                   >
@@ -240,7 +259,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
           <div className="mt-24 border-t border-black/5">
             <div className="flex justify-center border-b border-black/5">
               {(['description', 'additional', 'review'] as Tab[]).map(tab => (
-                <button 
+                <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-12 py-6 text-xs font-bold uppercase tracking-widest transition-all relative ${activeTab === tab ? 'text-black' : 'text-black/30 hover:text-black/60'}`}
@@ -264,14 +283,14 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                       </div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-black/40 pt-2">(128 Review)</p>
                     </div>
-                    
+
                     <div className="flex-1 w-full max-w-md space-y-3">
                       {[5, 4, 3, 2, 1].map(num => (
                         <div key={num} className="flex items-center gap-4">
                           <span className="text-xs font-bold w-12">{num} Star</span>
                           <div className="flex-1 h-2 bg-black/5 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-amber-400 rounded-full" 
+                            <div
+                              className="h-full bg-amber-400 rounded-full"
                               style={{ width: `${num === 5 ? 85 : num === 4 ? 40 : 10}%` }}
                             />
                           </div>
@@ -342,7 +361,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   { icon: <Sparkles size={18} />, label: 'AI Room Builder', action: onAI },
                   { icon: <Scale size={18} />, label: 'Market Benchmark', action: onCompare },
                 ].map((item, i) => (
-                  <button 
+                  <button
                     key={i}
                     onClick={() => { item.action(product); setShowStudioMenu(false); }}
                     className="w-full p-4 rounded-2xl bg-black/5 hover:bg-black hover:text-white transition-all text-left flex items-center gap-3 group"
@@ -354,8 +373,8 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
               </div>
             </div>
           )}
-          
-          <button 
+
+          <button
             onClick={() => setShowStudioMenu(!showStudioMenu)}
             className="flex items-center gap-8 bg-white pl-8 pr-2 py-2 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group active:scale-95 border border-black/5"
           >

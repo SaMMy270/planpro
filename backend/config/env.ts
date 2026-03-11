@@ -6,9 +6,9 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env.local') });
 
 export const env = {
     PORT: process.env.PORT || 5000,
-    SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-    HORIZON_NET_URL: process.env.NEXT_PUBLIC_AI_SERVER_URL || 'http://localhost:8000/predict',
+    SUPABASE_URL: process.env.VITE_SUPABASE_URL || '',
+    SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY || '',
+    HORIZON_NET_URL: process.env.VITE_AI_SERVER_URL || 'http://localhost:8000/predict',
     isDev: process.env.NODE_ENV !== 'production',
 };
 

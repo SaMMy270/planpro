@@ -109,6 +109,114 @@ import rc3 from '../assets/rc3.jpg';
 import rc4 from '../assets/rc4.jpg';
 import rc5 from '../assets/rc5.jpg';
 
+// Models imports
+// Tables
+import c1_model from '../models/coffee table models/c1.glb';
+import c2_model from '../models/coffee table models/c2.glb';
+import c3_model from '../models/coffee table models/c3.glb';
+import c4_model from '../models/coffee table models/c4.glb';
+import c5_model from '../models/coffee table models/c5.glb';
+
+import d1_model from '../models/Dinning table models/d1.glb';
+import d2_model from '../models/Dinning table models/d2.glb';
+import d3_model from '../models/Dinning table models/d3.glb';
+import d4_model from '../models/Dinning table models/d4.glb';
+import d5_model from '../models/Dinning table models/d5.glb';
+
+import st1_model from '../models/Study table models/Study table models/st1.glb';
+import st2_model from '../models/Study table models/Study table models/st2.glb';
+import st3_model from '../models/Study table models/Study table models/st3.glb';
+import st4_model from '../models/Study table models/Study table models/st4.glb';
+import st5_model from '../models/Study table models/Study table models/st5.glb';
+
+// Sofas
+import r1_model from '../models/recliner models/r1.glb';
+import r2_model from '../models/recliner models/r2.glb';
+import r3_model from '../models/recliner models/r3.glb';
+import r4_model from '../models/recliner models/r4.glb';
+import r5_model from '../models/recliner models/r5.glb';
+
+import ss1_model from '../models/sofaset models/ss1.glb';
+import ss2_model from '../models/sofaset models/ss2.glb';
+import ss3_model from '../models/sofaset models/ss3.glb';
+import ss4_model from '../models/sofaset models/ss4.glb';
+import ss5_model from '../models/sofaset models/ss5.glb';
+
+import sc1_model from '../models/sofacumbed models/sofacumbed models/sc1.glb';
+import sc2_model from '../models/sofacumbed models/sofacumbed models/sc2.obj';
+import sc3_model from '../models/sofacumbed models/sofacumbed models/sc3.glb';
+import sc4_model from '../models/sofacumbed models/sofacumbed models/sc4.glb';
+import sc5_model from '../models/sofacumbed models/sofacumbed models/sc5.glb';
+
+// Storage
+import cp1_model from '../models/cupboard models/cp1.glb';
+import cp2_model from '../models/cupboard models/cp2.glb';
+import cp3_model from '../models/cupboard models/cp3.glb';
+import cp4_model from '../models/cupboard models/cp4.glb';
+import cp5_model from '../models/cupboard models/cp5.glb';
+
+import sr1_model from '../models/shoerack models/sr1.glb';
+import sr2_model from '../models/shoerack models/sr2.glb';
+import sr3_model from '../models/shoerack models/sr3.glb';
+import sr4_model from '../models/shoerack models/sr4.glb';
+import sr5_model from '../models/shoerack models/sr5.glb';
+
+// Chairs
+import cs1_model from '../models/casual chair models/cs1.glb';
+import cs2_model from '../models/casual chair models/cs2.glb';
+import cs3_model from '../models/casual chair models/cs3.glb';
+import cs4_model from '../models/casual chair models/cs4.glb';
+import cs5_model from '../models/casual chair models/cs5.glb';
+
+import ch1_model from '../models/office chair models/office chair models/ch1.glb';
+import ch2_model from '../models/office chair models/office chair models/ch2.glb';
+import ch3_model from '../models/office chair models/office chair models/ch3.glb';
+import ch4_model from '../models/office chair models/office chair models/ch4.glb';
+import ch5_model from '../models/office chair models/office chair models/ch5.glb';
+
+import dc1_model from '../models/dinning chair models/dc1.glb';
+import dc2_model from '../models/dinning chair models/dc2.glb';
+import dc3_model from '../models/dinning chair models/dc3.glb';
+import dc4_model from '../models/dinning chair models/dc4.glb';
+import dc5_model from '../models/dinning chair models/dc5.glb';
+
+import g1_model from '../models/gaming chair moodels/G1.glb';
+import g2_model from '../models/gaming chair moodels/G2.glb';
+import g3_model from '../models/gaming chair moodels/G3.glb';
+import g4_model from '../models/gaming chair moodels/G4.glb';
+import g5_model from '../models/gaming chair moodels/G5.glb';
+
+import rc1_model from '../models/rocking chair models/rc1.glb';
+import rc2_model from '../models/rocking chair models/rc2.glb';
+import rc3_model from '../models/rocking chair models/rc3.glb';
+import rc4_model from '../models/rocking chair models/rc4.glb';
+import rc5_model from '../models/rocking chair models/rc5.glb';
+
+// Beds
+import q1_model from '../models/queen bed models/q1.glb';
+import q2_model from '../models/queen bed models/q2.glb';
+import q3_model from '../models/queen bed models/q3.glb';
+import q4_model from '../models/queen bed models/q4.glb';
+import q5_model from '../models/queen bed models/q5.glb';
+
+import sb1_model from '../models/single bed models/single bed modesl/sb1.glb';
+import sb2_model from '../models/single bed models/single bed modesl/sb2.glb';
+import sb3_model from '../models/single bed models/single bed modesl/sb3.glb';
+import sb4_model from '../models/single bed models/single bed modesl/sb4.glb';
+import sb5_model from '../models/single bed models/single bed modesl/sb5.glb';
+
+import db1_model from '../models/double bed models/double bed models/db1.glb';
+import db2_model from '../models/double bed models/double bed models/db2.glb';
+import db3_model from '../models/double bed models/double bed models/db3.glb';
+import db4_model from '../models/double bed models/double bed models/db4.glb';
+import db5_model from '../models/double bed models/double bed models/db5.glb';
+
+import k1_model from '../models/king bed models/k1.glb';
+import k2_model from '../models/king bed models/k2.glb';
+import k3_model from '../models/king bed models/k3.glb';
+import k4_model from '../models/king bed models/k4.glb';
+import k5_model from '../models/king bed models/k5.glb';
+
 
 export const PRODUCTS: Product[] = [
   // TABLES
@@ -123,7 +231,8 @@ export const PRODUCTS: Product[] = [
     description: 'A floating marble top coffee table with architectural brass legs.',
     dimensions: '36"D x 16"H',
     material: 'Carrara Marble, Brass',
-    rating: 4.9
+    rating: 4.9,
+    model: c1_model
   },
   {
     id: 't-coffee-2',
@@ -136,7 +245,8 @@ export const PRODUCTS: Product[] = [
     description: 'Modern glass coffee table with a sculptural wooden base.',
     dimensions: '34"D x 15"H',
     material: 'Tempered Glass, Ash Wood',
-    rating: 4.7
+    rating: 4.7,
+    model: c2_model
   },
   {
     id: 't-coffee-3',
@@ -149,7 +259,8 @@ export const PRODUCTS: Product[] = [
     description: 'Solid oak coffee table with a natural finish and ample surface area.',
     dimensions: '42"W x 24"D x 17"H',
     material: 'Solid Oak',
-    rating: 4.8
+    rating: 4.8,
+    model: c3_model
   },
   {
     id: 't-coffee-4',
@@ -162,7 +273,8 @@ export const PRODUCTS: Product[] = [
     description: 'Sleek black steel coffee table for industrial-inspired interiors.',
     dimensions: '30"D x 14"H',
     material: 'Powder-coated Steel',
-    rating: 4.6
+    rating: 4.6,
+    model: c4_model
   },
   {
     id: 't-coffee-5',
@@ -175,7 +287,8 @@ export const PRODUCTS: Product[] = [
     description: 'Set of two nesting coffee tables with a white finish and bamboo legs.',
     dimensions: 'Various',
     material: 'MDF, Bamboo',
-    rating: 4.8
+    rating: 4.8,
+    model: c5_model
   },
   {
     id: 't-dining-1',
@@ -188,7 +301,8 @@ export const PRODUCTS: Product[] = [
     description: 'Solid walnut dining table designed for family legacies.',
     dimensions: '84"W x 40"D x 30"H',
     material: 'Solid Walnut',
-    rating: 5.0
+    rating: 5.0,
+    model: d1_model
   },
   {
     id: 't-dining-2',
@@ -201,7 +315,8 @@ export const PRODUCTS: Product[] = [
     description: 'Clear glass top with chrome sculptural base for a contemporary look.',
     dimensions: '72"W x 36"D x 30"H',
     material: 'Glass, Chrome',
-    rating: 4.8
+    rating: 4.8,
+    model: d2_model
   },
   {
     id: 't-dining-3',
@@ -214,7 +329,8 @@ export const PRODUCTS: Product[] = [
     description: 'Rustic farmhouse style table with distressed oak finish.',
     dimensions: '78"W x 38"D x 30"H',
     material: 'Reclaimed Oak',
-    rating: 4.7
+    rating: 4.7,
+    model: d3_model
   },
   {
     id: 't-dining-4',
@@ -227,7 +343,8 @@ export const PRODUCTS: Product[] = [
     description: 'Premium white marble top with heavy iron pedestal base.',
     dimensions: '60"D x 30"H',
     material: 'Marble, Iron',
-    rating: 4.9
+    rating: 4.9,
+    model: d4_model
   },
   {
     id: 't-dining-5',
@@ -240,7 +357,8 @@ export const PRODUCTS: Product[] = [
     description: 'Small round bistro table perfect for apartments or breakfast nooks.',
     dimensions: '30"D x 30"H',
     material: 'Laminate, Aluminum',
-    rating: 4.6
+    rating: 4.6,
+    model: d5_model
   },
   {
     id: 't-study-1',
@@ -253,7 +371,8 @@ export const PRODUCTS: Product[] = [
     description: 'Minimalist study table with integrated cable management.',
     dimensions: '55"W x 28"D x 29"H',
     material: 'Oak, Steel',
-    rating: 4.7
+    rating: 4.7,
+    model: st1_model
   },
   {
     id: 't-study-2',
@@ -266,7 +385,8 @@ export const PRODUCTS: Product[] = [
     description: 'Spacious L-shaped desk with ample drawer storage.',
     dimensions: '70"W x 60"D x 30"H',
     material: 'Mahogany Veneer',
-    rating: 4.9
+    rating: 4.9,
+    model: st2_model
   },
   {
     id: 't-study-3',
@@ -279,7 +399,8 @@ export const PRODUCTS: Product[] = [
     description: 'Small footprint desk perfect for laptops and writing.',
     dimensions: '42"W x 20"D x 30"H',
     material: 'Painted Wood',
-    rating: 4.5
+    rating: 4.5,
+    model: st3_model
   },
   {
     id: 't-study-4',
@@ -292,7 +413,8 @@ export const PRODUCTS: Product[] = [
     description: 'Motorized sit-stand desk with memory presets.',
     dimensions: '60"W x 30"D x 28-48"H',
     material: 'Bamboo',
-    rating: 4.8
+    rating: 4.8,
+    model: st4_model
   },
   {
     id: 't-study-5',
@@ -305,7 +427,8 @@ export const PRODUCTS: Product[] = [
     description: 'Tilting top drafting table with adjustable height.',
     dimensions: '48"W x 36"D x 36"H',
     material: 'Steel, Pine',
-    rating: 4.6
+    rating: 4.6,
+    model: st5_model
   },
 
   // SOFAS
@@ -320,7 +443,8 @@ export const PRODUCTS: Product[] = [
     description: 'Zero-gravity leather recliner for ultimate relaxation.',
     dimensions: '35"W x 38"D x 40"H',
     material: 'Top-grain Leather',
-    rating: 4.9
+    rating: 4.9,
+    model: r1_model
   },
   {
     id: 's-recliner-2',
@@ -333,7 +457,8 @@ export const PRODUCTS: Product[] = [
     description: 'A contemporary swivel recliner with clean lines and soft fabric.',
     dimensions: '32"W x 34"D x 38"H',
     material: 'Performance Fabric',
-    rating: 4.7
+    rating: 4.7,
+    model: r2_model
   },
   {
     id: 's-recliner-3',
@@ -346,7 +471,8 @@ export const PRODUCTS: Product[] = [
     description: 'Plush theater-style recliner with cup holders and power recline.',
     dimensions: '40"W x 42"D x 44"H',
     material: 'Faux Leather',
-    rating: 4.8
+    rating: 4.8,
+    model: r3_model
   },
   {
     id: 's-recliner-4',
@@ -359,7 +485,8 @@ export const PRODUCTS: Product[] = [
     description: 'Space-saving manual recliner perfect for smaller living rooms.',
     dimensions: '29"W x 35"D x 39"H',
     material: 'Linen Blend',
-    rating: 4.5
+    rating: 4.5,
+    model: r4_model
   },
   {
     id: 's-recliner-5',
@@ -372,7 +499,8 @@ export const PRODUCTS: Product[] = [
     description: 'Advanced massage chair with zero-gravity positioning and heat therapy.',
     dimensions: '33"W x 60"D x 48"H',
     material: 'Premium Synthetic Leather',
-    rating: 5.0
+    rating: 5.0,
+    model: r5_model
   },
   {
     id: 's-sofaset-1',
@@ -385,7 +513,8 @@ export const PRODUCTS: Product[] = [
     description: 'Luxurious velvet modular sofa set for large living spaces.',
     dimensions: '120"W x 120"D x 32"H',
     material: 'Velvet, Kiln-dried Hardwood',
-    rating: 4.8
+    rating: 4.8,
+    model: ss1_model
   },
   {
     id: 's-sofaset-2',
@@ -398,7 +527,8 @@ export const PRODUCTS: Product[] = [
     description: 'Contemporary L-shaped sectional with deep seating and clean lines.',
     dimensions: '110"W x 85"D x 30"H',
     material: 'Performance Fabric',
-    rating: 4.7
+    rating: 4.7,
+    model: ss2_model
   },
   {
     id: 's-sofaset-3',
@@ -411,7 +541,8 @@ export const PRODUCTS: Product[] = [
     description: 'Premium top-grain leather sofa set with matching armchairs.',
     dimensions: 'Total: 140"W x 90"D x 36"H',
     material: 'Top-grain Leather',
-    rating: 4.9
+    rating: 4.9,
+    model: ss3_model
   },
   {
     id: 's-sofaset-4',
@@ -424,7 +555,8 @@ export const PRODUCTS: Product[] = [
     description: 'Minimalist 3-piece sofa set with light oak legs.',
     dimensions: '88"W x 35"D x 34"H',
     material: 'Textured Weave',
-    rating: 4.6
+    rating: 4.6,
+    model: ss4_model
   },
   {
     id: 's-sofaset-5',
@@ -437,7 +569,8 @@ export const PRODUCTS: Product[] = [
     description: 'Ultra-plush modular pit sofa for the ultimate lounging experience.',
     dimensions: '100"W x 100"D x 28"H',
     material: 'Down-filled Linen',
-    rating: 4.8
+    rating: 4.8,
+    model: ss5_model
   },
   {
     id: 's-sofacumbed-1',
@@ -450,7 +583,8 @@ export const PRODUCTS: Product[] = [
     description: 'Stylish 3-seater that transforms into a queen bed instantly.',
     dimensions: '80"W x 36"D x 34"H',
     material: 'Linen Blend',
-    rating: 4.6
+    rating: 4.6,
+    model: sc1_model
   },
   {
     id: 's-sofacumbed-2',
@@ -463,7 +597,8 @@ export const PRODUCTS: Product[] = [
     description: 'Click-clack futon sofa bed with a modern low-profile design.',
     dimensions: '75"W x 34"D x 32"H',
     material: 'Chenille Fabric',
-    rating: 4.5
+    rating: 4.5,
+    model: sc2_model
   },
   {
     id: 's-sofacumbed-3',
@@ -476,7 +611,8 @@ export const PRODUCTS: Product[] = [
     description: 'Hidden pull-out bed mechanism with premium memory foam mattress.',
     dimensions: '85"W x 38"D x 36"H',
     material: 'Velvet, Memory Foam',
-    rating: 4.8
+    rating: 4.8,
+    model: sc3_model
   },
   {
     id: 's-sofacumbed-4',
@@ -489,7 +625,8 @@ export const PRODUCTS: Product[] = [
     description: 'Versatile daybed that effortlessly converts for overnight guests.',
     dimensions: '78"W x 40"D x 30"H',
     material: 'Cotton Twill, Birch',
-    rating: 4.7
+    rating: 4.7,
+    model: sc4_model
   },
   {
     id: 's-sofacumbed-5',
@@ -502,7 +639,8 @@ export const PRODUCTS: Product[] = [
     description: 'L-shaped corner sofa with built-in storage and fold-out bed.',
     dimensions: '100"W x 65"D x 34"H',
     material: 'Microfiber, Hardwood',
-    rating: 4.9
+    rating: 4.9,
+    model: sc5_model
   },
 
   // STORAGE
@@ -517,7 +655,8 @@ export const PRODUCTS: Product[] = [
     description: 'Handcrafted oak cupboard with woven cane door panels.',
     dimensions: '48"W x 22"D x 72"H',
     material: 'Oak, Cane',
-    rating: 4.9
+    rating: 4.9,
+    model: cp1_model
   },
   {
     id: 'st-cupboard-2',
@@ -530,7 +669,8 @@ export const PRODUCTS: Product[] = [
     description: 'Two-door walnut wardrobe with full-length mirror and adjustable shelves.',
     dimensions: '42"W x 24"D x 78"H',
     material: 'Solid Walnut',
-    rating: 4.8
+    rating: 4.8,
+    model: cp2_model
   },
   {
     id: 'st-cupboard-3',
@@ -543,7 +683,8 @@ export const PRODUCTS: Product[] = [
     description: 'Space-saving sliding door cupboard with soft-close mechanism.',
     dimensions: '60"W x 24"D x 84"H',
     material: 'MDF, Melamine',
-    rating: 4.6
+    rating: 4.6,
+    model: cp3_model
   },
   {
     id: 'st-cupboard-4',
@@ -556,7 +697,8 @@ export const PRODUCTS: Product[] = [
     description: 'Antique-inspired armoire with ornate handles and carved detailing.',
     dimensions: '52"W x 26"D x 80"H',
     material: 'Mahogany',
-    rating: 4.9
+    rating: 4.9,
+    model: cp4_model
   },
   {
     id: 'st-cupboard-5',
@@ -569,7 +711,8 @@ export const PRODUCTS: Product[] = [
     description: 'Slim cupboard ideal for hallways and small apartments.',
     dimensions: '30"W x 18"D x 68"H',
     material: 'Pine, Laminate',
-    rating: 4.5
+    rating: 4.5,
+    model: cp5_model
   },
   {
     id: 'st-shoerack-1',
@@ -582,7 +725,8 @@ export const PRODUCTS: Product[] = [
     description: 'Wall-mounted minimalist shoe storage solution.',
     dimensions: '24"W x 8"D x 48"H',
     material: 'Powder-coated Aluminum',
-    rating: 4.5
+    rating: 4.5,
+    model: sr1_model
   },
   {
     id: 'st-shoerack-2',
@@ -595,7 +739,8 @@ export const PRODUCTS: Product[] = [
     description: 'Eco-friendly bamboo shoe rack with 3 tiers.',
     dimensions: '28"W x 10"D x 20"H',
     material: 'Bamboo',
-    rating: 4.6
+    rating: 4.6,
+    model: sr2_model
   },
   {
     id: 'st-shoerack-3',
@@ -608,7 +753,8 @@ export const PRODUCTS: Product[] = [
     description: 'Shoe rack with built-in bench seat for entryway convenience.',
     dimensions: '36"W x 14"D x 20"H',
     material: 'Walnut, Steel',
-    rating: 4.8
+    rating: 4.8,
+    model: sr3_model
   },
   {
     id: 'st-shoerack-4',
@@ -621,7 +767,8 @@ export const PRODUCTS: Product[] = [
     description: '360-degree rotating shoe tower for maximum storage in minimal space.',
     dimensions: '16"W x 16"D x 48"H',
     material: 'MDF, Metal',
-    rating: 4.7
+    rating: 4.7,
+    model: sr4_model
   },
   {
     id: 'st-shoerack-5',
@@ -634,7 +781,8 @@ export const PRODUCTS: Product[] = [
     description: 'Enclosed shoe cabinet with flip-down doors to keep shoes hidden.',
     dimensions: '30"W x 10"D x 42"H',
     material: 'Engineered Wood',
-    rating: 4.9
+    rating: 4.9,
+    model: sr5_model
   },
   {
     id: 'st-shelf-1',
@@ -714,7 +862,8 @@ export const PRODUCTS: Product[] = [
     description: 'Sophisticated grey bouclé armchair with architectural A-frame solid oak legs and cylindrical armrests.',
     dimensions: '32"W x 30"D x 32"H',
     material: 'Premium Bouclé, Solid Oak',
-    rating: 5.0
+    rating: 5.0,
+    model: cs1_model
   },
   {
     id: 'c-casual-2',
@@ -727,7 +876,8 @@ export const PRODUCTS: Product[] = [
     description: 'Vibrant coral-toned floral pattern on a classic mid-century silhouette with elegant mahogany legs.',
     dimensions: '28"W x 32"D x 34"H',
     material: 'Printed Linen, Mahogany',
-    rating: 4.8
+    rating: 4.8,
+    model: cs2_model
   },
   {
     id: 'c-casual-3',
@@ -740,7 +890,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic deep sapphire blue wingback with exquisite button-tufted backrest and dark walnut feet.',
     dimensions: '34"W x 36"D x 42"H',
     material: 'Indigo Performance Linen, Walnut',
-    rating: 4.9
+    rating: 4.9,
+    model: cs3_model
   },
   {
     id: 'c-casual-4',
@@ -753,7 +904,8 @@ export const PRODUCTS: Product[] = [
     description: 'Opulent mustard yellow velvet accent chair with high-fashion diamond tufting and polished gold stiletto legs.',
     dimensions: '30"W x 32"D x 46"H',
     material: 'Silk Velvet, Polished Brass',
-    rating: 4.9
+    rating: 4.9,
+    model: cs4_model
   },
   {
     id: 'c-casual-5',
@@ -766,7 +918,8 @@ export const PRODUCTS: Product[] = [
     description: 'Sculptural lounge chair featuring a dark walnut architectural frame and deep-seated navy blue upholstery.',
     dimensions: '32"W x 38"D x 30"H',
     material: 'Cotton Canvas, Dark Walnut',
-    rating: 4.7
+    rating: 4.7,
+    model: cs5_model
   },
 
   // CHAIRS - OFFICE (MATCHING PROVIDED IMAGES)
@@ -781,7 +934,8 @@ export const PRODUCTS: Product[] = [
     description: 'High-performance ergonomic mesh chair with adjustable lumbar support and breathable backrest.',
     dimensions: '26"W x 26"D x 40"H',
     material: 'Nylon Mesh, Polymer',
-    rating: 4.8
+    rating: 4.8,
+    model: ch1_model
   },
   {
     id: 'c-office-2',
@@ -794,7 +948,8 @@ export const PRODUCTS: Product[] = [
     description: 'Premium top-grain leather executive chair with synchronized tilt mechanism and polished aluminum base.',
     dimensions: '29"W x 30"D x 46"H',
     material: 'Top-grain Leather, Aluminum',
-    rating: 4.9
+    rating: 4.9,
+    model: ch2_model
   },
   {
     id: 'c-office-3',
@@ -807,7 +962,8 @@ export const PRODUCTS: Product[] = [
     description: 'Clean-lined studio chair perfect for home offices, featuring a molded seat and white powder-coated legs.',
     dimensions: '24"W x 24"D x 34"H',
     material: 'Polypropylene, Steel',
-    rating: 4.6
+    rating: 4.6,
+    model: ch3_model
   },
   {
     id: 'c-office-4',
@@ -820,7 +976,8 @@ export const PRODUCTS: Product[] = [
     description: 'Adjustable height drafting stool with foot ring, ideal for standing desks and creative workspaces.',
     dimensions: '26"W x 26"D x 48"H',
     material: 'Mesh, Steel',
-    rating: 4.7
+    rating: 4.7,
+    model: ch4_model
   },
   {
     id: 'c-office-5',
@@ -833,7 +990,8 @@ export const PRODUCTS: Product[] = [
     description: 'Sleek mid-back conference chair with ribbed upholstery and chrome accents.',
     dimensions: '25"W x 26"D x 38"H',
     material: 'Faux Leather, Chrome',
-    rating: 4.5
+    rating: 4.5,
+    model: ch5_model
   },
 
 
@@ -849,7 +1007,8 @@ export const PRODUCTS: Product[] = [
     description: 'Iconic mid-century molded shell chair for dining.',
     dimensions: '18"W x 20"D x 32"H',
     material: 'Polypropylene, Maple',
-    rating: 4.9
+    rating: 4.9,
+    model: dc1_model
   },
   {
     id: 'c-dining-2',
@@ -862,7 +1021,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic wishbone chair with woven paper cord seat.',
     dimensions: '22"W x 21"D x 29"H',
     material: 'Beech Wood, Paper Cord',
-    rating: 4.8
+    rating: 4.8,
+    model: dc2_model
   },
   {
     id: 'c-dining-3',
@@ -875,7 +1035,8 @@ export const PRODUCTS: Product[] = [
     description: 'Luxurious velvet dining chair with gold legs.',
     dimensions: '20"W x 22"D x 34"H',
     material: 'Velvet, Metal',
-    rating: 4.7
+    rating: 4.7,
+    model: dc3_model
   },
   {
     id: 'c-dining-4',
@@ -888,7 +1049,8 @@ export const PRODUCTS: Product[] = [
     description: 'Sleek leather dining chair with chrome legs.',
     dimensions: '18"W x 20"D x 34"H',
     material: 'Leather, Chrome',
-    rating: 4.6
+    rating: 4.6,
+    model: dc4_model
   },
   {
     id: 'c-dining-5',
@@ -901,7 +1063,8 @@ export const PRODUCTS: Product[] = [
     description: 'Sturdy wooden armchair with a rustic finish.',
     dimensions: '22"W x 24"D x 36"H',
     material: 'Solid Oak',
-    rating: 4.8
+    rating: 4.8,
+    model: dc5_model
   },
 
   // CHAIRS - GAMING
@@ -916,7 +1079,8 @@ export const PRODUCTS: Product[] = [
     description: 'High-performance gaming chair with premium leather and lumbar support.',
     dimensions: '28"W x 26"D x 52"H',
     material: 'PU Leather, Steel',
-    rating: 4.8
+    rating: 4.8,
+    model: g1_model
   },
   {
     id: 'c-gaming-2',
@@ -929,7 +1093,8 @@ export const PRODUCTS: Product[] = [
     description: 'Racing-style gaming chair with vibrant color accents and 4D armrests.',
     dimensions: '27"W x 27"D x 50"H',
     material: 'Breathable Mesh, ABS',
-    rating: 4.6
+    rating: 4.6,
+    model: g2_model
   },
   {
     id: 'c-gaming-3',
@@ -942,7 +1107,8 @@ export const PRODUCTS: Product[] = [
     description: 'All-black minimalist gaming chair with advanced ergonomic adjustments.',
     dimensions: '28"W x 28"D x 48"H',
     material: 'Fabric, Memory Foam',
-    rating: 4.9
+    rating: 4.9,
+    model: g3_model
   },
   {
     id: 'c-gaming-4',
@@ -955,7 +1121,8 @@ export const PRODUCTS: Product[] = [
     description: 'Luxury gaming chair designed for long streaming sessions.',
     dimensions: '30"W x 30"D x 54"H',
     material: 'Velvet, Aluminum',
-    rating: 5.0
+    rating: 5.0,
+    model: g4_model
   },
   {
     id: 'c-gaming-5',
@@ -968,7 +1135,8 @@ export const PRODUCTS: Product[] = [
     description: 'Floor-level rocker gaming chair with built-in speakers.',
     dimensions: '24"W x 32"D x 30"H',
     material: 'Vinyl, Foam',
-    rating: 4.5
+    rating: 4.5,
+    model: g5_model
   },
   // CHAIRS - ROCKING
   {
@@ -982,7 +1150,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic wooden rocking chair with cushioned seat.',
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
-    rating: 4.5
+    rating: 4.5,
+    model: rc1_model
   },
   {
     id: 'c-rocking-2',
@@ -995,7 +1164,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic wooden rocking chair with cushioned seat.',
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
-    rating: 4.5
+    rating: 4.5,
+    model: rc2_model
   },
   {
     id: 'c-rocking-3',
@@ -1008,7 +1178,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic wooden rocking chair with cushioned seat.',
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
-    rating: 4.5
+    rating: 4.5,
+    model: rc3_model
   },
   {
     id: 'c-rocking-4',
@@ -1021,7 +1192,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic wooden rocking chair with cushioned seat.',
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
-    rating: 4.5
+    rating: 4.5,
+    model: rc4_model
   },
   {
     id: 'c-rocking-5',
@@ -1034,7 +1206,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic wooden rocking chair with cushioned seat.',
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
-    rating: 4.5
+    rating: 4.5,
+    model: rc5_model
   },
 
   // BEDS
@@ -1049,7 +1222,8 @@ export const PRODUCTS: Product[] = [
     description: 'Upholstered queen bed with button-tufted headboard.',
     dimensions: '66"W x 86"D x 52"H',
     material: 'Velvet, Pine',
-    rating: 4.9
+    rating: 4.9,
+    model: q1_model
   },
   {
     id: 'b-queen-2',
@@ -1062,7 +1236,8 @@ export const PRODUCTS: Product[] = [
     description: 'Low-profile platform bed with clean Scandinavian lines.',
     dimensions: '64"W x 84"D x 36"H',
     material: 'Solid Oak',
-    rating: 4.8
+    rating: 4.8,
+    model: q2_model
   },
   {
     id: 'b-queen-3',
@@ -1075,7 +1250,8 @@ export const PRODUCTS: Product[] = [
     description: 'Elegant four-poster canopy bed with sheer drapes.',
     dimensions: '68"W x 88"D x 80"H',
     material: 'Wrought Iron',
-    rating: 4.7
+    rating: 4.7,
+    model: q3_model
   },
   {
     id: 'b-queen-4',
@@ -1088,7 +1264,8 @@ export const PRODUCTS: Product[] = [
     description: 'Queen bed with hydraulic lift storage underneath.',
     dimensions: '65"W x 85"D x 40"H',
     material: 'Engineered Wood, Fabric',
-    rating: 4.6
+    rating: 4.6,
+    model: q4_model
   },
   {
     id: 'b-queen-5',
@@ -1101,7 +1278,8 @@ export const PRODUCTS: Product[] = [
     description: 'Modern floating design with LED backlit headboard panel.',
     dimensions: '66"W x 86"D x 44"H',
     material: 'MDF, Walnut Veneer',
-    rating: 5.0
+    rating: 5.0,
+    model: q5_model
   },
   {
     id: 'b-single-1',
@@ -1114,7 +1292,8 @@ export const PRODUCTS: Product[] = [
     description: 'Minimalist platform bed for compact living.',
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
-    rating: 4.7
+    rating: 4.7,
+    model: sb1_model
   },
   {
     id: 'b-single-2',
@@ -1127,7 +1306,8 @@ export const PRODUCTS: Product[] = [
     description: 'Minimalist platform bed for compact living.',
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
-    rating: 4.7
+    rating: 4.7,
+    model: sb2_model
   },
   {
     id: 'b-single-3',
@@ -1140,7 +1320,8 @@ export const PRODUCTS: Product[] = [
     description: 'Minimalist platform bed for compact living.',
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
-    rating: 4.7
+    rating: 4.7,
+    model: sb3_model
   },
   {
     id: 'b-single-4',
@@ -1153,7 +1334,8 @@ export const PRODUCTS: Product[] = [
     description: 'Minimalist platform bed for compact living.',
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
-    rating: 4.7
+    rating: 4.7,
+    model: sb4_model
   },
   {
     id: 'b-single-5',
@@ -1166,7 +1348,8 @@ export const PRODUCTS: Product[] = [
     description: 'Minimalist platform bed for compact living.',
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
-    rating: 4.7
+    rating: 4.7,
+    model: sb5_model
   },
   {
     id: 'b-double-1',
@@ -1179,7 +1362,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic double bed frame with integrated storage drawers.',
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
-    rating: 4.6
+    rating: 4.6,
+    model: db1_model
   },
   {
     id: 'b-double-2',
@@ -1192,7 +1376,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic double bed frame with integrated storage drawers.',
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
-    rating: 4.6
+    rating: 4.6,
+    model: db2_model
   },
   {
     id: 'b-double-3',
@@ -1205,7 +1390,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic double bed frame with integrated storage drawers.',
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
-    rating: 4.6
+    rating: 4.6,
+    model: db3_model
   },
   {
     id: 'b-double-4',
@@ -1218,7 +1404,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic double bed frame with integrated storage drawers.',
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
-    rating: 4.6
+    rating: 4.6,
+    model: db4_model
   },
   {
     id: 'b-double-5',
@@ -1231,7 +1418,8 @@ export const PRODUCTS: Product[] = [
     description: 'Classic double bed frame with integrated storage drawers.',
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
-    rating: 4.6
+    rating: 4.6,
+    model: db5_model
   },
   {
     id: 'b-king-1',
@@ -1244,7 +1432,8 @@ export const PRODUCTS: Product[] = [
     description: 'Expansive king bed with American Walnut frame.',
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
-    rating: 5.0
+    rating: 5.0,
+    model: k1_model
   },
   {
     id: 'b-king-2',
@@ -1257,7 +1446,8 @@ export const PRODUCTS: Product[] = [
     description: 'Expansive king bed with American Walnut frame.',
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
-    rating: 5.0
+    rating: 5.0,
+    model: k2_model
   },
   {
     id: 'b-king-3',
@@ -1270,7 +1460,8 @@ export const PRODUCTS: Product[] = [
     description: 'Expansive king bed with American Walnut frame.',
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
-    rating: 5.0
+    rating: 5.0,
+    model: k3_model
   },
   {
     id: 'b-king-4',
@@ -1283,7 +1474,8 @@ export const PRODUCTS: Product[] = [
     description: 'Expansive king bed with American Walnut frame.',
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
-    rating: 5.0
+    rating: 5.0,
+    model: k4_model
   },
   {
     id: 'b-king-5',
@@ -1296,6 +1488,7 @@ export const PRODUCTS: Product[] = [
     description: 'Expansive king bed with American Walnut frame.',
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
-    rating: 5.0
+    rating: 5.0,
+    model: k5_model
   }
 ];
