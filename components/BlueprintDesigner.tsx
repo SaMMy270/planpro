@@ -82,6 +82,7 @@ const BlueprintDesigner: React.FC = () => {
     const newItem: BlueprintItem = {
       id: Math.random().toString(36).substr(2, 9),
       type: placingProduct.name,
+      model: placingProduct.model,
       x: position[0],
       y: position[2],
       rotation: 0,
@@ -671,6 +672,7 @@ const BlueprintDesigner: React.FC = () => {
                         const newItem: BlueprintItem = {
                           id: Math.random().toString(36).substr(2, 9),
                           type: module.name,
+                          model: (module as any).model,
                           x: 0,
                           y: 0,
                           rotation: 0,

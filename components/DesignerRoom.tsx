@@ -1,99 +1,12 @@
 
 import React, { useMemo, useRef, Suspense, useState, useEffect } from "react";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Grid, useTexture, Environment, ContactShadows, useGLTF, PivotControls } from "@react-three/drei";
+import { OrbitControls, Grid, useTexture, Environment, ContactShadows, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { RoomData, RoomOpening, BlueprintItem, Product } from "../types";
 import { PRODUCTS } from "../data/mockData";
-
-// --- 1. Model Item Component ---
-interface ModelItemProps {
-    item: BlueprintItem;
-    isSelected: boolean;
-    onClick: () => void;
-    onUpdate: (id: string, updates: Partial<BlueprintItem>) => void;
-}
-
-const ModelItem: React.FC<ModelItemProps> = ({ item, isSelected, onClick, onUpdate }) => {
-    const product = useMemo(() => PRODUCTS.find(p => p.name === item.type), [item.type]);
-
-    if (!product?.model) {
-        return (
-            <mesh
-                position={item.position || [0, 0.5, 0]}
-                rotation={[0, (item.rotation * Math.PI) / 180, 0]}
-                onClick={(e) => { e.stopPropagation(); onClick(); }}
-            >
-                <boxGeometry args={[1, 1, 1]} />
-                <meshStandardMaterial color={isSelected ? "#3b82f6" : "#E4E4F4"} />
-            </mesh>
-        );
-    }
-
-    const { scene } = useGLTF(product.model);
-    const clonedScene = useMemo(() => {
-        const s = scene.clone();
-        // Calculate bounding box to find the bottom
-        const box = new THREE.Box3().setFromObject(s);
-        const size = new THREE.Vector3();
-        box.getSize(size);
-
-        // Create an offset group to ground the model
-        const wrapper = new THREE.Group();
-        s.position.y = -box.min.y; // Move model up so its min.y is at 0
-        wrapper.add(s);
-
-        wrapper.traverse((node) => {
-            if (node instanceof THREE.Mesh) {
-                node.castShadow = true;
-                node.receiveShadow = true;
-            }
-        });
-        return wrapper;
-    }, [scene]);
-
-    const itemPosition = useMemo(() => item.position || [0, 0, 0], [item.position]);
-    const matrix = useMemo(() => new THREE.Matrix4().makeTranslation(itemPosition[0], itemPosition[1], itemPosition[2]), [itemPosition]);
-
-    const content = (
-        <group
-            onClick={(e) => { e.stopPropagation(); onClick(); }}
-            position={isSelected ? [0, 0, 0] : (itemPosition as [number, number, number])}
-            rotation={[0, (item.rotation * Math.PI) / 180, 0]}
-        >
-            <primitive object={clonedScene} />
-            {isSelected && (
-                <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <ringGeometry args={[0.8, 1, 32]} />
-                    <meshBasicMaterial color="#3b82f6" transparent opacity={0.5} />
-                </mesh>
-            )}
-        </group>
-    );
-
-    if (isSelected) {
-        return (
-            <PivotControls
-                matrix={matrix}
-                activeAxes={[true, false, true]}
-                depthTest={false}
-                anchor={[0, 0, 0]}
-                scale={2}
-                fixed={false}
-                autoTransform={true}
-                onDragEnd={() => {
-                    const pos = new THREE.Vector3();
-                    pos.setFromMatrixPosition(matrix);
-                    onUpdate(item.id, { position: [pos.x, 0, pos.z] });
-                }}
-            >
-                {content}
-            </PivotControls>
-        );
-    }
-
-    return content;
-};
+import { getShapePoints } from "./RoomDesigner/RoomMath";
+import FurniturePrimitive from "./RoomDesigner/FurniturePrimitive";
 
 // --- 1.2 Ghost Model Component ---
 const GhostModel: React.FC<{ product: Product, position: [number, number, number] }> = ({ product, position }) => {
@@ -107,9 +20,11 @@ const GhostModel: React.FC<{ product: Product, position: [number, number, number
     }
 
     const { scene } = useGLTF(product.model);
-    const ghostScene = useMemo(() => {
+    const { ghostScene, bounds } = useMemo(() => {
         const s = scene.clone();
         const box = new THREE.Box3().setFromObject(s);
+        const size = new THREE.Vector3();
+        box.getSize(size);
         const wrapper = new THREE.Group();
         s.position.y = -box.min.y;
         wrapper.add(s);
@@ -131,14 +46,22 @@ const GhostModel: React.FC<{ product: Product, position: [number, number, number
                 }
             }
         });
-        return wrapper;
+        return { 
+            ghostScene: wrapper, 
+            bounds: { 
+                width: size.x, 
+                depth: size.z, 
+                centerX: (box.max.x + box.min.x)/2, 
+                centerZ: (box.max.z + box.min.z)/2 
+            } 
+        };
     }, [scene]);
 
     return (
         <group position={position}>
             <primitive object={ghostScene} />
-            <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[0.8, 1, 32]} />
+            <mesh position={[bounds.centerX, 0.01, bounds.centerZ]} rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[bounds.width, bounds.depth]} />
                 <meshBasicMaterial color="#3b82f6" transparent opacity={0.4} />
             </mesh>
         </group>
@@ -226,7 +149,6 @@ function SceneContent({
     selectedItemId,
     setSelectedItemId,
     viewMode = '3D',
-    onUpdateItem,
     placingProduct,
     onPlaceItem,
     onCancelPlacement
@@ -237,7 +159,6 @@ function SceneContent({
     selectedItemId: string | null,
     setSelectedItemId: (id: string | null) => void,
     viewMode: string;
-    onUpdateItem: (id: string, updates: Partial<BlueprintItem>) => void;
     placingProduct: Product | null;
     onPlaceItem: (pos: [number, number, number]) => void;
     onCancelPlacement?: () => void;
@@ -276,51 +197,12 @@ function SceneContent({
 
     const { shape, dimensions, openings = [], wallColor, floorTexture, panoramaUrl } = roomData;
     console.log("Current RoomData:", { shape, dimensions, panoramaUrl });
-    const { length: L = 6, width: W = 6, notchL = 2, notchW = 2 } = dimensions;
+    const { length: L = 6, width: W = 6 } = dimensions;
 
     const pointsData = useMemo(() => {
-        const hL = L / 2;
-        const hW = W / 2;
-        const sW = notchW / 2;
-        const headY = hW - notchL;
-
-        switch (shape) {
-            case 'L_SHAPE':
-                return [
-                    { pos: new THREE.Vector2(-hL, -hW) },
-                    { pos: new THREE.Vector2(hL, -hW) },
-                    { pos: new THREE.Vector2(hL, hW - notchW) },
-                    { pos: new THREE.Vector2(hL - notchL, hW - notchW) },
-                    { pos: new THREE.Vector2(hL - notchL, hW) },
-                    { pos: new THREE.Vector2(-hL, hW) },
-                ];
-            case 'T_SHAPE':
-                return [
-                    { pos: new THREE.Vector2(-sW, -hW) },
-                    { pos: new THREE.Vector2(sW, -hW) },
-                    { pos: new THREE.Vector2(sW, headY) },
-                    { pos: new THREE.Vector2(hL, headY) },
-                    { pos: new THREE.Vector2(hL, hW) },
-                    { pos: new THREE.Vector2(-hL, hW) },
-                    { pos: new THREE.Vector2(-hL, headY) },
-                    { pos: new THREE.Vector2(-sW, headY) },
-                ];
-            case 'HEXAGON':
-                const hexPts: { pos: THREE.Vector2 }[] = [];
-                for (let i = 0; i < 6; i++) {
-                    const angle = (i / 6) * Math.PI * 2 + Math.PI / 6;
-                    hexPts.push({ pos: new THREE.Vector2(Math.cos(angle) * hL, Math.sin(angle) * hL) });
-                }
-                return hexPts;
-            default: // SQUARE
-                return [
-                    { pos: new THREE.Vector2(-hL, -hW) },
-                    { pos: new THREE.Vector2(hL, -hW) },
-                    { pos: new THREE.Vector2(hL, hW) },
-                    { pos: new THREE.Vector2(-hL, hW) }
-                ];
-        }
-    }, [shape, L, W, notchL, notchW]);
+        const rawPoints = getShapePoints(shape, dimensions);
+        return rawPoints.map(p => ({ pos: new THREE.Vector2(p[0], p[1]) }));
+    }, [shape, dimensions]);
 
     const wallData = useMemo(() => {
         return pointsData.map((p1Obj, i) => {
@@ -479,13 +361,17 @@ function SceneContent({
                     })
                 )}
 
-                {items.map((it) => (
-                    <ModelItem
+                {items.map((it, idx) => (
+                    <FurniturePrimitive
                         key={it.id}
                         item={it}
+                        index={idx}
                         isSelected={selectedItemId === it.id}
-                        onClick={() => setSelectedItemId(it.id)}
-                        onUpdate={onUpdateItem}
+                        furnitureList={items}
+                        setFurnitureList={setItems}
+                        setSelectedIndex={setSelectedItemId}
+                        points={pointsData}
+                        controlsRef={controlsRef}
                     />
                 ))}
             </group>
@@ -523,19 +409,12 @@ export default React.forwardRef(function DesignerRoom(props: any, ref) {
         }
     }));
 
-    const handleUpdateItem = (id: string, updates: Partial<BlueprintItem>) => {
-        if (props.setItems) {
-            props.setItems(props.items.map((it: any) => it.id === id ? { ...it, ...updates } : it));
-        }
-    };
-
     return (
         <div className="w-full h-full relative cursor-crosshair">
             <Canvas shadows camera={{ position: [8, 8, 8], fov: 45 }} gl={{ preserveDrawingBuffer: true }}>
                 <Suspense fallback={null}>
                     <SceneContent
                         {...props}
-                        onUpdateItem={handleUpdateItem}
                     />
                     <SceneCapture onRef={(g: THREE.Group) => (designContentRef.current as any) = g} />
                 </Suspense>
