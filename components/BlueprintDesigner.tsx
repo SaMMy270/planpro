@@ -43,6 +43,32 @@ const BlueprintDesigner: React.FC = () => {
   const [hoveredProduct, setHoveredProduct] = useState<Product | null>(null);
   const [popupPos, setPopupPos] = useState({ top: 0, left: 0 });
   const [aiImages, setAiImages] = useState<File[]>([]);
+  const [libraryCategory, setLibraryCategory] = useState<string>('All');
+  const [librarySubcategory, setLibrarySubcategory] = useState<string>('All');
+
+  const categories = useMemo(() => ['All', ...new Set(PRODUCTS.map(p => p.category))], []);
+  
+  const subCategories = useMemo(() => {
+    if (libraryCategory === 'All') return [];
+    const subs = PRODUCTS
+      .filter(p => p.category === libraryCategory)
+      .map(p => p.subcategory);
+    return ['All', ...new Set(subs)];
+  }, [libraryCategory]);
+
+  useEffect(() => {
+    setLibrarySubcategory('All');
+  }, [libraryCategory]);
+
+  const filteredLibraryProducts = useMemo(() => {
+    return PRODUCTS.filter(p => {
+      const matchesCategory = libraryCategory === 'All' || p.category === libraryCategory;
+      const subcat = p.subcategory || '';
+      const matchesSubcategory = librarySubcategory === 'All' || subcat.toLowerCase() === librarySubcategory.toLowerCase();
+      return matchesCategory && matchesSubcategory;
+    });
+  }, [libraryCategory, librarySubcategory]);
+
 
   // --- HELPERS ---
   const updateRoom = (updates: Partial<RoomData>) => {
@@ -163,13 +189,6 @@ const BlueprintDesigner: React.FC = () => {
     setPopupPos({ top: Math.max(100, rect.top - 100), left: rect.right + 20 });
     setHoveredProduct(product);
   };
-
-  const archModules = [
-    { name: 'Living Room', category: 'Architecture', image: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=600&auto=format&fit=crop' },
-    { name: 'Bedroom', category: 'Architecture', image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=600&auto=format&fit=crop' },
-    { name: 'Dining Area', category: 'Architecture', image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=600&auto=format&fit=crop' },
-    { name: 'Suite Studio', category: 'Architecture', image: 'https://images.unsplash.com/photo-1556911220-e15022358364?q=80&w=600&auto=format&fit=crop' }
-  ];
 
   // --- VIEWS ---
 
@@ -663,40 +682,48 @@ const BlueprintDesigner: React.FC = () => {
           {activeSidebarTab === 'library' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
               <section className="space-y-6">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/40 px-1">Spatial Modules</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {archModules.map(module => (
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Categories</h3>
+                  <span className="text-[8px] font-bold text-black/20 uppercase tracking-widest">{filteredLibraryProducts.length} Items</span>
+                </div>
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                  {categories.map(cat => (
                     <button
-                      key={module.name}
-                      onClick={() => {
-                        const newItem: BlueprintItem = {
-                          id: Math.random().toString(36).substr(2, 9),
-                          type: module.name,
-                          model: (module as any).model,
-                          x: 0,
-                          y: 0,
-                          rotation: 0,
-                          position: [0, 0, 0]
-                        };
-                        setItems([...items, newItem]);
-                        setSelectedItemId(newItem.id);
-                        toast.info(`Added ${module.name} module placeholder`);
-                      }}
-                      className="group relative aspect-square rounded-2xl overflow-hidden border border-black/5 hover:border-black/20 hover:shadow-lg transition-all"
+                      key={cat}
+                      onClick={() => setLibraryCategory(cat)}
+                      className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${
+                        libraryCategory === cat ? 'bg-black border-black text-white shadow-md' : 'bg-white border-black/5 text-black/30 hover:text-black hover:border-black/20'
+                      }`}
                     >
-                      <img src={module.image} className="w-full h-full object-cover brightness-[0.7] group-hover:scale-110 transition-transform duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent flex flex-col justify-end p-4">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-white leading-tight">{module.name}</span>
-                      </div>
+                      {cat}
                     </button>
                   ))}
                 </div>
+
+                {libraryCategory !== 'All' && subCategories.length > 0 && (
+                  <div className="flex flex-col gap-2 pt-2 animate-in slide-in-from-top-2 duration-500">
+                    <span className="text-[7px] font-black uppercase tracking-[0.3em] text-black/20 px-1">Refine</span>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                      {subCategories.map(sub => (
+                        <button
+                          key={sub}
+                          onClick={() => setLibrarySubcategory(sub)}
+                          className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${
+                            librarySubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-black text-white shadow-sm' : 'bg-white/50 border-black/5 text-black/40 hover:text-black hover:border-black/20'
+                          }`}
+                        >
+                          {sub}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </section>
 
               <section className="space-y-6">
                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 px-1">Furniture Pieces</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  {PRODUCTS.map(p => (
+                  {filteredLibraryProducts.map(p => (
                     <button
                       key={p.id}
                       onClick={() => addItemToPlacement(p)}

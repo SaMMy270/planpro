@@ -30,6 +30,13 @@ export interface BlueprintItem {
   rotation: number;
   model?: string;
   position?: [number, number, number];
+  dimensions?: {
+    width: number;
+    depth: number;
+    height: number;
+    centerX: number;
+    centerZ: number;
+  };
 }
 
 export type RoomShape = 'SQUARE' | 'L_SHAPE' | 'T_SHAPE' | 'HEXAGON';

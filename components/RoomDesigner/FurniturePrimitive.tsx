@@ -86,7 +86,18 @@ export default function FurniturePrimitive({
 
     const handleModelLoad = useCallback((bounds: any) => {
         setModelBounds(bounds);
-    }, []);
+        
+        // Only update the main list if dimensions are missing or different
+        // This prevents infinite render loops
+        if (!item.dimensions || 
+            Math.abs(item.dimensions.width - bounds.width) > 0.01 ||
+            Math.abs(item.dimensions.depth - bounds.depth) > 0.01) {
+            
+            setFurnitureList(prev => prev.map(f => 
+                f.id === item.id ? { ...f, dimensions: bounds } : f
+            ));
+        }
+    }, [item.id, item.dimensions, setFurnitureList]);
 
     // --- CAMERA LOCK LOGIC ---
     const setCameraLocked = useCallback((locked: boolean) => {

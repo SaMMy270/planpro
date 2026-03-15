@@ -53,11 +53,8 @@ export const calculateRoomArea = (roomData: RoomData) => {
 export const calculateFurnitureArea = (furnitureList: BlueprintItem[]) => {
     if (!furnitureList || !Array.isArray(furnitureList)) return 0;
     return furnitureList.reduce((total, item) => {
-        // We use model dimensions if available from a calculation, 
-        // but for simple summary we might need a meta property or just use 1x1 as fallback
-        // In the real app, we might get this from the primitive's calculated bounds
-        const w = 1; // Default fallback
-        const d = 1;
+        const w = item.dimensions?.width || 1;
+        const d = item.dimensions?.depth || 1;
         return total + (w * d);
     }, 0);
 };
@@ -137,7 +134,7 @@ export const checkPlacementValidity = (
     if (!isInside) return { valid: false, reason: 'OUTSIDE' };
     
     // 2. Furniture collision check
-    const margin = 0.05;
+    const safetyBuffer = 0.15; // Minimum gap in meters
     const isHittingOther = furnitureList.some((other, i) => {
         // Skip self
         if (ignoreId && other.id === ignoreId) return false;
@@ -146,18 +143,15 @@ export const checkPlacementValidity = (
         // Use position from item
         const otherPos = other.position || [other.x, 0, other.y];
         
-        // For simple collision, we use a bounding box approach. 
-        // In a more advanced version, we'd use SAT (Separating Axis Theorem) for rotated rectangles.
-        // For now, let's keep it simple as in the provided snippet but with a bit more safety.
-        
-        // Fallback dimensions if not available
-        const otherW = 1; 
-        const otherD = 1;
+        // Use actual dimensions if available
+        const otherW = other.dimensions?.width || 0.8;
+        const otherD = other.dimensions?.depth || 0.8;
         
         const dx = Math.abs(pos[0] - otherPos[0]);
         const dz = Math.abs(pos[2] - otherPos[2]);
         
-        return dx < (w + otherW) / 2 - margin && dz < (d + otherD) / 2 - margin;
+        // Collision if horizontal distance is less than combined half-widths + buffer
+        return dx < (w + otherW) / 2 + safetyBuffer && dz < (d + otherD) / 2 + safetyBuffer;
     });
     
     if (isHittingOther) return { valid: false, reason: 'COLLISION' };
