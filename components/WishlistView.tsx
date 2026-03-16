@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, ArrowRight, ShoppingCart } from 'lucide-react';
+import { Heart, ArrowRight, ShoppingCart, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Product } from '../types';
 import { PRODUCTS } from '../data/mockData';
@@ -13,11 +13,12 @@ interface WishlistViewProps {
     onAR: (p: Product) => void;
     onAI: (p: Product) => void;
     onCompare: (p: Product) => void;
+    onSmartCompare: () => void;
     onContinueShopping: () => void;
 }
 
 const WishlistView: React.FC<WishlistViewProps> = ({
-    wishlist, onToggleWishlist, onAddToCart, onViewDetails, onAR, onAI, onCompare, onContinueShopping
+    wishlist, onToggleWishlist, onAddToCart, onViewDetails, onAR, onAI, onCompare, onSmartCompare, onContinueShopping
 }) => {
     const wishlistedProducts = PRODUCTS.filter(p => wishlist.includes(p.id));
 
@@ -48,7 +49,15 @@ const WishlistView: React.FC<WishlistViewProps> = ({
                     <h2 className="text-3xl font-bold tracking-tighter uppercase">Your Wishlist</h2>
                     <p className="text-xs font-bold text-black/40 uppercase tracking-widest">Saved Items for later</p>
                 </div>
-                <span className="text-xs font-bold text-black/40 uppercase tracking-widest">{wishlist.length} Items</span>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={onSmartCompare}
+                        className="flex items-center gap-2 px-6 py-2.5 bg-[#1754cf] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#1754cf]/90 transition-all shadow-lg active:scale-95 group"
+                    >
+                        <Sparkles size={14} className="group-hover:rotate-12 transition-transform" /> AI Smart Compare
+                    </button>
+                    <span className="text-xs font-bold text-black/40 uppercase tracking-widest">{wishlist.length} Items</span>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">

@@ -8,13 +8,13 @@ const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 export const geminiService = {
   async compareProducts(productName: string, category: string): Promise<{ text: string, links: any[] }> {
     const ai = getAI();
-    // Complex market comparison and reasoning task using gemini-3-pro-preview
+    // Complex market comparison and reasoning task using gemini-1.5-pro
     const prompt = `Research and compare the furniture product "${productName}" in the category "${category}" with at least 3 similar products from high-end competitors (like West Elm, Restoration Hardware, or Herman Miller). 
     Provide a concise comparison of price, materials, and design aesthetic.
     Use Google Search to find current data and mention how PlanPro's offering compares in terms of value.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-1.5-pro',
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }]
@@ -31,9 +31,9 @@ export const geminiService = {
   async buildRoomWithAI(roomImageBase64: string, productDescription: string): Promise<string | null> {
     const ai = getAI();
     
-    // We use gemini-2.5-flash-image for image editing/generation tasks
+    // We use gemini-1.5-flash for image editing/generation tasks
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: 'gemini-1.5-flash',
       contents: {
         parts: [
           {

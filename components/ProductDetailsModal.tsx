@@ -27,7 +27,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
   const [selectedImg, setSelectedImg] = useState(0);
   const [isSliding, setIsSliding] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<Tab>('review');
+  const [activeTab, setActiveTab] = useState<Tab>('description');
   const [showStudioMenu, setShowStudioMenu] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
   const [is3DActive, setIs3DActive] = useState(false);
@@ -57,26 +57,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
     handleImgChange(prevIdx);
   };
 
-  const reviews = [
-    {
-      id: 1,
-      user: 'Kristin Watson',
-      verified: true,
-      rating: 5,
-      date: '1 month ago',
-      content: 'Absolutely love this product! The quality of the materials is top-notch and it fits perfectly in my studio apartment.',
-      images: gallery.slice(1, 3)
-    },
-    {
-      id: 2,
-      user: 'Jenny Wilson',
-      verified: true,
-      rating: 4,
-      date: '2 months ago',
-      content: 'Great design and very comfortable. Shipping took a little longer than expected but it was worth the wait.',
-      images: []
-    }
-  ];
+  // Using product.reviews instead of static mock data
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 lg:p-12 overflow-hidden">
@@ -180,21 +161,21 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 <div className="flex items-center gap-6 mt-4">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={16} fill={i < 4 ? "currentColor" : "none"} />
+                      <Star key={i} size={16} fill={i < Math.round(product.rating || 0) ? "currentColor" : "none"} />
                     ))}
-                    <span className="text-sm font-bold text-black ml-1">4.8</span>
+                    <span className="text-sm font-bold text-black ml-1">{(product.rating || 0).toFixed(1)}</span>
                   </div>
-                  <span className="text-sm font-bold text-black/40">(128 Review)</span>
+                  <span className="text-sm font-bold text-black/40">({product.reviews?.length || 0} Review{product.reviews?.length !== 1 ? 's' : ''})</span>
                 </div>
               </div>
 
               <div className="flex items-baseline gap-4">
-                <span className="text-4xl font-bold tracking-tighter">${product.price}.00</span>
-                <span className="text-xl text-black/20 line-through font-medium">$1250.00</span>
+                <span className="text-4xl font-bold tracking-tighter">₹{product.price}.00</span>
+                <span className="text-xl text-black/20 line-through font-medium">₹1250.00</span>
               </div>
 
-              <p className="text-black/50 leading-relaxed text-sm max-w-lg">
-                Experience unparalleled comfort and sophisticated design. This piece is meticulously crafted to elevate any modern interior with its timeless aesthetic and premium build quality.
+              <p className="text-black/50 leading-relaxed text-sm max-w-lg line-clamp-3">
+                {product.description}
               </p>
 
               {/* Selection Controls */}
@@ -271,31 +252,58 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
             </div>
 
             <div className="py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {activeTab === 'description' && (
+                <div className="space-y-6 animate-fade-up max-w-3xl mx-auto">
+                  <h4 className="text-xl font-serif mb-4">Product Description</h4>
+                  <p className="text-black/60 leading-relaxed min-h-[150px]">{product.description}</p>
+                </div>
+              )}
+
+              {activeTab === 'additional' && (
+                <div className="space-y-6 animate-fade-up max-w-3xl mx-auto">
+                  <h4 className="text-xl font-serif mb-4">Additional Information</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[150px]">
+                    <div className="bg-[#FBFBF9] p-6 rounded-2xl border border-black/5">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-black/30 block mb-2">Dimensions</span>
+                      <p className="font-medium text-black/80">{product.dimensions}</p>
+                    </div>
+                    <div className="bg-[#FBFBF9] p-6 rounded-2xl border border-black/5">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-black/30 block mb-2">Material</span>
+                      <p className="font-medium text-black/80">{product.material}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {activeTab === 'review' && (
                 <div className="space-y-16">
                   {/* Rating Summary */}
                   <div className="flex flex-col md:flex-row gap-12 items-center md:items-start bg-[#FBFBF9] p-10 rounded-[32px]">
                     <div className="text-center md:text-left space-y-2">
-                      <div className="text-6xl font-bold tracking-tighter">4.8</div>
+                      <div className="text-6xl font-bold tracking-tighter">{(product.rating || 0).toFixed(1)}</div>
                       <div className="text-xs font-bold uppercase tracking-[0.2em] text-black/30">Out of 5</div>
                       <div className="flex justify-center md:justify-start text-amber-400">
-                        {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}
+                        {[...Array(5)].map((_, i) => <Star key={i} size={18} fill={i < Math.round(product.rating || 0) ? "currentColor" : "none"} />)}
                       </div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-black/40 pt-2">(128 Review)</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-black/40 pt-2">({product.reviews?.length || 0} Review{product.reviews?.length !== 1 ? 's' : ''})</p>
                     </div>
 
                     <div className="flex-1 w-full max-w-md space-y-3">
-                      {[5, 4, 3, 2, 1].map(num => (
-                        <div key={num} className="flex items-center gap-4">
-                          <span className="text-xs font-bold w-12">{num} Star</span>
-                          <div className="flex-1 h-2 bg-black/5 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-amber-400 rounded-full"
-                              style={{ width: `${num === 5 ? 85 : num === 4 ? 40 : 10}%` }}
-                            />
+                      {[5, 4, 3, 2, 1].map(num => {
+                        const count = product.reviews?.filter(r => Math.round(r.rating) === num).length || 0;
+                        const percent = product.reviews?.length ? (count / product.reviews.length) * 100 : 0;
+                        return (
+                          <div key={num} className="flex items-center gap-4">
+                            <span className="text-xs font-bold w-12">{num} Star</span>
+                            <div className="flex-1 h-2 bg-black/5 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-amber-400 rounded-full transition-all duration-1000"
+                                style={{ width: `${percent}%` }}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -309,40 +317,34 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                     </div>
 
                     <div className="space-y-12">
-                      {reviews.map(rev => (
-                        <div key={rev.id} className="space-y-4 animate-fade-up">
+                      {(product.reviews || []).map((rev, index) => (
+                        <div key={index} className="space-y-4 animate-fade-up">
                           <div className="flex justify-between items-start">
                             <div className="flex gap-4">
                               <div className="w-12 h-12 rounded-full bg-black/5 overflow-hidden flex-shrink-0">
-                                <img src={`https://i.pravatar.cc/100?u=${rev.user}`} />
+                                <img src={`https://i.pravatar.cc/100?u=${rev.user.replace(' ', '')}`} alt={rev.user} />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
                                   <h5 className="font-bold text-sm">{rev.user}</h5>
-                                  {rev.verified && <CheckCircle2 size={14} className="text-green-500" />}
+                                  <CheckCircle2 size={14} className="text-green-500" />
                                   <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 opacity-60">(Verified)</span>
                                 </div>
                                 <div className="flex items-center gap-4 mt-1">
                                   <div className="flex text-amber-400">
-                                    {[...Array(5)].map((_, i) => <Star key={i} size={12} fill={i < rev.rating ? "currentColor" : "none"} />)}
+                                    {[...Array(5)].map((_, i) => <Star key={i} size={12} fill={i < Math.round(rev.rating) ? "currentColor" : "none"} />)}
                                   </div>
-                                  <span className="text-[10px] font-bold text-black/30">{rev.date}</span>
+                                  <span className="text-[10px] font-bold text-black/30">Recent</span>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <p className="text-sm text-black/60 leading-relaxed max-w-3xl">{rev.content}</p>
-                          {rev.images.length > 0 && (
-                            <div className="flex gap-3 pt-2">
-                              {rev.images.map((img, idx) => (
-                                <div key={idx} className="w-20 h-20 rounded-xl overflow-hidden border border-black/5">
-                                  <img src={img} className="w-full h-full object-cover" />
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          <p className="text-sm text-black/60 leading-relaxed max-w-3xl">{rev.comment}</p>
                         </div>
                       ))}
+                      {!product.reviews?.length && (
+                        <p className="text-sm text-black/50 py-4 italic">No reviews yet. Be the first to review this product!</p>
+                      )}
                     </div>
                   </div>
                 </div>

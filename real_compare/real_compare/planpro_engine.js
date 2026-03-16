@@ -307,12 +307,34 @@ const flipkart = loadJSON("flipkart_D.json").map(adaptRealProduct);
 const ikea = loadJSON("ikea_D.json").map(adaptRealProduct);
 const urbanladder = loadJSON("urbanladder_D.json").map(adaptRealProduct);
 
-console.log("\nAVAILABLE PLANPRO PRODUCTS:");
-console.table(planproData.map(p => ({
-  id: p[0],
-  name: p[1],
-  price: p[3]
-})));
+const isJsonMode = process.argv.includes("--json-output");
+
+if (!isJsonMode) {
+  console.log("\nAVAILABLE PLANPRO PRODUCTS:");
+  console.table(planproData.map(p => ({
+    id: p[0],
+    name: p[1],
+    price: p[3]
+  })));
+}
+
+if (isJsonMode) {
+  const inputId = process.argv[process.argv.indexOf("--id") + 1];
+  const planProduct = planproData.find(p => p[0] === inputId?.trim());
+  if (planProduct) {
+    const results = compare(planProduct, [amazon, flipkart, ikea, urbanladder]);
+    const finalResults = {};
+    for (const site in results) {
+       finalResults[site] = results[site]
+          .sort((a, b) => b.similarity - a.similarity)
+          .slice(0, 2);
+    }
+    console.log("JSON_START");
+    console.log(JSON.stringify({ selected: planProduct, results: finalResults }));
+    console.log("JSON_END");
+  }
+  process.exit(0);
+}
 
 const rl = readline.createInterface({
   input: process.stdin,

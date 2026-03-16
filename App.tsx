@@ -24,6 +24,7 @@ import CartView from './components/CartView';
 import WishlistView from './components/WishlistView';
 import CheckoutPage from './components/CheckoutPage';
 import UserProfile from './components/UserProfile';
+import WishlistComparisonModal from './components/WishlistComparisonModal';
 
 type View = 'home' | 'products' | 'blueprint' | 'login' | 'cart' | 'wishlist' | 'ar-preview' | 'comparison' | 'checkout' | 'profile';
 
@@ -37,12 +38,13 @@ const App: React.FC = () => {
   const [isAIBuilderOpen, setIsAIBuilderOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [initialARViewMode, setInitialARViewMode] = useState<'qr' | 'live'>('qr');
+  const [isWishlistCompareOpen, setIsWishlistCompareOpen] = useState(false);
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('All');
-  const [maxPrice, setMaxPrice] = useState<number>(3000);
+  const [maxPrice, setMaxPrice] = useState<number>(50000);
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
   const [user, setUser] = useState<any>(null);
 
@@ -56,7 +58,13 @@ const App: React.FC = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       const currentUser = session?.user ?? null;
-      setUser(currentUser);
+      
+      // Only update user if the ID has changed to prevent unnecessary re-fetches
+      setUser((prevUser: any) => {
+        if (prevUser?.id === currentUser?.id) return prevUser;
+        return currentUser;
+      });
+
       if (event === 'SIGNED_IN' && currentUser) {
         syncUserProfile(currentUser);
       }
@@ -98,87 +106,113 @@ const App: React.FC = () => {
   const fetchUserData = async () => {
     if (!user) return;
 
-    // Fetch Wishlist
-    const { data: wishlistData } = await supabase
-      .from('WishlistItem')
-      .select('productId')
-      .eq('wishlistId', (await getOrCreateWishlist()).id);
+    try {
+      const wishlistObj = await getOrCreateWishlist();
+      const cartObj = await getOrCreateCart();
 
-    if (wishlistData) {
-      setWishlist(wishlistData.map(item => item.productId));
-    }
+      // Fetch Wishlist
+      const { data: wishlistData, error: wError } = await supabase
+        .from('WishlistItem')
+        .select('productId')
+        .eq('wishlistId', wishlistObj.id);
 
-    // Fetch Cart
-    const { data: cartData } = await supabase
-      .from('CartItem')
-      .select('productId, quantity')
-      .eq('cartId', (await getOrCreateCart()).id);
+      if (wError) throw wError;
+      if (wishlistData) {
+        setWishlist(wishlistData.map(item => item.productId));
+      }
 
-    if (cartData) {
-      setCart(cartData.map(item => ({ id: item.productId, qty: item.quantity })));
+      // Fetch Cart
+      const { data: cartData, error: cError } = await supabase
+        .from('CartItem')
+        .select('productId, quantity')
+        .eq('cartId', cartObj.id);
+
+      if (cError) throw cError;
+      if (cartData) {
+        setCart(cartData.map(item => ({ id: item.productId, qty: item.quantity })));
+      }
+    } catch (err) {
+      console.error('Failed to fetch user data:', err);
     }
   };
 
   const getOrCreateWishlist = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const currentUserId = session?.user?.id;
-    if (!currentUserId) throw new Error('User not authenticated');
+    if (!user) throw new Error('User not authenticated');
 
-    let { data: wishlist, error } = await supabase
+    // Try to find existing wishlist
+    const { data: wishlists, error } = await supabase
       .from('Wishlist')
       .select('id')
-      .eq('userId', currentUserId)
-      .single();
+      .eq('userId', user.id);
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows found"
+    if (error) {
       console.error('Error fetching wishlist:', error);
     }
 
-    if (!wishlist) {
-      const { data: newWishlist, error: createError } = await supabase
-        .from('Wishlist')
-        .insert({ userId: currentUserId })
-        .select()
-        .single();
-
-      if (createError) {
-        console.error('Error creating wishlist:', createError);
-        throw createError;
-      }
-      wishlist = newWishlist;
+    // If wishlist exists, return the first one (handles dupes gracefully)
+    if (wishlists && wishlists.length > 0) {
+      return wishlists[0];
     }
-    return wishlist;
+
+    // Otherwise create one
+    const { data: newWishlist, error: createError } = await supabase
+      .from('Wishlist')
+      .insert({ userId: user.id })
+      .select()
+      .maybeSingle();
+
+    if (createError) {
+      if (createError.code === '23505') { // Unique constraint violation (race condition)
+        const { data: retryWishlist } = await supabase
+          .from('Wishlist')
+          .select('id')
+          .eq('userId', user.id)
+          .single();
+        if (retryWishlist) return retryWishlist;
+      }
+      console.error('Error creating wishlist:', createError);
+      throw createError;
+    }
+    
+    return newWishlist;
   };
 
   const getOrCreateCart = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const currentUserId = session?.user?.id;
-    if (!currentUserId) throw new Error('User not authenticated');
+    if (!user) throw new Error('User not authenticated');
 
-    let { data: cart, error } = await supabase
+    const { data: carts, error } = await supabase
       .from('Cart')
       .select('id')
-      .eq('userId', currentUserId)
-      .single();
+      .eq('userId', user.id);
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
       console.error('Error fetching cart:', error);
     }
 
-    if (!cart) {
-      const { data: newCart, error: createError } = await supabase
-        .from('Cart')
-        .insert({ userId: currentUserId })
-        .select()
-        .single();
-
-      if (createError) {
-        console.error('Error creating cart:', createError);
-        throw createError;
-      }
-      cart = newCart;
+    if (carts && carts.length > 0) {
+      return carts[0];
     }
-    return cart;
+
+    const { data: newCart, error: createError } = await supabase
+      .from('Cart')
+      .insert({ userId: user.id })
+      .select()
+      .maybeSingle();
+
+    if (createError) {
+      if (createError.code === '23505') {
+        const { data: retryCart } = await supabase
+          .from('Cart')
+          .select('id')
+          .eq('userId', user.id)
+          .single();
+        if (retryCart) return retryCart;
+      }
+      console.error('Error creating cart:', createError);
+      throw createError;
+    }
+    
+    return newCart;
   };
 
   // Derive categories and subcategories automatically from data
@@ -684,7 +718,7 @@ const App: React.FC = () => {
                     className="p-4 rounded-[20px] bg-white border border-black/5 hover:border-black shadow-sm transition-all relative group"
                   >
                     <SlidersHorizontal size={22} />
-                    {(maxPrice < 3000 || searchQuery !== '') && (
+                    {(maxPrice < 50000 || searchQuery !== '') && (
                       <span className="absolute -top-1 -right-1 w-3 h-3 bg-black rounded-full border-2 border-white" />
                     )}
                   </button>
@@ -756,7 +790,7 @@ const App: React.FC = () => {
                       <p className="text-xs md:text-sm text-black/40 max-w-xs mx-auto">Try refining your search or price filters to find what you're looking for.</p>
                     </div>
                     <button
-                      onClick={() => { setSelectedCategory('All'); setSelectedSubcategory('All'); setMaxPrice(3000); setSearchQuery(''); }}
+                      onClick={() => { setSelectedCategory('All'); setSelectedSubcategory('All'); setMaxPrice(50000); setSearchQuery(''); }}
                       className="px-8 py-3 bg-black text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
                     >
                       Reset Filters
@@ -784,20 +818,20 @@ const App: React.FC = () => {
                 <div className="space-y-6">
                   <div className="flex justify-between items-end">
                     <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/30">Budget Range</h4>
-                    <span className="text-lg md:text-xl font-bold tracking-tighter">${maxPrice}</span>
+                    <span className="text-lg md:text-xl font-bold tracking-tighter">₹{maxPrice}</span>
                   </div>
                   <input
                     type="range"
-                    min="100"
-                    max="3000"
-                    step="100"
+                    min="1000"
+                    max="50000"
+                    step="500"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(parseInt(e.target.value))}
                     className="w-full h-1.5 bg-black/5 rounded-full appearance-none cursor-pointer accent-black"
                   />
                   <div className="flex justify-between text-[9px] md:text-[10px] font-bold text-black/20 uppercase tracking-widest">
-                    <span>$100</span>
-                    <span>$3,000+</span>
+                    <span>₹1,000</span>
+                    <span>₹50,000+</span>
                   </div>
                 </div>
 
@@ -833,7 +867,7 @@ const App: React.FC = () => {
 
         {activeTab === 'blueprint' && (
           <div className="animate-in fade-in duration-700">
-            <BlueprintDesigner />
+            <BlueprintDesigner wishlist={wishlist} toggleWishlist={toggleWishlist} />
           </div>
         )}
 
@@ -859,6 +893,7 @@ const App: React.FC = () => {
               onAR={triggerAR}
               onAI={triggerAI}
               onCompare={triggerCompare}
+              onSmartCompare={() => setIsWishlistCompareOpen(true)}
               onContinueShopping={() => setActiveTab('products')}
             />
           </div>
@@ -902,18 +937,26 @@ const App: React.FC = () => {
 
       {activeTab !== 'blueprint' && activeTab !== 'login' && <Footer />}
 
-      {showDetails && selectedProduct && (
-        <ProductDetailsModal
-          product={selectedProduct}
-          isWishlisted={wishlist.includes(selectedProduct.id)}
-          onClose={() => setShowDetails(false)}
-          onAddToCart={addToCart}
-          onToggleWishlist={toggleWishlist}
-          onAR={triggerAR}
-          onAI={triggerAI}
-          onCompare={triggerCompare}
-        />
-      )}
+        {showDetails && selectedProduct && (
+          <ProductDetailsModal
+            product={selectedProduct}
+            isWishlisted={wishlist.includes(selectedProduct.id)}
+            onClose={() => setShowDetails(false)}
+            onAddToCart={addToCart}
+            onToggleWishlist={toggleWishlist}
+            onAR={triggerAR}
+            onAI={triggerAI}
+            onCompare={triggerCompare}
+          />
+        )}
+
+        {isWishlistCompareOpen && (
+          <WishlistComparisonModal
+            wishlistIds={wishlist}
+            onClose={() => setIsWishlistCompareOpen(false)}
+            onViewProduct={(p) => { setSelectedProduct(p); setShowDetails(true); setIsWishlistCompareOpen(false); }}
+          />
+        )}
 
       {isAIBuilderOpen && (
         <AIBuilderModal

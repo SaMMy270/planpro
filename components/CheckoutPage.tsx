@@ -247,19 +247,19 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
                                                     <div className="p-5 pt-0 space-y-3 border-t border-black/5 mt-2">
                                                         <div className="flex justify-between text-[11px]">
                                                             <span className="text-black/40 font-medium">{item.name} (x{item.qty})</span>
-                                                            <span className="font-bold">${item.price * item.qty}</span>
+                                                            <span className="font-bold">₹{item.price * item.qty}</span>
                                                         </div>
                                                         <div className="flex justify-between text-[11px]">
                                                             <span className="text-black/40 font-medium">Estimated shipping</span>
-                                                            <span className="font-bold">$0.00</span>
+                                                            <span className="font-bold">₹0.00</span>
                                                         </div>
                                                         <div className="flex justify-between text-[11px]">
                                                             <span className="text-black/40 font-medium">Discount</span>
-                                                            <span className="font-bold">$0.00</span>
+                                                            <span className="font-bold">₹0.00</span>
                                                         </div>
                                                         <div className="pt-2 border-t border-black/5 flex justify-between text-sm">
                                                             <span className="font-bold">Total</span>
-                                                            <span className="font-bold">${item.price * item.qty}</span>
+                                                            <span className="font-bold">₹{item.price * item.qty}</span>
                                                         </div>
                                                     </div>
                                                 </motion.div>
@@ -272,7 +272,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
                             <div className="pt-8 border-t border-black/10 flex items-end justify-between">
                                 <div>
                                     <p className="text-[10px] font-bold text-black/30 uppercase tracking-widest">Total Amount:</p>
-                                    <h4 className="text-4xl font-bold tracking-tighter">${total}</h4>
+                                    <h4 className="text-4xl font-bold tracking-tighter">₹{total}</h4>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-[8px] font-bold text-black/20 uppercase tracking-widest">Including taxes</p>

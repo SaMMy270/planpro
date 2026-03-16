@@ -66,7 +66,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <span className="text-[10px] uppercase tracking-widest text-black/40 font-semibold">{product.category}</span>
             <h4 className="font-serif text-xl mt-1 group-hover:text-black/70 transition-colors">{product.name}</h4>
           </div>
-          <span className="text-lg font-medium">${product.price}</span>
+          <span className="text-lg font-medium">₹{product.price}</span>
         </div>
         
         <p className="text-sm text-black/50 line-clamp-2 leading-relaxed">

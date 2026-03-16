@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Scale, ExternalLink, ShieldCheck, TrendingDown, Loader2 } from 'lucide-react';
 import { Product } from '../types';
 import { geminiService } from '../services/geminiService';
+import { comparisonService } from '../services/comparisonService';
 
 interface ComparisonModalProps {
   product: Product;
@@ -12,11 +13,36 @@ interface ComparisonModalProps {
 const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{ text: string, links: any[] } | null>(null);
+  const [localData, setLocalData] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await geminiService.compareProducts(product.name, product.category);
-      setData(result);
+      setLoading(true);
+      
+      // Fetch Gemini Data
+      try {
+        const geminiResult = await geminiService.compareProducts(product.name, product.category);
+        setData(geminiResult);
+      } catch (err) {
+        console.error("Gemini comparison failed:", err);
+        setData({ text: "Market analysis currently unavailable. Please check your connection or API configuration.", links: [] });
+      }
+
+      // Fetch Local Market Data
+      try {
+        const localResult = await comparisonService.getInterComparison(product.id);
+        if (localResult && localResult.rawOutput) {
+           const start = localResult.rawOutput.indexOf('JSON_START');
+           const end = localResult.rawOutput.indexOf('JSON_END');
+           if (start !== -1 && end !== -1) {
+              const jsonStr = localResult.rawOutput.substring(start + 10, end).trim();
+              setLocalData(JSON.parse(jsonStr));
+           }
+        }
+      } catch (err) {
+        console.error("Local market comparison failed:", err);
+      }
+      
       setLoading(false);
     };
     fetchData();
@@ -61,9 +87,36 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                   </div>
                 </div>
 
-                <div className="prose prose-sm max-w-none text-black/70 leading-relaxed whitespace-pre-wrap">
+                <div className="prose prose-sm max-w-none text-black/70 leading-relaxed whitespace-pre-wrap mb-8">
                   {data?.text}
                 </div>
+
+                {localData && localData.results && (
+                  <div className="space-y-4">
+                    <h5 className="text-[10px] font-black uppercase tracking-widest text-black/40">Verified Market Price Points</h5>
+                    <div className="grid grid-cols-1 gap-3">
+                      {Object.entries(localData.results).map(([site, matches]: [string, any]) => (
+                        matches.length > 0 && (
+                          <div key={site} className="p-4 bg-white border border-black/5 rounded-2xl flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-slate-50 border border-black/5 flex items-center justify-center font-bold text-[10px] text-black/40">
+                                {site[0]}
+                              </div>
+                              <div>
+                                <h6 className="text-[11px] font-black uppercase text-black/80">{site} Alternative</h6>
+                                <p className="text-[10px] text-black/40">Similarity: {(matches[0].similarity * 100).toFixed(1)}%</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-bold">₹{matches[0].price}</p>
+                              <div className="text-[9px] font-bold text-green-600 uppercase">Save ₹{product.price - matches[0].price > 0 ? product.price - matches[0].price : 0}</div>
+                            </div>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-4 pt-6 border-t border-black/5">
                   <h5 className="text-[10px] font-bold uppercase tracking-widest text-black/40">Data Sources & Citations</h5>

@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Layout, Move, RotateCw, Plus, Trash2, Save, Sparkles, Loader2,
-  AlertCircle, X, Box, MousePointer2, Info, Star, Maximize,
+  AlertCircle, X, Box, MousePointer2, Info, Star, Maximize, Heart,
   ArrowLeft, ArrowRight, ChevronRight, Camera, Download, Check, Upload, ChevronLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +13,12 @@ import html2canvas from 'html2canvas';
 import { exportSceneToGLB, uploadToAppScript } from '../services/exporter';
 import { toast } from 'sonner';
 
-const BlueprintDesigner: React.FC = () => {
+interface BlueprintDesignerProps {
+  wishlist?: string[];
+  toggleWishlist?: (id: string) => void;
+}
+
+const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist = [], toggleWishlist }) => {
   // --- REFS ---
   const designerRef = useRef<any>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -534,7 +539,7 @@ const BlueprintDesigner: React.FC = () => {
                 <h5 className="font-serif text-2xl leading-tight text-black">{hoveredProduct.name}</h5>
               </div>
               <div className="flex justify-between items-center py-4 border-y border-black/5">
-                <span className="text-2xl font-bold tracking-tighter text-black">${hoveredProduct.price}</span>
+                <span className="text-2xl font-bold tracking-tighter text-black">₹{hoveredProduct.price}</span>
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 rounded-full text-amber-500">
                   <Star size={14} fill="currentColor" />
                   <span className="text-[11px] font-black text-black">{hoveredProduct.rating}</span>
@@ -722,21 +727,47 @@ const BlueprintDesigner: React.FC = () => {
 
               <section className="space-y-6">
                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 px-1">Furniture Pieces</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredLibraryProducts.map(p => (
-                    <button
+                <div className="grid grid-cols-2 gap-3">                   {filteredLibraryProducts.map(p => (
+                    <div
                       key={p.id}
-                      onClick={() => addItemToPlacement(p)}
-                      onMouseEnter={(e) => handleProductHover(e, p)}
-                      onMouseLeave={() => setHoveredProduct(null)}
                       className="group flex flex-col gap-2"
                     >
-                      <div className="aspect-square bg-[#F5F5F3] rounded-2xl overflow-hidden border border-black/5 group-hover:border-black transition-all p-3 relative shadow-sm">
-                        <img src={p.image} className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
-                        <div className="absolute top-2 right-2 p-1.5 rounded-full bg-white opacity-0 group-hover:opacity-100"><Info size={10} /></div>
+                      <div className="aspect-square bg-[#F5F5F3] rounded-2xl overflow-hidden border border-black/5 group-hover:border-black transition-all p-3 relative shadow-sm cursor-pointer">
+                        <img 
+                          src={p.image} 
+                          onClick={() => addItemToPlacement(p)}
+                          onMouseEnter={(e) => handleProductHover(e, p)}
+                          onMouseLeave={() => setHoveredProduct(null)}
+                          className="w-full h-full object-contain group-hover:scale-110 transition-transform" 
+                        />
+                        
+                        {/* Info Button */}
+                        <div className="absolute top-2 left-2 p-1.5 rounded-full bg-white opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                          <Info size={10} />
+                        </div>
+                        
+                        {/* Wishlist Button */}
+                        {toggleWishlist && (
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleWishlist(p.id);
+                            }}
+                            className={`absolute top-2 right-2 p-1.5 rounded-full bg-white shadow-sm z-20 transition-all hover:scale-110 ${
+                              wishlist.includes(p.id) 
+                                ? "opacity-100 scale-105 shadow-[0_0_15px_-3px_rgba(239,68,68,0.4)]" 
+                                : "opacity-0 group-hover:opacity-100"
+                            }`}
+                          >
+                            <Heart 
+                              size={14} 
+                              className={`${wishlist.includes(p.id) ? "fill-red-500 text-red-500" : "text-black/40"} transition-colors`} 
+                            />
+                          </div>
+                        )}
                       </div>
                       <span className="text-[8px] font-bold uppercase tracking-widest text-black/40 group-hover:text-black truncate px-1">{p.name}</span>
-                    </button>
+                    </div>
                   ))}
                 </div>
               </section>
@@ -747,7 +778,7 @@ const BlueprintDesigner: React.FC = () => {
         <div className="p-8 border-t border-black/5 bg-white space-y-6">
           <div className="flex justify-between items-center">
             <span className="text-[10px] font-black uppercase tracking-widest text-black/30">Total Value</span>
-            <span className="text-lg font-bold tracking-tighter">${items.reduce((acc, it) => acc + (PRODUCTS.find(p => p.name === it.type)?.price || 0), 0)}</span>
+            <span className="text-lg font-bold tracking-tighter">₹{items.reduce((acc, it) => acc + (PRODUCTS.find(p => p.name === it.type)?.price || 0), 0)}</span>
           </div>
           <button
             onClick={async () => {

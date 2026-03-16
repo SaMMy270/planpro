@@ -11,6 +11,7 @@ export interface Product {
   dimensions: string;
   material: string;
   rating: number;
+  reviews?: { user: string; rating: number; comment: string }[];
   model?: string;
 }
 

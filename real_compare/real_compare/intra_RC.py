@@ -139,9 +139,9 @@ def format_intent_for_display(intent):
     return formatted
 
 
-# ---------- FILTER + BASE SCORING ----------
+# ---------- FILTER + BASE SCORING (SOFT SCORING - always rank all wishlist items) ----------
 def recommend(wishlist, intent):
-    filtered = []
+    scored = []
 
     for p in wishlist:
         score = 0
@@ -151,58 +151,63 @@ def recommend(wishlist, intent):
         name = normalize(p.get("Name") or "")
         description = normalize(p.get("Description") or "")
 
-        match = True
-
-        # -------- PRODUCT TYPE MATCHING (FIXED LOGIC) --------
+        # -------- PRODUCT TYPE MATCHING (SOFT - adds points, does not eliminate) --------
         if intent["product_type"]:
+            query_pt = normalize(intent["product_type"])
+            parts = query_pt.split()
 
-            query = normalize(intent["product_type"])
-            parts = query.split()
-
-            # If user said "gaming chair"
-            if len(parts) >= 2:
-                query_subtype = parts[0]
-                query_type = parts[1]
-
-                if query_subtype not in subtype:
-                    match = False
-                if query_type not in product_type:
-                    match = False
-
-                if match:
-                    score += 4
-
-            # If only main type detected (like just "chair")
-            else:
-                if parts[0] not in product_type:
-                    match = False
-                else:
+            # Check if any part of the intent type appears in product fields
+            for part in parts:
+                if part in product_type:
                     score += 3
+                elif part in subtype:
+                    score += 4
+                elif part in name:
+                    score += 2
+                elif part in description:
+                    score += 1
 
-        # -------- MATERIAL --------
+        # -------- MATERIAL (soft) --------
         if intent["material"]:
             material = normalize(p.get("Material") or "")
-            if material not in intent["material"]:
-                match = False
-            else:
+            if isinstance(intent["material"], list):
+                if any(m in material for m in intent["material"]):
+                    score += 1
+            elif intent["material"] in material:
                 score += 1
 
-        # -------- STYLE --------
+        # -------- STYLE (soft) --------
         if intent["style"]:
             style = normalize(p.get("Style") or "")
-            if style not in intent["style"]:
-                match = False
-            else:
+            if isinstance(intent["style"], list):
+                if any(s in style or s in name or s in description for s in intent["style"]):
+                    score += 1
+            elif intent["style"] in style or intent["style"] in name:
                 score += 1
 
-        # -------- CONSTRAINT BONUS (DO NOT FILTER) --------
-        if intent["constraints"]:
-            score += 1
+        # -------- USAGE / SIGNALS --------
+        if intent.get("signals"):
+            for sig in intent["signals"]:
+                if sig in name or sig in description:
+                    score += 1
 
-        if match:
-            filtered.append((p, score))
+        # -------- CONSTRAINT: price ceiling --------
+        if intent.get("constraints") and intent["constraints"].get("price"):
+            price_cat = intent["constraints"]["price"]
+            item_price = float(p.get("Price") or 0)
+            # bonus for being within the implied price range
+            if price_cat in ("very_low", "budget") and item_price < 15000:
+                score += 1
+            elif price_cat == "mid" and 15000 <= item_price < 30000:
+                score += 1
+            elif price_cat in ("high", "premium") and item_price >= 30000:
+                score += 1
 
-    return filtered
+        # Always include item in results (soft scoring — never exclude)
+        scored.append((p, score))
+
+    return scored
+
 
 # ---------- FINAL COMPARISON (PRICE + RATING) ----------
 def compare(recommended):
@@ -259,48 +264,80 @@ def intra_recommend_compare(user_text, wishlist):
 
 # ---------- CLI RUNNER ----------
 if __name__ == "__main__":
+    import sys
+    import argparse
 
-    print("\n🤖 AssistoBot – Intra Recommender & Comparer\n")
+    parser = argparse.ArgumentParser(description='PlanPro Intra-Site Recommender')
+    parser.add_argument('--ids', type=str, help='Comma-separated product IDs', default=None)
+    parser.add_argument('--query', type=str, help='User query string', default=None)
+    args, unknown = parser.parse_known_args()
 
-    # ---- STEP 1: WISHLIST INPUT ----
-    raw_indexes = input(
-        "Enter product indexes for your wishlist (comma separated)\n"
-        "Example: x1,x4,x9\n> "
-    ).strip()
+    # --- NON-INTERACTIVE MODE (called from backend) ---
+    if args.ids and args.query:
+        wishlist_indexes = [i.strip() for i in args.ids.split(',')]
+        wishlist = build_wishlist_from_indexes(PLANPRO, wishlist_indexes)
 
-    if not raw_indexes:
-        print("❌ No wishlist provided.")
-        exit()
+        if not wishlist:
+            print("ERROR: Wishlist is empty after validation.")
+            sys.exit(1)
 
-    wishlist_indexes = raw_indexes.split(",")
-    wishlist = build_wishlist_from_indexes(PLANPRO, wishlist_indexes)
+        output = intra_recommend_compare(args.query, wishlist)
 
-    if not wishlist:
-        print("❌ Wishlist is empty after validation.")
-        exit()
+        print("\nDetected Intent:")
+        print(json.dumps(format_intent_for_display(output["intent"]), indent=2))
 
-    print(f"\n✅ Wishlist created with {len(wishlist)} items.\n")
+        if not output["results"]:
+            print("\nNo matching products found in your wishlist.")
+            sys.exit(0)
 
-    # ---- STEP 2: USER QUERY ----
-    user_text = input("What are you looking for?\n> ").strip()
+        print("\n\U0001f3c6 Ranked Products:\n")
+        for idx, r in enumerate(output["results"], start=1):
+            rating_str = f"\u2b50 {r['rating']}" if r["rating"] else "\u2b50 N/A"
+            print(f"{idx}. {r['id']} | {r['name']} | \u20b9{r['price']} | {rating_str} | score={r['final_score']}")
 
-    if not user_text:
-        print("❌ No input provided.")
-        exit()
+    # --- INTERACTIVE MODE (fallback for manual testing) ---
+    else:
+        print("\n\U0001f916 AssistoBot \u2013 Intra Recommender & Comparer\n")
 
-    output = intra_recommend_compare(user_text, wishlist)
+        # ---- STEP 1: WISHLIST INPUT ----
+        raw_indexes = input(
+            "Enter product indexes for your wishlist (comma separated)\n"
+            "Example: x1,x4,x9\n> "
+        ).strip()
 
-    print("\n🧠 Detected Intent:")
-    print(json.dumps(format_intent_for_display(output["intent"]), indent=2))
+        if not raw_indexes:
+            print("\u274c No wishlist provided.")
+            sys.exit()
 
-    if not output["results"]:
-        print("\n❌ No matching products found in your wishlist.")
-        exit()
+        wishlist_indexes = raw_indexes.split(",")
+        wishlist = build_wishlist_from_indexes(PLANPRO, wishlist_indexes)
 
-    print("\n🏆 Ranked Products:\n")
+        if not wishlist:
+            print("\u274c Wishlist is empty after validation.")
+            sys.exit()
 
-    for idx, r in enumerate(output["results"], start=1):
-        rating_str = f"⭐ {r['rating']}" if r["rating"] else "⭐ N/A"
-        print(
-            f"{idx}. {r['name']} | ₹{r['price']} | {rating_str} | score={r['final_score']}"
-        )
+        print(f"\n\u2705 Wishlist created with {len(wishlist)} items.\n")
+
+        # ---- STEP 2: USER QUERY ----
+        user_text = input("What are you looking for?\n> ").strip()
+
+        if not user_text:
+            print("\u274c No input provided.")
+            sys.exit()
+
+        output = intra_recommend_compare(user_text, wishlist)
+
+        print("\n\U0001f9e0 Detected Intent:")
+        print(json.dumps(format_intent_for_display(output["intent"]), indent=2))
+
+        if not output["results"]:
+            print("\n\u274c No matching products found in your wishlist.")
+            sys.exit()
+
+        print("\n\U0001f3c6 Ranked Products:\n")
+
+        for idx, r in enumerate(output["results"], start=1):
+            rating_str = f"\u2b50 {r['rating']}" if r["rating"] else "\u2b50 N/A"
+            print(
+                f"{idx}. {r['id']} | {r['name']} | \u20b9{r['price']} | {rating_str} | score={r['final_score']}"
+            )

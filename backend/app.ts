@@ -6,6 +6,7 @@ import roomRoutes from './modules/room/room.routes';
 import arRoutes from './modules/ar/ar.routes';
 import ecommerceRoutes from './modules/ecommerce/ecommerce.routes';
 import aiRoutes from './modules/ai/ai.routes';
+import comparisonRoutes from './modules/comparison/comparison.routes';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use('/api/rooms', roomRoutes);
 app.use('/api/ar', arRoutes);
 app.use('/api/ecommerce', ecommerceRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/comparison', comparisonRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {

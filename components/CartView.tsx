@@ -94,8 +94,8 @@ const CartView: React.FC<CartViewProps> = ({
                                         </div>
 
                                         <div className="text-right min-w-[80px]">
-                                            <p className="font-bold text-lg">${item.price * item.qty}</p>
-                                            <p className="text-[10px] text-black/30 font-bold uppercase tracking-tighter">${item.price} / unit</p>
+                                            <p className="font-bold text-lg">₹{item.price * item.qty}</p>
+                                            <p className="text-[10px] text-black/30 font-bold uppercase tracking-tighter">₹{item.price} / unit</p>
                                         </div>
 
                                         <button
@@ -126,15 +126,15 @@ const CartView: React.FC<CartViewProps> = ({
                         <div className="space-y-4">
                             <div className="flex justify-between text-sm">
                                 <span className="text-black/40 font-bold uppercase tracking-widest">Subtotal</span>
-                                <span className="font-bold">${subtotal}</span>
+                                <span className="font-bold">₹{subtotal}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-black/40 font-bold uppercase tracking-widest">Shipping</span>
-                                <span className="font-bold">{shipping === 0 ? 'FREE' : `$${shipping}`}</span>
+                                <span className="font-bold">{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
                             </div>
                             <div className="pt-4 border-t border-black/5 flex justify-between items-end">
                                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Total</span>
-                                <span className="text-4xl font-bold tracking-tighter">${total}</span>
+                                <span className="text-4xl font-bold tracking-tighter">₹{total}</span>
                             </div>
                         </div>
 
