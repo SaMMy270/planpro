@@ -53,6 +53,13 @@ export interface RoomOpening {
   offset: number; // 0 to 1
 }
 
+export interface ComparisonResult {
+  competitor: string;
+  productName: string;
+  price: string;
+  url: string;
+  keyDifference: string;
+}
 export interface RoomData {
   shape: RoomShape;
   dimensions: {

@@ -1,14 +1,13 @@
-import React, { useState, Suspense, useEffect, useRef } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { XR, ARButton, createXRStore, useXR } from "@react-three/xr";
-import { useGLTF, OrbitControls, ContactShadows } from "@react-three/drei";
+import { XR, ARButton, createXRStore, useXR, Interactive } from "@react-three/xr";
+import { useGLTF, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { toast } from "sonner";
 
 
 function Model({ url, position, index, draggable, onPointerDown, onPointerMove, onPointerUp, onLoadSize }: { url: string; position: THREE.Vector3; index?: number; draggable?: boolean; onPointerDown?: (e: any, i?: number)=>void; onPointerMove?: (e: any, i?: number)=>void; onPointerUp?: (e: any, i?: number)=>void; onLoadSize?: (i:number, size:THREE.Vector3)=>void }) {
-  const ref = useRef<THREE.Group | null>(null);
-  const reportedRef = useRef(false);
+  const ref = React.useRef<THREE.Group | null>(null);
+  const reportedRef = React.useRef(false);
 
   // defensive read of the glTF result
   const gltf: any = useGLTF(url);
@@ -20,7 +19,7 @@ function Model({ url, position, index, draggable, onPointerDown, onPointerMove, 
   scene.position.set(0, 0, 0);
 
   // compute bounding box and report size once
-  useEffect(() => {
+  React.useEffect(() => {
     if (reportedRef.current) return;
     try {
       const box = new THREE.Box3().setFromObject(scene);
@@ -69,7 +68,7 @@ function Scene({ models, placed, selectedIndex, onDragStart, onDragMove, onDragE
   const { session } = useXR();
 
   // Setup hit-test based dragging when an XR session is active
-  useEffect(() => {
+  React.useEffect(() => {
     if (!gl || !gl.xr) return;
     const xrSession = gl.xr.getSession();
     if (!xrSession) return;
@@ -237,17 +236,6 @@ export default function MultiARScene({ modelData, initialSelectedIndex = 0 }: { 
   const [xrSupported, setXrSupported] = useState<boolean | null>(null);
   const [secureContext, setSecureContext] = useState<boolean>(false);
   const [arStatus, setArStatus] = useState<'none' | 'scanning' | 'locked'>('none');
-
-  const { session } = useXR();
-  useEffect(() => {
-    if (session) {
-      if (arStatus === 'scanning') {
-        toast.info("Scanning floor... move phone slowly.", { id: 'ar-scan', duration: 4000 });
-      } else if (arStatus === 'locked') {
-        toast.success("Surface detected! Place your items.", { id: 'ar-scan' });
-      }
-    }
-  }, [arStatus, session]);
 
   // create a single XR store instance
   const store = createXRStore();
@@ -432,7 +420,14 @@ export default function MultiARScene({ modelData, initialSelectedIndex = 0 }: { 
         </div>
       </div>
 
-      {/* Status Notifications via Toasts handled in useEffect or trigger */}
+      {/* Status Overlay */}
+      {arStatus === 'scanning' && (
+          <div style={{ position: 'fixed', top: '25%', width: '100%', textAlign: 'center', zIndex: 2500, pointerEvents: 'none' }}>
+              <p style={{ background: 'rgba(0,0,0,0.7)', color: 'white', display: 'inline-block', padding: '10px 20px', borderRadius: '20px', fontSize: '14px' }}>
+                  Scanning floor... move phone slowly.
+              </p>
+          </div>
+      )}
 
       {/* Rescan Button (Floating Top Right in AR) */}
       {secureContext && xrSupported && (
@@ -514,8 +509,8 @@ export default function MultiARScene({ modelData, initialSelectedIndex = 0 }: { 
             makeDefault 
         />
         <gridHelper args={[10, 20, 0xcccccc, 0xeeeeee]} position={[0, -0.01, 0]} />
-        <ContactShadows opacity={0.4} scale={10} blur={2.4} far={0.8} />
+        
       </Canvas>
     </div>
   );
-}
+}

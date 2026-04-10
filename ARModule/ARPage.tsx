@@ -45,4 +45,4 @@ const ARPage: React.FC = () => {
   );
 };
 
-export default ARPage;
+export default ARPage;

@@ -1,3 +1,4 @@
+import React from 'react';
 /// <reference types="vite/client" />
 
 declare module '*.png';
@@ -6,6 +7,7 @@ declare module '*.jpeg';
 declare module '*.svg';
 declare module '*.glb';
 declare module '*.obj';
+declare module '@google/model-viewer';
 
 interface ImportMetaEnv {
     readonly VITE_SUPABASE_URL: string;
@@ -18,4 +20,24 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
     readonly env: ImportMetaEnv;
+}
+
+
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        src?: string;
+        ar?: boolean;
+        'ar-modes'?: string;
+        'ar-placement'?: string;
+        'camera-controls'?: boolean;
+        'auto-rotate'?: boolean;
+        'shadow-intensity'?: string;
+        style?: React.CSSProperties; 
+        // Add other model-viewer specific props as needed
+      };
+    }
+  }
 }

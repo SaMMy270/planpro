@@ -1,221 +1,221 @@
 
-import { Product } from '../types';
+import { Product } from './types';
 
-import cs1 from '../assets/cs1.jpg';
-import cs2 from '../assets/cs2.jpg';
-import cs3 from '../assets/cs3.jpg';
-import cs4 from '../assets/cs4.jpg';
-import cs5 from '../assets/cs5.jpg';
+import cs1 from './assets/cs1.jpg';
+import cs2 from './assets/cs2.jpg';
+import cs3 from './assets/cs3.jpg';
+import cs4 from './assets/cs4.jpg';
+import cs5 from './assets/cs5.jpg';
 
-import ch1 from '../assets/ch1.jpg';
-import ch2 from '../assets/ch2.jpg';
-import ch3 from '../assets/ch3.jpg';
-import ch4 from '../assets/ch4.jpg';
-import ch5 from '../assets/ch5.jpg';
+import ch1 from './assets/ch1.jpg';
+import ch2 from './assets/ch2.jpg';
+import ch3 from './assets/ch3.jpg';
+import ch4 from './assets/ch4.jpg';
+import ch5 from './assets/ch5.jpg';
 
-import dc1 from '../assets/dc1.jpg';
-import dc2 from '../assets/dc2.jpg';
-import dc3 from '../assets/dc3.jpg';
-import dc4 from '../assets/dc4.jpg';
-import dc5 from '../assets/dc5.jpg';
+import dc1 from './assets/dc1.jpg';
+import dc2 from './assets/dc2.jpg';
+import dc3 from './assets/dc3.jpg';
+import dc4 from './assets/dc4.jpg';
+import dc5 from './assets/dc5.jpg';
 
-import g1 from '../assets/g1.jpg';
-import g2 from '../assets/g2.jpg';
-import g3 from '../assets/g3.jpg';
-import g4 from '../assets/g4.jpg';
-import g5 from '../assets/g5.jpg';
+import g1 from './assets/g1.jpg';
+import g2 from './assets/g2.jpg';
+import g3 from './assets/g3.jpg';
+import g4 from './assets/g4.jpg';
+import g5 from './assets/g5.jpg';
 
-import c1 from '../assets/c1.png';
-import c2 from '../assets/c2.jpg';
-import c3 from '../assets/c3.jpg';
-import c4 from '../assets/c4.jpg';
-import c5 from '../assets/c5.jpg';
+import c1 from './assets/c1.png';
+import c2 from './assets/c2.jpg';
+import c3 from './assets/c3.jpg';
+import c4 from './assets/c4.jpg';
+import c5 from './assets/c5.jpg';
 
-import d1 from '../assets/d1.png';
-import d2 from '../assets/d2.png';
-import d3 from '../assets/d3.jpg';
-import d4 from '../assets/d4.png';
-import d5 from '../assets/d5.png';
+import d1 from './assets/d1.png';
+import d2 from './assets/d2.png';
+import d3 from './assets/d3.jpg';
+import d4 from './assets/d4.png';
+import d5 from './assets/d5.png';
 
-import st1 from '../assets/st1.png';
-import st2 from '../assets/st2.png';
-import st3 from '../assets/st3.png';
-import st4 from '../assets/st4.png';
-import st5 from '../assets/st5.png';
+import st1 from './assets/st1.png';
+import st2 from './assets/st2.png';
+import st3 from './assets/st3.png';
+import st4 from './assets/st4.png';
+import st5 from './assets/st5.png';
 
-import r1 from '../assets/r1.jpg';
-import r2 from '../assets/r2.jpg';
-import r3 from '../assets/r3.jpg';
-import r4 from '../assets/r4.jpg';
-import r5 from '../assets/r5.jpg';
+import r1 from './assets/r1.jpg';
+import r2 from './assets/r2.jpg';
+import r3 from './assets/r3.jpg';
+import r4 from './assets/r4.jpg';
+import r5 from './assets/r5.jpg';
 
-import ss1 from '../assets/ss1.jpg';
-import ss2 from '../assets/ss2.jpg';
-import ss3 from '../assets/ss3.jpg';
-import ss4 from '../assets/ss4.jpg';
-import ss5 from '../assets/ss5.jpg';
+import ss1 from './assets/ss1.jpg';
+import ss2 from './assets/ss2.jpg';
+import ss3 from './assets/ss3.jpg';
+import ss4 from './assets/ss4.jpg';
+import ss5 from './assets/ss5.jpg';
 
-import sc1 from '../assets/sc1.jpg';
-import sc2 from '../assets/sc2.jpg';
-import sc3 from '../assets/sc3.jpg';
-import sc4 from '../assets/sc4.jpg';
-import sc5 from '../assets/sc5.jpg';
+import sc1 from './assets/sc1.jpg';
+import sc2 from './assets/sc2.jpg';
+import sc3 from './assets/sc3.jpg';
+import sc4 from './assets/sc4.jpg';
+import sc5 from './assets/sc5.jpg';
 
-import cp1 from '../assets/cp1.jpg';
-import cp2 from '../assets/cp2.jpg';
-import cp3 from '../assets/cp3.jpg';
-import cp4 from '../assets/cp4.jpg';
-import cp5 from '../assets/cp5.jpg';
+import cp1 from './assets/cp1.jpg';
+import cp2 from './assets/cp2.jpg';
+import cp3 from './assets/cp3.jpg';
+import cp4 from './assets/cp4.jpg';
+import cp5 from './assets/cp5.jpg';
 
-import s1 from '../assets/s1.jpg';
-import s2 from '../assets/s2.jpg';
-import s3 from '../assets/s3.jpg';
-import s4 from '../assets/s4.jpg';
-import s5 from '../assets/s5.jpg';
+import s1 from './assets/s1.jpg';
+import s2 from './assets/s2.jpg';
+import s3 from './assets/s3.jpg';
+import s4 from './assets/s4.jpg';
+import s5 from './assets/s5.jpg';
 
-import sr1 from '../assets/sr1.jpg';
-import sr2 from '../assets/sr2.jpg';
-import sr3 from '../assets/sr3.jpg';
-import sr4 from '../assets/sr4.jpg';
-import sr5 from '../assets/sr5.jpg';
+import sr1 from './assets/sr1.jpg';
+import sr2 from './assets/sr2.jpg';
+import sr3 from './assets/sr3.jpg';
+import sr4 from './assets/sr4.jpg';
+import sr5 from './assets/sr5.jpg';
 
-import q1 from '../assets/q1.jpg';
-import q2 from '../assets/q2.jpg';
-import q3 from '../assets/q3.jpg';
-import q4 from '../assets/q4.jpg';
-import q5 from '../assets/q5.jpg';
+import q1 from './assets/q1.jpg';
+import q2 from './assets/q2.jpg';
+import q3 from './assets/q3.jpg';
+import q4 from './assets/q4.jpg';
+import q5 from './assets/q5.jpg';
 
-import sb1 from '../assets/sb1.jpg';
-import sb2 from '../assets/sb2.jpg';
-import sb3 from '../assets/sb3.jpg';
-import sb4 from '../assets/sb4.jpg';
-import sb5 from '../assets/sb5.jpg';
+import sb1 from './assets/sb1.jpg';
+import sb2 from './assets/sb2.jpg';
+import sb3 from './assets/sb3.jpg';
+import sb4 from './assets/sb4.jpg';
+import sb5 from './assets/sb5.jpg';
 
-import db1 from '../assets/db1.jpg';
-import db2 from '../assets/db2.jpg';
-import db3 from '../assets/db3.jpg';
-import db4 from '../assets/db4.jpg';
-import db5 from '../assets/db5.jpg';
+import db1 from './assets/db1.jpg';
+import db2 from './assets/db2.jpg';
+import db3 from './assets/db3.jpg';
+import db4 from './assets/db4.jpg';
+import db5 from './assets/db5.jpg';
 
-import k1 from '../assets/k1.jpg';
-import k2 from '../assets/k2.jpg';
-import k3 from '../assets/k3.jpg';
-import k4 from '../assets/k4.jpg';
-import k5 from '../assets/k5.jpg';
+import k1 from './assets/k1.jpg';
+import k2 from './assets/k2.jpg';
+import k3 from './assets/k3.jpg';
+import k4 from './assets/k4.jpg';
+import k5 from './assets/k5.jpg';
 
-import rc1 from '../assets/rc1.jpg';
-import rc2 from '../assets/rc2.jpg';
-import rc3 from '../assets/rc3.jpg';
-import rc4 from '../assets/rc4.jpg';
-import rc5 from '../assets/rc5.jpg';
+import rc1 from './assets/rc1.jpg';
+import rc2 from './assets/rc2.jpg';
+import rc3 from './assets/rc3.jpg';
+import rc4 from './assets/rc4.jpg';
+import rc5 from './assets/rc5.jpg';
 
 // Models imports
 // Tables
-import c1_model from '../models/coffee table models/c1.glb';
-import c2_model from '../models/coffee table models/c2.glb';
-import c3_model from '../models/coffee table models/c3.glb';
-import c4_model from '../models/coffee table models/c4.glb';
-import c5_model from '../models/coffee table models/c5.glb';
+import c1_model from './models/coffee table models/c1.glb?url';
+import c2_model from './models/coffee table models/c2.glb?url';
+import c3_model from './models/coffee table models/c3.glb?url';
+import c4_model from './models/coffee table models/c4.glb?url';
+import c5_model from './models/coffee table models/c5.glb?url';
 
-import d1_model from '../models/Dinning table models/d1.glb';
-import d2_model from '../models/Dinning table models/d2.glb';
-import d3_model from '../models/Dinning table models/d3.glb';
-import d4_model from '../models/Dinning table models/d4.glb';
-import d5_model from '../models/Dinning table models/d5.glb';
+import d1_model from './models/Dinning table models/d1.glb?url';
+import d2_model from './models/Dinning table models/d2.glb?url';
+import d3_model from './models/Dinning table models/d3.glb?url';
+import d4_model from './models/Dinning table models/d4.glb?url';
+import d5_model from './models/Dinning table models/d5.glb?url';
 
-import st1_model from '../models/Study table models/Study table models/st1.glb';
-import st2_model from '../models/Study table models/Study table models/st2.glb';
-import st3_model from '../models/Study table models/Study table models/st3.glb';
-import st4_model from '../models/Study table models/Study table models/st4.glb';
-import st5_model from '../models/Study table models/Study table models/st5.glb';
+import st1_model from './models/Study table models/Study table models/st1.glb?url';
+import st2_model from './models/Study table models/Study table models/st2.glb?url';
+import st3_model from './models/Study table models/Study table models/st3.glb?url';
+import st4_model from './models/Study table models/Study table models/st4.glb?url';
+import st5_model from './models/Study table models/Study table models/st5.glb?url';
 
 // Sofas
-import r1_model from '../models/recliner models/r1.glb';
-import r2_model from '../models/recliner models/r2.glb';
-import r3_model from '../models/recliner models/r3.glb';
-import r4_model from '../models/recliner models/r4.glb';
-import r5_model from '../models/recliner models/r5.glb';
+import r1_model from './models/recliner models/r1.glb?url';
+import r2_model from './models/recliner models/r2.glb?url';
+import r3_model from './models/recliner models/r3.glb?url';
+import r4_model from './models/recliner models/r4.glb?url';
+import r5_model from './models/recliner models/r5.glb?url';
 
-import ss1_model from '../models/sofaset models/ss1.glb';
-import ss2_model from '../models/sofaset models/ss2.glb';
-import ss3_model from '../models/sofaset models/ss3.glb';
-import ss4_model from '../models/sofaset models/ss4.glb';
-import ss5_model from '../models/sofaset models/ss5.glb';
+import ss1_model from './models/sofaset models/ss1.glb?url';
+import ss2_model from './models/sofaset models/ss2.glb?url';
+import ss3_model from './models/sofaset models/ss3.glb?url';
+import ss4_model from './models/sofaset models/ss4.glb?url';
+import ss5_model from './models/sofaset models/ss5.glb?url';
 
-import sc1_model from '../models/sofacumbed models/sofacumbed models/sc1.glb';
-import sc2_model from '../models/sofacumbed models/sofacumbed models/sc2.obj';
-import sc3_model from '../models/sofacumbed models/sofacumbed models/sc3.glb';
-import sc4_model from '../models/sofacumbed models/sofacumbed models/sc4.glb';
-import sc5_model from '../models/sofacumbed models/sofacumbed models/sc5.glb';
+import sc1_model from './models/sofacumbed models/sofacumbed models/sc1.glb?url';
+import sc2_model from './models/sofacumbed models/sofacumbed models/sc2.obj';
+import sc3_model from './models/sofacumbed models/sofacumbed models/sc3.glb?url';
+import sc4_model from './models/sofacumbed models/sofacumbed models/sc4.glb?url';
+import sc5_model from './models/sofacumbed models/sofacumbed models/sc5.glb?url';
 
 // Storage
-import cp1_model from '../models/cupboard models/cp1.glb';
-import cp2_model from '../models/cupboard models/cp2.glb';
-import cp3_model from '../models/cupboard models/cp3.glb';
-import cp4_model from '../models/cupboard models/cp4.glb';
-import cp5_model from '../models/cupboard models/cp5.glb';
+import cp1_model from './models/cupboard models/cp1.glb?url';
+import cp2_model from './models/cupboard models/cp2.glb?url';
+import cp3_model from './models/cupboard models/cp3.glb?url';
+import cp4_model from './models/cupboard models/cp4.glb?url';
+import cp5_model from './models/cupboard models/cp5.glb?url';
 
-import sr1_model from '../models/shoerack models/sr1.glb';
-import sr2_model from '../models/shoerack models/sr2.glb';
-import sr3_model from '../models/shoerack models/sr3.glb';
-import sr4_model from '../models/shoerack models/sr4.glb';
-import sr5_model from '../models/shoerack models/sr5.glb';
+import sr1_model from './models/shoerack models/sr1.glb?url';
+import sr2_model from './models/shoerack models/sr2.glb?url';
+import sr3_model from './models/shoerack models/sr3.glb?url';
+import sr4_model from './models/shoerack models/sr4.glb?url';
+import sr5_model from './models/shoerack models/sr5.glb?url';
 
 // Chairs
-import cs1_model from '../models/casual chair models/cs1.glb';
-import cs2_model from '../models/casual chair models/cs2.glb';
-import cs3_model from '../models/casual chair models/cs3.glb';
-import cs4_model from '../models/casual chair models/cs4.glb';
-import cs5_model from '../models/casual chair models/cs5.glb';
+import cs1_model from './models/casual chair models/cs1.glb?url';
+import cs2_model from './models/casual chair models/cs2.glb?url';
+import cs3_model from './models/casual chair models/cs3.glb?url';
+import cs4_model from './models/casual chair models/cs4.glb?url';
+import cs5_model from './models/casual chair models/cs5.glb?url';
 
-import ch1_model from '../models/office chair models/office chair models/ch1.glb';
-import ch2_model from '../models/office chair models/office chair models/ch2.glb';
-import ch3_model from '../models/office chair models/office chair models/ch3.glb';
-import ch4_model from '../models/office chair models/office chair models/ch4.glb';
-import ch5_model from '../models/office chair models/office chair models/ch5.glb';
+import ch1_model from './models/office chair models/office chair models/ch1.glb?url';
+import ch2_model from './models/office chair models/office chair models/ch2.glb?url';
+import ch3_model from './models/office chair models/office chair models/ch3.glb?url';
+import ch4_model from './models/office chair models/office chair models/ch4.glb?url';
+import ch5_model from './models/office chair models/office chair models/ch5.glb?url';
 
-import dc1_model from '../models/dinning chair models/dc1.glb';
-import dc2_model from '../models/dinning chair models/dc2.glb';
-import dc3_model from '../models/dinning chair models/dc3.glb';
-import dc4_model from '../models/dinning chair models/dc4.glb';
-import dc5_model from '../models/dinning chair models/dc5.glb';
+import dc1_model from './models/dinning chair models/dc1.glb?url';
+import dc2_model from './models/dinning chair models/dc2.glb?url';
+import dc3_model from './models/dinning chair models/dc3.glb?url';
+import dc4_model from './models/dinning chair models/dc4.glb?url';
+import dc5_model from './models/dinning chair models/dc5.glb?url';
 
-import g1_model from '../models/gaming chair moodels/G1.glb';
-import g2_model from '../models/gaming chair moodels/G2.glb';
-import g3_model from '../models/gaming chair moodels/G3.glb';
-import g4_model from '../models/gaming chair moodels/G4.glb';
-import g5_model from '../models/gaming chair moodels/G5.glb';
+import g1_model from './models/gaming chair moodels/G1.glb?url';
+import g2_model from './models/gaming chair moodels/G2.glb?url';
+import g3_model from './models/gaming chair moodels/G3.glb?url';
+import g4_model from './models/gaming chair moodels/G4.glb?url';
+import g5_model from './models/gaming chair moodels/G5.glb?url';
 
-import rc1_model from '../models/rocking chair models/rc1.glb';
-import rc2_model from '../models/rocking chair models/rc2.glb';
-import rc3_model from '../models/rocking chair models/rc3.glb';
-import rc4_model from '../models/rocking chair models/rc4.glb';
-import rc5_model from '../models/rocking chair models/rc5.glb';
+import rc1_model from './models/rocking chair models/rc1.glb?url';
+import rc2_model from './models/rocking chair models/rc2.glb?url';
+import rc3_model from './models/rocking chair models/rc3.glb?url';
+import rc4_model from './models/rocking chair models/rc4.glb?url';
+import rc5_model from './models/rocking chair models/rc5.glb?url';
 
 // Beds
-import q1_model from '../models/queen bed models/q1.glb';
-import q2_model from '../models/queen bed models/q2.glb';
-import q3_model from '../models/queen bed models/q3.glb';
-import q4_model from '../models/queen bed models/q4.glb';
-import q5_model from '../models/queen bed models/q5.glb';
+import q1_model from './models/queen bed models/q1.glb?url';
+import q2_model from './models/queen bed models/q2.glb?url';
+import q3_model from './models/queen bed models/q3.glb?url';
+import q4_model from './models/queen bed models/q4.glb?url';
+import q5_model from './models/queen bed models/q5.glb?url';
 
-import sb1_model from '../models/single bed models/single bed modesl/sb1.glb';
-import sb2_model from '../models/single bed models/single bed modesl/sb2.glb';
-import sb3_model from '../models/single bed models/single bed modesl/sb3.glb';
-import sb4_model from '../models/single bed models/single bed modesl/sb4.glb';
-import sb5_model from '../models/single bed models/single bed modesl/sb5.glb';
+import sb1_model from './models/single bed models/single bed modesl/sb1.glb?url';
+import sb2_model from './models/single bed models/single bed modesl/sb2.glb?url';
+import sb3_model from './models/single bed models/single bed modesl/sb3.glb?url';
+import sb4_model from './models/single bed models/single bed modesl/sb4.glb?url';
+import sb5_model from './models/single bed models/single bed modesl/sb5.glb?url';
 
-import db1_model from '../models/double bed models/double bed models/db1.glb';
-import db2_model from '../models/double bed models/double bed models/db2.glb';
-import db3_model from '../models/double bed models/double bed models/db3.glb';
-import db4_model from '../models/double bed models/double bed models/db4.glb';
-import db5_model from '../models/double bed models/double bed models/db5.glb';
+import db1_model from './models/double bed models/double bed models/db1.glb?url';
+import db2_model from './models/double bed models/double bed models/db2.glb?url';
+import db3_model from './models/double bed models/double bed models/db3.glb?url';
+import db4_model from './models/double bed models/double bed models/db4.glb?url';
+import db5_model from './models/double bed models/double bed models/db5.glb?url';
 
-import k1_model from '../models/king bed models/k1.glb';
-import k2_model from '../models/king bed models/k2.glb';
-import k3_model from '../models/king bed models/k3.glb';
-import k4_model from '../models/king bed models/k4.glb';
-import k5_model from '../models/king bed models/k5.glb';
+import k1_model from './models/king bed models/k1.glb?url';
+import k2_model from './models/king bed models/k2.glb?url';
+import k3_model from './models/king bed models/k3.glb?url';
+import k4_model from './models/king bed models/k4.glb?url';
+import k5_model from './models/king bed models/k5.glb?url';
 
 
 export const PRODUCTS: Product[] = [
@@ -232,8 +232,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '36"D x 16"H',
     material: 'Carrara Marble, Brass',
     rating: 4.9,
-    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.8, comment: 'Modern design and easy to assemble.' }, { user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.' }],
-    model: c1_model
+    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.', date: '2022-01-01'  }, { user: 'Ananya', rating: 4.8, comment: 'Modern design and easy to assemble.', date: '2022-01-01' }, { user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.', date: '2022-01-01' }],
+    model: c1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-coffee-2',
@@ -247,8 +249,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '34"D x 15"H',
     material: 'Tempered Glass, Ash Wood',
     rating: 4.7,
-    reviews: [{ user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.6, comment: 'Good value for money and sturdy build.' }],
-    model: c2_model
+    reviews: [{ user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.6, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: c2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-coffee-3',
@@ -262,8 +266,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '42"W x 24"D x 17"H',
     material: 'Solid Oak',
     rating: 4.8,
-    reviews: [{ user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.5, comment: 'Good value for money and sturdy build.' }],
-    model: c3_model
+    reviews: [{ user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.5, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: c3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-coffee-4',
@@ -277,8 +283,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '30"D x 14"H',
     material: 'Powder-coated Steel',
     rating: 4.6,
-    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.' }],
-    model: c4_model
+    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: c4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-coffee-5',
@@ -292,8 +300,10 @@ export const PRODUCTS: Product[] = [
     dimensions: 'Various',
     material: 'MDF, Bamboo',
     rating: 4.8,
-    reviews: [{ user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.' }],
-    model: c5_model
+    reviews: [{ user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: c5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-dining-1',
@@ -307,8 +317,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '84"W x 40"D x 30"H',
     material: 'Solid Walnut',
     rating: 5.0,
-    reviews: [{ user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.' }],
-    model: d1_model
+    reviews: [{ user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: d1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-dining-2',
@@ -322,8 +334,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '72"W x 36"D x 30"H',
     material: 'Glass, Chrome',
     rating: 4.8,
-    reviews: [{ user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.0, comment: 'Exactly what I was looking for.' }],
-    model: d2_model
+    reviews: [{ user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.0, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: d2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-dining-3',
@@ -337,8 +351,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '78"W x 38"D x 30"H',
     material: 'Reclaimed Oak',
     rating: 4.7,
-    reviews: [{ user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }],
-    model: d3_model
+    reviews: [{ user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: d3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-dining-4',
@@ -352,8 +368,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '60"D x 30"H',
     material: 'Marble, Iron',
     rating: 4.9,
-    reviews: [{ user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }],
-    model: d4_model
+    reviews: [{ user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: d4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-dining-5',
@@ -367,8 +385,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '30"D x 30"H',
     material: 'Laminate, Aluminum',
     rating: 4.6,
-    reviews: [{ user: 'Kabir', rating: 4.0, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }],
-    model: d5_model
+    reviews: [{ user: 'Kabir', rating: 4.0, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: d5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-study-1',
@@ -382,8 +402,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '55"W x 28"D x 29"H',
     material: 'Oak, Steel',
     rating: 4.7,
-    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }, { user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }],
-    model: st1_model
+    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: st1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-study-2',
@@ -397,8 +419,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '70"W x 60"D x 30"H',
     material: 'Mahogany Veneer',
     rating: 4.9,
-    reviews: [{ user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.' }],
-    model: st2_model
+    reviews: [{ user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: st2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-study-3',
@@ -412,8 +436,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '42"W x 20"D x 30"H',
     material: 'Painted Wood',
     rating: 4.5,
-    reviews: [{ user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }],
-    model: st3_model
+    reviews: [{ user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: st3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-study-4',
@@ -427,8 +453,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '60"W x 30"D x 28-48"H',
     material: 'Bamboo',
     rating: 4.8,
-    reviews: [{ user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }],
-    model: st4_model
+    reviews: [{ user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: st4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 't-study-5',
@@ -442,8 +470,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '48"W x 36"D x 36"H',
     material: 'Steel, Pine',
     rating: 4.6,
-    reviews: [{ user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }],
-    model: st5_model
+    reviews: [{ user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: st5_model,
+    texture:'' ,
+    productUrl: '',
   },
 
   // SOFAS
@@ -459,8 +489,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '35"W x 38"D x 40"H',
     material: 'Top-grain Leather',
     rating: 4.9,
-    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }],
-    model: r1_model
+    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: r1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-recliner-2',
@@ -474,8 +506,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '32"W x 34"D x 38"H',
     material: 'Performance Fabric',
     rating: 4.7,
-    reviews: [{ user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Kabir', rating: 4.7, comment: 'Good value for money and sturdy build.' }],
-    model: r2_model
+    reviews: [{ user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.7, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: r2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-recliner-3',
@@ -489,8 +523,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '40"W x 42"D x 44"H',
     material: 'Faux Leather',
     rating: 4.8,
-    reviews: [{ user: 'Ananya', rating: 5.0, comment: 'Modern design and easy to assemble.' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.' }],
-    model: r3_model
+    reviews: [{ user: 'Ananya', rating: 5.0, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: r3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-recliner-4',
@@ -504,8 +540,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '29"W x 35"D x 39"H',
     material: 'Linen Blend',
     rating: 4.5,
-    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }],
-    model: r4_model
+    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: r4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-recliner-5',
@@ -519,8 +557,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '33"W x 60"D x 48"H',
     material: 'Premium Synthetic Leather',
     rating: 5.0,
-    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }],
-    model: r5_model
+    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: r5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofaset-1',
@@ -534,8 +574,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '120"W x 120"D x 32"H',
     material: 'Velvet, Kiln-dried Hardwood',
     rating: 4.8,
-    reviews: [{ user: 'Kabir', rating: 4.7, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }],
-    model: ss1_model
+    reviews: [{ user: 'Kabir', rating: 4.7, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: ss1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofaset-2',
@@ -549,8 +591,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '110"W x 85"D x 30"H',
     material: 'Performance Fabric',
     rating: 4.7,
-    reviews: [{ user: 'Ananya', rating: 5.0, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }],
-    model: ss2_model
+    reviews: [{ user: 'Ananya', rating: 5.0, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: ss2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofaset-3',
@@ -564,8 +608,10 @@ export const PRODUCTS: Product[] = [
     dimensions: 'Total: 140"W x 90"D x 36"H',
     material: 'Top-grain Leather',
     rating: 4.9,
-    reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.0, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 5.0, comment: 'Great quality and very comfortable.' }],
-    model: ss3_model
+    reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.0, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Aarav', rating: 5.0, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: ss3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofaset-4',
@@ -579,8 +625,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '88"W x 35"D x 34"H',
     material: 'Textured Weave',
     rating: 4.6,
-    reviews: [{ user: 'Riya', rating: 4.1, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.' }],
-    model: ss4_model
+    reviews: [{ user: 'Riya', rating: 4.1, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: ss4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofaset-5',
@@ -594,8 +642,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '100"W x 100"D x 28"H',
     material: 'Down-filled Linen',
     rating: 4.8,
-    reviews: [{ user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }],
-    model: ss5_model
+    reviews: [{ user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: ss5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofacumbed-1',
@@ -609,8 +659,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '80"W x 36"D x 34"H',
     material: 'Linen Blend',
     rating: 4.6,
-    reviews: [{ user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }, { user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.' }],
-    model: sc1_model
+    reviews: [{ user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: sc1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofacumbed-2',
@@ -624,8 +676,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '75"W x 34"D x 32"H',
     material: 'Chenille Fabric',
     rating: 4.5,
-    reviews: [{ user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.' }, { user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.' }],
-    model: sc2_model
+    reviews: [{ user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: sc2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofacumbed-3',
@@ -639,8 +693,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '85"W x 38"D x 36"H',
     material: 'Velvet, Memory Foam',
     rating: 4.8,
-    reviews: [{ user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }],
-    model: sc3_model
+    reviews: [{ user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: sc3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofacumbed-4',
@@ -654,8 +710,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '78"W x 40"D x 30"H',
     material: 'Cotton Twill, Birch',
     rating: 4.7,
-    reviews: [{ user: 'Ananya', rating: 4.9, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.' }],
-    model: sc4_model
+    reviews: [{ user: 'Ananya', rating: 4.9, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: sc4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 's-sofacumbed-5',
@@ -669,8 +727,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '100"W x 65"D x 34"H',
     material: 'Microfiber, Hardwood',
     rating: 4.9,
-    reviews: [{ user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }],
-    model: sc5_model
+    reviews: [{ user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: sc5_model,
+    texture:'' ,
+    productUrl: '',
   },
 
   // STORAGE
@@ -686,8 +746,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '48"W x 22"D x 72"H',
     material: 'Oak, Cane',
     rating: 4.9,
-    reviews: [{ user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.8, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }],
-    model: cp1_model
+    reviews: [{ user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.8, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: cp1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-cupboard-2',
@@ -701,8 +763,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '42"W x 24"D x 78"H',
     material: 'Solid Walnut',
     rating: 4.8,
-    reviews: [{ user: 'Ananya', rating: 4.9, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.' }],
-    model: cp2_model
+    reviews: [{ user: 'Ananya', rating: 4.9, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: cp2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-cupboard-3',
@@ -716,8 +780,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '60"W x 24"D x 84"H',
     material: 'MDF, Melamine',
     rating: 4.6,
-    reviews: [{ user: 'Kabir', rating: 5.0, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }],
-    model: cp3_model
+    reviews: [{ user: 'Kabir', rating: 5.0, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: cp3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-cupboard-4',
@@ -731,8 +797,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '52"W x 26"D x 80"H',
     material: 'Mahogany',
     rating: 4.9,
-    reviews: [{ user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.' }],
-    model: cp4_model
+    reviews: [{ user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: cp4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-cupboard-5',
@@ -746,8 +814,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '30"W x 18"D x 68"H',
     material: 'Pine, Laminate',
     rating: 4.5,
-    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.5, comment: 'Good value for money and sturdy build.' }],
-    model: cp5_model
+    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Kabir', rating: 4.5, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }],
+    model: cp5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shoerack-1',
@@ -761,8 +831,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 8"D x 48"H',
     material: 'Powder-coated Aluminum',
     rating: 4.5,
-    reviews: [{ user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 5.0, comment: 'Great quality and very comfortable.' }],
-    model: sr1_model
+    reviews: [{ user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Aarav', rating: 5.0, comment: 'Great quality and very comfortable.', date:'2026-04-11' }],
+    model: sr1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shoerack-2',
@@ -776,8 +848,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '28"W x 10"D x 20"H',
     material: 'Bamboo',
     rating: 4.6,
-    reviews: [{ user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }],
-    model: sr2_model
+    reviews: [{ user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: sr2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shoerack-3',
@@ -791,8 +865,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '36"W x 14"D x 20"H',
     material: 'Walnut, Steel',
     rating: 4.8,
-    reviews: [{ user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }],
-    model: sr3_model
+    reviews: [{ user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }],
+    model: sr3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shoerack-4',
@@ -806,8 +882,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '16"W x 16"D x 48"H',
     material: 'MDF, Metal',
     rating: 4.7,
-    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 5.0, comment: 'Exactly what I was looking for.' }],
-    model: sr4_model
+    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.', date:'2026-04-11' }, { user: 'Vivaan', rating: 5.0, comment: 'Exactly what I was looking for.', date:'2026-04-11' }],
+    model: sr4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shoerack-5',
@@ -821,8 +899,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '30"W x 10"D x 42"H',
     material: 'Engineered Wood',
     rating: 4.9,
-    reviews: [{ user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.' }],
-    model: sr5_model
+    reviews: [{ user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: sr5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shelf-1',
@@ -835,7 +915,11 @@ export const PRODUCTS: Product[] = [
     description: 'Invisible mounting floating shelf for display.',
     dimensions: '48"W x 10"D x 2"H',
     material: 'Walnut Veneer',
-    rating: 4.8
+    rating: 4.8,
+    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: st1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shelf-2',
@@ -848,7 +932,11 @@ export const PRODUCTS: Product[] = [
     description: 'Wall-mounted industrial shelf with iron pipe brackets.',
     dimensions: '36"W x 12"D x 48"H',
     material: 'Reclaimed Wood, Iron',
-    rating: 4.7
+    rating: 4.7,
+    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: st2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shelf-3',
@@ -861,7 +949,11 @@ export const PRODUCTS: Product[] = [
     description: 'Stackable cube shelving system for customizable storage.',
     dimensions: '30"W x 12"D x 60"H',
     material: 'Engineered Wood',
-    rating: 4.6
+    rating: 4.6,
+    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: st3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shelf-4',
@@ -874,7 +966,11 @@ export const PRODUCTS: Product[] = [
     description: 'Space-saving ladder shelf designed for corners.',
     dimensions: '20"W x 20"D x 68"H',
     material: 'Bamboo',
-    rating: 4.5
+    rating: 4.5,
+    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: st4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'st-shelf-5',
@@ -887,7 +983,11 @@ export const PRODUCTS: Product[] = [
     description: 'Elegant tempered glass shelf unit with chrome supports.',
     dimensions: '32"W x 14"D x 72"H',
     material: 'Tempered Glass, Chrome',
-    rating: 4.9
+    rating: 4.9,
+    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
+    model: st5_model,
+    texture:'' ,
+    productUrl: '',
   },
 
   // CHAIRS - CASUAL (MATCHING PROVIDED IMAGES)
@@ -903,8 +1003,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '32"W x 30"D x 32"H',
     material: 'Premium Bouclé, Solid Oak',
     rating: 5.0,
-    reviews: [{ user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.' }],
-    model: cs1_model
+    reviews: [{ user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.',date:'2026-04-11' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.',date:'2026-04-11' }, { user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.',date:'2026-04-11' }],
+    model: cs1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-casual-2',
@@ -918,8 +1020,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '28"W x 32"D x 34"H',
     material: 'Printed Linen, Mahogany',
     rating: 4.8,
-    reviews: [{ user: 'Riya', rating: 4.0, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.' }],
-    model: cs2_model
+    reviews: [{ user: 'Riya', rating: 4.0, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: cs2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-casual-3',
@@ -933,8 +1037,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '34"W x 36"D x 42"H',
     material: 'Indigo Performance Linen, Walnut',
     rating: 4.9,
-    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.' }],
-    model: cs3_model
+    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.','date':'2026-04-11' }],
+    model: cs3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-casual-4',
@@ -948,8 +1054,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '30"W x 32"D x 46"H',
     material: 'Silk Velvet, Polished Brass',
     rating: 4.9,
-    reviews: [{ user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.' }],
-    model: cs4_model
+    reviews: [{ user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: cs4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-casual-5',
@@ -963,8 +1071,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '32"W x 38"D x 30"H',
     material: 'Cotton Canvas, Dark Walnut',
     rating: 4.7,
-    reviews: [{ user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.' }],
-    model: cs5_model
+    reviews: [{ user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.',date:'2026-04-11' }, { user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.',date:'2026-04-11' }, { user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.',date:'2026-04-11' }],
+    model: cs5_model,
+    texture:'' ,
+    productUrl: '',
   },
 
   // CHAIRS - OFFICE (MATCHING PROVIDED IMAGES)
@@ -980,8 +1090,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '26"W x 26"D x 40"H',
     material: 'Nylon Mesh, Polymer',
     rating: 4.8,
-    reviews: [{ user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }, { user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.' }],
-    model: ch1_model
+    reviews: [{ user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: ch1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-office-2',
@@ -995,8 +1107,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '29"W x 30"D x 46"H',
     material: 'Top-grain Leather, Aluminum',
     rating: 4.9,
-    reviews: [{ user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.' }],
-    model: ch2_model
+    reviews: [{ user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: ch2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-office-3',
@@ -1010,8 +1124,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 24"D x 34"H',
     material: 'Polypropylene, Steel',
     rating: 4.6,
-    reviews: [{ user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }],
-    model: ch3_model
+    reviews: [{ user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: ch3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-office-4',
@@ -1025,8 +1141,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '26"W x 26"D x 48"H',
     material: 'Mesh, Steel',
     rating: 4.7,
-    reviews: [{ user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.9, comment: 'Modern design and easy to assemble.' }],
-    model: ch4_model
+    reviews: [{ user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.9, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: ch4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-office-5',
@@ -1040,8 +1158,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '25"W x 26"D x 38"H',
     material: 'Faux Leather, Chrome',
     rating: 4.5,
-    reviews: [{ user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.' }],
-    model: ch5_model
+    reviews: [{ user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.','date':'2026-04-11'   }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: ch5_model,
+    texture:'' ,
+    productUrl: '',
   },
 
 
@@ -1058,8 +1178,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '18"W x 20"D x 32"H',
     material: 'Polypropylene, Maple',
     rating: 4.9,
-    reviews: [{ user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.' }, { user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.' }],
-    model: dc1_model
+    reviews: [{ user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.','date':'2026-04-11' }],
+    model: dc1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-dining-2',
@@ -1073,8 +1195,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '22"W x 21"D x 29"H',
     material: 'Beech Wood, Paper Cord',
     rating: 4.8,
-    reviews: [{ user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.' }],
-    model: dc2_model
+    reviews: [{ user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.','date':'2026-04-11' }],
+    model: dc2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-dining-3',
@@ -1088,8 +1212,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '20"W x 22"D x 34"H',
     material: 'Velvet, Metal',
     rating: 4.7,
-    reviews: [{ user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }],
-    model: dc3_model
+    reviews: [{ user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: dc3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-dining-4',
@@ -1103,8 +1229,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '18"W x 20"D x 34"H',
     material: 'Leather, Chrome',
     rating: 4.6,
-    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }],
-    model: dc4_model
+    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: dc4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-dining-5',
@@ -1118,8 +1246,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '22"W x 24"D x 36"H',
     material: 'Solid Oak',
     rating: 4.8,
-    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }],
-    model: dc5_model
+    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: dc5_model,
+    texture:'' ,
+    productUrl: '',
   },
 
   // CHAIRS - GAMING
@@ -1135,8 +1265,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '28"W x 26"D x 52"H',
     material: 'PU Leather, Steel',
     rating: 4.8,
-    reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.' }],
-    model: g1_model
+    reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: g1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-gaming-2',
@@ -1150,8 +1282,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '27"W x 27"D x 50"H',
     material: 'Breathable Mesh, ABS',
     rating: 4.6,
-    reviews: [{ user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.' }],
-    model: g2_model
+    reviews: [{ user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: g2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-gaming-3',
@@ -1165,8 +1299,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '28"W x 28"D x 48"H',
     material: 'Fabric, Memory Foam',
     rating: 4.9,
-    reviews: [{ user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }],
-    model: g3_model
+    reviews: [{ user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: g3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-gaming-4',
@@ -1180,8 +1316,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '30"W x 30"D x 54"H',
     material: 'Velvet, Aluminum',
     rating: 5.0,
-    reviews: [{ user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }],
-    model: g4_model
+    reviews: [{ user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: g4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-gaming-5',
@@ -1195,8 +1333,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 32"D x 30"H',
     material: 'Vinyl, Foam',
     rating: 4.5,
-    reviews: [{ user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.' }],
-    model: g5_model
+    reviews: [{ user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: g5_model,
+    texture:'' ,
+    productUrl: '',
   },
   // CHAIRS - ROCKING
   {
@@ -1211,8 +1351,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
     rating: 4.5,
-    reviews: [{ user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.' }],
-    model: rc1_model
+    reviews: [{ user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }],
+    model: rc1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-rocking-2',
@@ -1226,8 +1368,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
     rating: 4.5,
-    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }],
-    model: rc2_model
+    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: rc2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-rocking-3',
@@ -1241,8 +1385,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
     rating: 4.5,
-    reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.' }],
-    model: rc3_model
+    reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.','date':'2026-04-11' }],
+    model: rc3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-rocking-4',
@@ -1256,8 +1402,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
     rating: 4.5,
-    reviews: [{ user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.' }],
-    model: rc4_model
+    reviews: [{ user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }],
+    model: rc4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'c-rocking-5',
@@ -1271,8 +1419,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '24"W x 32"D x 30"H',
     material: 'Oak, Fabric',
     rating: 4.5,
-    reviews: [{ user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.' }],
-    model: rc5_model
+    reviews: [{ user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: rc5_model,
+    texture:'' ,
+    productUrl: '',
   },
 
   // BEDS
@@ -1288,8 +1438,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '66"W x 86"D x 52"H',
     material: 'Velvet, Pine',
     rating: 4.9,
-    reviews: [{ user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.8, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.' }],
-    model: q1_model
+    reviews: [{ user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.8, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Riya', rating: 4.4, comment: 'Looks amazing in my living room.','date':'2026-04-11' }],
+    model: q1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-queen-2',
@@ -1303,8 +1455,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '64"W x 84"D x 36"H',
     material: 'Solid Oak',
     rating: 4.8,
-    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }],
-    model: q2_model
+    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: q2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-queen-3',
@@ -1318,8 +1472,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '68"W x 88"D x 80"H',
     material: 'Wrought Iron',
     rating: 4.7,
-    reviews: [{ user: 'Kabir', rating: 4.0, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }],
-    model: q3_model
+    reviews: [{ user: 'Kabir', rating: 4.0, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.7, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: q3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-queen-4',
@@ -1333,8 +1489,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '65"W x 85"D x 40"H',
     material: 'Engineered Wood, Fabric',
     rating: 4.6,
-    reviews: [{ user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.2, comment: 'Modern design and easy to assemble.' }],
-    model: q4_model
+    reviews: [{ user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.2, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: q4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-queen-5',
@@ -1348,8 +1506,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '66"W x 86"D x 44"H',
     material: 'MDF, Walnut Veneer',
     rating: 5.0,
-    reviews: [{ user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }],
-    model: q5_model
+    reviews: [{ user: 'Riya', rating: 4.9, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: q5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-single-1',
@@ -1363,8 +1523,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
     rating: 4.7,
-    reviews: [{ user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.5, comment: 'Modern design and easy to assemble.' }],
-    model: sb1_model
+    reviews: [{ user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.',  'date':'2026-04-11' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.5, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: sb1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-single-2',
@@ -1378,8 +1540,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
     rating: 4.7,
-    reviews: [{ user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.' }, { user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.' }],
-    model: sb2_model
+    reviews: [{ user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }],
+    model: sb2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-single-3',
@@ -1393,8 +1557,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
     rating: 4.7,
-    reviews: [{ user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.6, comment: 'Good value for money and sturdy build.' }],
-    model: sb3_model
+    reviews: [{ user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.6, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }],
+    model: sb3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-single-4',
@@ -1408,8 +1574,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
     rating: 4.7,
-    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.5, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.' }],
-    model: sb4_model
+    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.5, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: sb4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-single-5',
@@ -1423,8 +1591,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '40"W x 78"D x 12"H',
     material: 'Solid Birch',
     rating: 4.7,
-    reviews: [{ user: 'Kabir', rating: 4.0, comment: 'Good value for money and sturdy build.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }],
-    model: sb5_model
+    reviews: [{ user: 'Kabir', rating: 4.0, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: sb5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-double-1',
@@ -1438,8 +1608,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
     rating: 4.6,
-    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.0, comment: 'Looks amazing in my living room.' }, { user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.' }],
-    model: db1_model
+    reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Riya', rating: 4.0, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.4, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }],
+    model: db1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-double-2',
@@ -1453,8 +1625,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
     rating: 4.6,
-    reviews: [{ user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.' }, { user: 'Ananya', rating: 4.0, comment: 'Modern design and easy to assemble.' }],
-    model: db2_model
+    reviews: [{ user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.8, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.0, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: db2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-double-3',
@@ -1468,8 +1642,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
     rating: 4.6,
-    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }],
-    model: db3_model
+    reviews: [{ user: 'Ananya', rating: 4.7, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }],
+    model: db3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-double-4',
@@ -1483,8 +1659,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
     rating: 4.6,
-    reviews: [{ user: 'Ananya', rating: 4.2, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.' }],
-    model: db4_model
+    reviews: [{ user: 'Ananya', rating: 4.2, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.','date':'2026-04-11' }],
+    model: db4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-double-5',
@@ -1498,8 +1676,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '56"W x 78"D x 40"H',
     material: 'Engineered Wood',
     rating: 4.6,
-    reviews: [{ user: 'Riya', rating: 4.0, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.' }],
-    model: db5_model
+    reviews: [{ user: 'Riya', rating: 4.0, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.0, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: db5_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-king-1',
@@ -1513,8 +1693,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
     rating: 5.0,
-    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.0, comment: 'Modern design and easy to assemble.' }],
-    model: k1_model
+    reviews: [{ user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.','date':'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.0, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }],
+    model: k1_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-king-2',
@@ -1528,8 +1710,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
     rating: 5.0,
-    reviews: [{ user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.' }],
-    model: k2_model
+    reviews: [{ user: 'Kabir', rating: 4.8, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.9, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: k2_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-king-3',
@@ -1543,8 +1727,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
     rating: 5.0,
-    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.' }],
-    model: k3_model
+    reviews: [{ user: 'Riya', rating: 4.2, comment: 'Looks amazing in my living room.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.','date':'2026-04-11' }, { user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.','date':'2026-04-11' }],
+    model: k3_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-king-4',
@@ -1558,8 +1744,10 @@ export const PRODUCTS: Product[] = [
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
     rating: 5.0,
-    reviews: [{ user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.' }],
-    model: k4_model
+    reviews: [{ user: 'Ananya', rating: 4.4, comment: 'Modern design and easy to assemble.',  'date':'2026-04-11' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Vivaan', rating: 4.4, comment: 'Exactly what I was looking for.','date':'2026-04 - 11' }],
+    model: k4_model,
+    texture:'' ,
+    productUrl: '',
   },
   {
     id: 'b-king-5',
@@ -1573,7 +1761,9 @@ export const PRODUCTS: Product[] = [
     dimensions: '110"W x 90"D x 42"H',
     material: 'American Walnut',
     rating: 5.0,
-    reviews: [{ user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.' }, { user: 'Ananya', rating: 4.2, comment: 'Modern design and easy to assemble.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }],
-    model: k5_model
+    reviews: [{ user: 'Kabir', rating: 4.9, comment: 'Good value for money and sturdy build.','date':'2026-04-11' }, { user: 'Ananya', rating: 4.2, comment: 'Modern design and easy to assemble.','date':'2026-04-11' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.','date':'2026-04-11' }],
+    model: k5_model,
+    texture:'' ,
+    productUrl: '',
   }
 ];

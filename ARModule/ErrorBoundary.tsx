@@ -1,12 +1,17 @@
-import React from "react";
+import React, { ReactNode } from "react";
+
+interface Props {
+  children?: ReactNode; // Define children here
+}
 
 interface State {
   hasError: boolean;
   error: Error | null;
 }
 
-export default class ErrorBoundary extends React.Component<{}, State> {
-  constructor(props: {}) {
+// Pass Props as the first generic argument
+export default class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = { hasError: false, error: null };
   }
@@ -16,7 +21,6 @@ export default class ErrorBoundary extends React.Component<{}, State> {
   }
 
   componentDidCatch(error: Error, info: any) {
-    // eslint-disable-next-line no-console
     console.error("ErrorBoundary caught:", error, info);
   }
 
@@ -30,6 +34,6 @@ export default class ErrorBoundary extends React.Component<{}, State> {
       );
     }
 
-    return this.props as React.ReactElement;
+    return this.props.children;
   }
 }

@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: '0.0.0.0',
       // https: true as any,
+      allowedHosts:true
     },
     plugins: [
       react()
