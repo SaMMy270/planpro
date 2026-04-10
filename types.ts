@@ -11,8 +11,10 @@ export interface Product {
   dimensions: string;
   material: string;
   rating: number;
-  reviews?: { user: string; rating: number; comment: string }[];
+  reviews?: { user: string; rating: number; comment: string; date: string; }[];
   model?: string;
+  texture?: string;
+  productUrl: string
 }
 
 export interface ComparisonResult {
@@ -31,6 +33,8 @@ export interface BlueprintItem {
   rotation: number;
   model?: string;
   position?: [number, number, number];
+  color?: string;
+  texture?: string;
   dimensions?: {
     width: number;
     depth: number;
@@ -43,6 +47,7 @@ export interface BlueprintItem {
 export type RoomShape = 'SQUARE' | 'L_SHAPE' | 'T_SHAPE' | 'HEXAGON';
 
 export interface RoomOpening {
+  id?: string;
   type: 'DOOR' | 'WINDOW';
   wallIndex: number;
   offset: number; // 0 to 1
@@ -53,12 +58,15 @@ export interface RoomData {
   dimensions: {
     length: number;
     width: number;
+    ceilingHeight?: number;
     notchL?: number;
     notchW?: number;
   };
   openings: RoomOpening[];
   wallColor: string;
+  wallTexture: 'plain' | 'brick' | 'concrete' | 'plaster';
   floorTexture: 'plain' | 'wood' | 'tiles';
+  units?: 'METERS' | 'FEET';
   projectTitle: string;
   panoramaUrl?: string;
 }

@@ -1,14 +1,18 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useLayoutEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, ContactShadows, OrbitControls } from '@react-three/drei';
+import { useGLTF, Environment, ContactShadows, useTexture } from '@react-three/drei';
+import * as THREE from 'three';
 import { Product } from '../types';
 
 interface ModelProps {
     url: string;
+   
 }
 
 const Model: React.FC<ModelProps> = ({ url }) => {
     const { scene } = useGLTF(url);
+
+
     return <primitive object={scene} />;
 };
 
@@ -26,7 +30,7 @@ const ARScene3D: React.FC<ARScene3DProps> = ({ product, rotation, scale }) => {
             <Canvas camera={{ position: [0, 1, 3], fov: 40 }} gl={{ alpha: true }}>
                 <Suspense fallback={null}>
                     <group rotation={[0, (rotation * Math.PI) / 180, 0]} scale={scale}>
-                        <Model url={product.model} />
+                        <Model url={product.model}  />
                     </group>
                     <Environment preset="city" />
                     <ContactShadows

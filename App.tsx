@@ -10,7 +10,7 @@ import { PRODUCTS } from './data/mockData';
 import { Product } from './types';
 import { geminiService } from './services/geminiService';
 import { supabase } from './services/supabase';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 
 // Sub-components
 import ProductCard from './components/ProductCard';
@@ -18,15 +18,17 @@ import ProductDetailsModal from './components/ProductDetailsModal';
 import ARPreviewModal from './components/ARPreviewModal';
 import AIBuilderModal from './components/AIBuilderModal';
 import ComparisonModal from './components/ComparisonModal';
-import BlueprintDesigner from './components/BlueprintDesigner';
+import BlueprintDesigner from './components/RoomBuilder/BlueprintDesigner';
 import LoginPage from './components/LoginPage';
 import CartView from './components/CartView';
 import WishlistView from './components/WishlistView';
 import CheckoutPage from './components/CheckoutPage';
 import UserProfile from './components/UserProfile';
 import WishlistComparisonModal from './components/WishlistComparisonModal';
+import ARPage from './ARModule/ARPage';
 
-type View = 'home' | 'products' | 'blueprint' | 'login' | 'cart' | 'wishlist' | 'ar-preview' | 'comparison' | 'checkout' | 'profile';
+
+type View = 'home' | 'products' | 'blueprint' | 'login' | 'cart' | 'wishlist' | 'ar-preview' | 'comparison' | 'checkout' | 'profile' | 'ar';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<View>('home');
@@ -37,7 +39,7 @@ const App: React.FC = () => {
 
   const [isAIBuilderOpen, setIsAIBuilderOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [initialARViewMode, setInitialARViewMode] = useState<'qr' | 'live'>('qr');
+  const [initialARViewMode, setInitialARViewMode] = useState<'inspect' | 'live' | 'qr'>('inspect');
   const [isWishlistCompareOpen, setIsWishlistCompareOpen] = useState(false);
 
   // Filter States
@@ -135,6 +137,15 @@ const App: React.FC = () => {
       console.error('Failed to fetch user data:', err);
     }
   };
+
+  // Deep Link Listener for AR
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) {
+      setActiveTab('ar');
+    }
+  }, []);
 
   const getOrCreateWishlist = async () => {
     if (!user) throw new Error('User not authenticated');
@@ -264,7 +275,17 @@ const App: React.FC = () => {
 
   const toggleWishlist = async (id: string) => {
     const isAdding = !wishlist.includes(id);
+    const product = PRODUCTS.find(p => p.id === id);
+    
     setWishlist(prev => isAdding ? [...prev, id] : prev.filter(i => i !== id));
+
+    if (isAdding) {
+      toast.success(`${product?.name || 'Item'} added to wishlist`, {
+        icon: <Heart size={16} className="fill-red-500 text-red-500" />
+      });
+    } else {
+      toast.info(`${product?.name || 'Item'} removed from wishlist`);
+    }
 
     if (user) {
       const wishlistObj = await getOrCreateWishlist();
@@ -300,6 +321,12 @@ const App: React.FC = () => {
         await supabase.from('CartItem').insert({ cartId: cartObj.id, productId: id, quantity: 1 });
       }
     }
+    
+    const product = PRODUCTS.find(p => p.id === id);
+    toast.success(`${product?.name || 'Item'} added to collection`, {
+      description: "You can view it in your cart.",
+      icon: <ShoppingCart size={16} />
+    });
   };
 
   const removeFromCart = async (id: string) => {
@@ -339,6 +366,7 @@ const App: React.FC = () => {
   const triggerAR = (product: Product) => {
     setSelectedProduct(product);
     setShowDetails(false);
+    setInitialARViewMode('inspect');
     setActiveTab('ar-preview');
   };
 
@@ -646,6 +674,15 @@ const App: React.FC = () => {
     </footer>
   );
 
+  if (activeTab === 'ar') {
+    return (
+      <div className="min-h-screen bg-black overflow-hidden">
+        <ARPage />
+        <Toaster position="top-center" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FBFBF9]">
       <Toaster position="top-center" />
@@ -690,6 +727,8 @@ const App: React.FC = () => {
             </section>
           </div>
         )}
+
+
 
         {activeTab === 'products' && (
           <div className="pt-24 min-h-screen animate-in slide-in-from-bottom-8 duration-700">
@@ -905,7 +944,10 @@ const App: React.FC = () => {
               cart={cart}
               onBack={() => setActiveTab('cart')}
               onConfirm={() => {
-                alert("Order confirmed! Thank you for choosing PlanPro.");
+                toast.success("Order confirmed!", {
+                  description: "Thank you for choosing PlanPro. Your furniture is being prepared.",
+                  duration: 5000
+                });
                 setCart([]);
                 setActiveTab('home');
               }}
@@ -975,10 +1017,12 @@ const App: React.FC = () => {
       {activeTab === 'ar-preview' && selectedProduct && (
         <ARPreviewModal
           product={selectedProduct}
-          onClose={() => { setActiveTab('products'); setInitialARViewMode('qr'); }}
+          onClose={() => { setActiveTab('products'); setInitialARViewMode('inspect'); }}
           initialViewMode={initialARViewMode}
         />
       )}
+
+      <Toaster position="top-center" />
     </div>
   );
 };

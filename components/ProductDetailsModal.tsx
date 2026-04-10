@@ -6,7 +6,7 @@ import {
   Twitter, Instagram, CheckCircle2
 } from 'lucide-react';
 import { Product } from '../types';
-import Scene3D from './Scene3D';
+import Scene3D from './RoomBuilder/Scene3D';
 
 interface ProductDetailsModalProps {
   product: Product;
@@ -123,7 +123,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 {/* 3D View Over-Layer */}
                 {is3DActive && product.model && (
                   <div className="absolute inset-0 z-40 bg-white">
-                    <Scene3D modelUrl={product.model} />
+                    <Scene3D modelUrl={product.model}  />
                   </div>
                 )}
 
