@@ -56,13 +56,61 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ 
       status: "success", 
       message: "Saved to " + subfolderName,
-      fileId: file.getId()
+      fileId: file.getId(),
+      url: file.getDownloadUrl() || `https://drive.google.com/uc?id=${file.getId()}`
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ 
       status: "error", 
       message: err.toString() 
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    const folderType = e.parameter.type || "all"; // '3d', 'preview', 'ai', 'all'
+    const mainFolder = DriveApp.getFolderById(PARENT_FOLDER_ID);
+    const results = [];
+
+    const subfolders = {
+      '3d': "3D_Models",
+      'preview': "Room_Previews",
+      'ai': "AI_Uploads"
+    };
+
+    const targetFolders = folderType === "all" ? Object.values(subfolders) : [subfolders[folderType]];
+
+    targetFolders.forEach(subName => {
+      const subSearch = mainFolder.getFoldersByName(subName);
+      if (subSearch.hasNext()) {
+        const folder = subSearch.next();
+        const files = folder.getFiles();
+        while (files.hasNext()) {
+          const file = files.next();
+          results.push({
+            id: file.getId(),
+            name: file.getName(),
+            mimeType: file.getMimeType(),
+            url: `https://drive.google.com/uc?id=${file.getId()}`,
+            dateCreated: file.getDateCreated(),
+            size: file.getSize(),
+            type: subName
+          });
+        }
+      }
+    });
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      files: results
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: err.toString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }

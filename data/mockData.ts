@@ -241,6 +241,7 @@ export const PRODUCTS: Product[] = [
     rating: 4.9,
     reviews: [{ user: 'Aarav', rating: 4.7, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.8, comment: 'Modern design and easy to assemble.' }, { user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.' }],
     model: c1_model
+   
   },
   {
     id: 't-coffee-2',
@@ -544,11 +545,12 @@ export const PRODUCTS: Product[] = [
     image: ss1,
     images: [ss1],
     description: 'Luxurious velvet modular sofa set for large living spaces.',
-    dimensions: '100.0 cm | 38.9 cm | 86.0 cm',
+    dimensions: '217.0 cm | 85 cm | 186.0 cm',
     material: 'Velvet, Kiln-dried Hardwood',
     rating: 4.8,
     reviews: [{ user: 'Kabir', rating: 4.7, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.6, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }],
-    model: ss1_model
+    model: ss1_model,
+    scale: 2.5
   },
   {
     id: 's-sofaset-2',
@@ -559,11 +561,12 @@ export const PRODUCTS: Product[] = [
     image: ss2,
     images: [ss2],
     description: 'Contemporary L-shaped sectional with deep seating and clean lines.',
-    dimensions: '99.1 cm | 41.7 cm | 99.7 cm',
+    dimensions: '167 cm | 70 cm | 167 cm',
     material: 'Performance Fabric',
     rating: 4.7,
     reviews: [{ user: 'Ananya', rating: 5.0, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.8, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }],
-    model: ss2_model
+    model: ss2_model,
+    scale: 2.5
   },
   {
     id: 's-sofaset-3',
@@ -574,11 +577,12 @@ export const PRODUCTS: Product[] = [
     image: ss3,
     images: [ss3],
     description: 'Premium top-grain leather sofa set with matching armchairs.',
-    dimensions: '93.2 cm | 36.4 cm | 99.9 cm',
+    dimensions: '218 cm | 85 cm | 233 cm',
     material: 'Top-grain Leather',
     rating: 4.9,
     reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.0, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 5.0, comment: 'Great quality and very comfortable.' }],
-    model: ss3_model
+    model: ss3_model,
+    scale: 2.5
   },
   {
     id: 's-sofaset-4',
@@ -589,11 +593,12 @@ export const PRODUCTS: Product[] = [
     image: ss4,
     images: [ss4],
     description: 'Minimalist 3-piece sofa set with light oak legs.',
-    dimensions: '99.9 cm | 27.9 cm | 52.6 cm',
+    dimensions: '300 cm | 89 cm | 168 cm',
     material: 'Textured Weave',
     rating: 4.6,
     reviews: [{ user: 'Riya', rating: 4.1, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.3, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.1, comment: 'Great quality and very comfortable.' }],
-    model: ss4_model
+    model: ss4_model,
+    scale: 2.5
   },
   {
     id: 's-sofaset-5',
@@ -604,11 +609,12 @@ export const PRODUCTS: Product[] = [
     image: ss5,
     images: [ss5],
     description: 'Ultra-plush modular pit sofa for the ultimate lounging experience.',
-    dimensions: '99.9 cm | 29.4 cm | 91.6 cm',
+    dimensions: '200 cm | 85 cm | 200 cm',
     material: 'Down-filled Linen',
     rating: 4.8,
     reviews: [{ user: 'Vivaan', rating: 4.9, comment: 'Exactly what I was looking for.' }, { user: 'Riya', rating: 4.8, comment: 'Looks amazing in my living room.' }, { user: 'Aarav', rating: 4.4, comment: 'Great quality and very comfortable.' }],
-    model: ss5_model
+    model: ss5_model,
+    scale: 2.5
   },
   {
     id: 's-sofacumbed-1',
@@ -853,7 +859,9 @@ export const PRODUCTS: Product[] = [
     description: 'Invisible mounting floating shelf for display.',
     dimensions: '99.9 cm | 88.8 cm | 30.6 cm',
     material: 'Walnut Veneer',
-    rating: 4.8
+    rating: 4.8,
+    model:st1_model,
+   
   },
   {
     id: 'st-shelf-2',
@@ -866,7 +874,8 @@ export const PRODUCTS: Product[] = [
     description: 'Wall-mounted industrial shelf with iron pipe brackets.',
     dimensions: '67.6 cm | 100.0 cm | 14.8 cm',
     material: 'Reclaimed Wood, Iron',
-    rating: 4.7
+    rating: 4.7,
+    model:st2_model,
   },
   {
     id: 'st-shelf-3',
@@ -879,7 +888,8 @@ export const PRODUCTS: Product[] = [
     description: 'Stackable cube shelving system for customizable storage.',
     dimensions: '100.1 cm | 94.4 cm | 33.4 cm',
     material: 'Engineered Wood',
-    rating: 4.6
+    rating: 4.6,
+    model:st3_model
   },
   {
     id: 'st-shelf-4',
@@ -892,7 +902,8 @@ export const PRODUCTS: Product[] = [
     description: 'Space-saving ladder shelf designed for corners.',
     dimensions: '70.6 cm | 100.1 cm | 21.4 cm',
     material: 'Bamboo',
-    rating: 4.5
+    rating: 4.5,
+    model:st4_model
   },
   {
     id: 'st-shelf-5',
@@ -905,7 +916,8 @@ export const PRODUCTS: Product[] = [
     description: 'Elegant tempered glass shelf unit with chrome supports.',
     dimensions: '100.1 cm | 23.0 cm | 17.2 cm',
     material: 'Tempered Glass, Chrome',
-    rating: 4.9
+    rating: 4.9,
+    model:st5_model
   },
 
   // CHAIRS - CASUAL (MATCHING PROVIDED IMAGES)

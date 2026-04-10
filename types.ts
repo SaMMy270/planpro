@@ -11,10 +11,11 @@ export interface Product {
   dimensions: string;
   material: string;
   rating: number;
-  reviews?: { user: string; rating: number; comment: string; date: string; }[];
-  model?: string;
+  reviews?: { user: string; rating: number; comment: string; date?: string; }[];
+  model: string;
+  scale?: number;
   texture?: string;
-  productUrl: string
+  productUrl?: string
 }
 
 export interface ComparisonResult {

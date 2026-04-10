@@ -142,11 +142,11 @@ import ss3_model from './models/sofaset models/ss3.glb?url';
 import ss4_model from './models/sofaset models/ss4.glb?url';
 import ss5_model from './models/sofaset models/ss5.glb?url';
 
-import sc1_model from './models/sofacumbed models/sofacumbed models/sc1.glb?url';
-import sc2_model from './models/sofacumbed models/sofacumbed models/sc2.obj';
-import sc3_model from './models/sofacumbed models/sofacumbed models/sc3.glb?url';
-import sc4_model from './models/sofacumbed models/sofacumbed models/sc4.glb?url';
-import sc5_model from './models/sofacumbed models/sofacumbed models/sc5.glb?url';
+import sc1_model from './models/sofacumbed models/sc1.glb?url';
+import sc2_model from './models/sofacumbed models/sc2.glb?url';
+import sc3_model from './models/sofacumbed models/sc3.glb?url';
+import sc4_model from './models/sofacumbed models/sc4.glb?url';
+import sc5_model from './models/sofacumbed models/sc5.glb?url';
 
 // Storage
 import cp1_model from './models/cupboard models/cp1.glb?url';

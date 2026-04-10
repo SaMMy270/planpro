@@ -13,13 +13,16 @@ import { DimensionSetup, OpeningsSetup } from './RoomSetup';
 import { calculateRoomArea, calculateFurnitureArea } from './RoomMath';
 import { HexColorPicker } from 'react-colorful';
 import { formatArea, toFeetDecimal, toMetersFromDecimal } from "../../services/UnitUtils";
+import { supabase } from "../../services/supabase";
+
 
 interface BlueprintDesignerProps {
   wishlist: string[];
   toggleWishlist: (id: string) => Promise<void>;
+  user: any;
 }
 
-const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleWishlist }) => {
+const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleWishlist, user }) => {
   // --- REFS ---
   const designerRef = useRef<any>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -231,6 +234,47 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
       toast.error("Failed to process room. Ensure the AI server is running.");
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const saveToSupabase = async (payload: {
+    type: 'manual' | 'ai',
+    projectTitle: string,
+    thumbnailUrl?: string,
+    layoutData?: any,
+    imageUrls?: string[],
+    panoramaUrl?: string
+  }) => {
+    if (!user) {
+      toast.error("You must be logged in to save projects.");
+      return;
+    }
+
+    try {
+      if (payload.type === 'manual') {
+        const { error } = await supabase
+          .from('RoomDesign')
+          .insert({
+            userId: user.id,
+            name: payload.projectTitle,
+            layoutData: payload.layoutData,
+            thumbnailUrl: payload.thumbnailUrl
+          });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('AiDesign')
+          .insert({
+            userId: user.id,
+            name: payload.projectTitle,
+            imageUrls: payload.imageUrls || [],
+            panoramaUrl: payload.panoramaUrl
+          });
+        if (error) throw error;
+      }
+    } catch (err) {
+      console.error("Supabase Save Error:", err);
+      throw err;
     }
   };
 
@@ -796,6 +840,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
       const projectTitle = roomData.projectTitle || 'Project';
 
       // 1. Capture Thumbnail
+      let thumbnailUrl = "";
       if (canvasContainerRef.current) {
         toast.loading("Capturing workspace preview...", { id: saveToast });
         const canvas = await html2canvas(canvasContainerRef.current, { 
@@ -806,22 +851,48 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         });
         const pngData = canvas.toDataURL('image/png');
         const blob = await (await fetch(pngData)).blob();
-        await uploadToAppScript(blob, `Preview_${projectTitle}_${timestamp}.png`, 'image/png');
+        const filename = `Preview_${projectTitle}_${timestamp}.png`;
+        
+        // We'll need the URL back from AppScript. Since doGet is implemented, we can assume it works.
+        // For now, let's construct the presumptive URL
+        await uploadToAppScript(blob, filename, 'image/png');
+        // Note: Realistically we'd get the ID back, but for now we use name pattern or rely on list files.
       }
 
       // 2. Export 3D Model
-      if (designerRef.current) {
+      if (designerRef.current && items.length > 0) {
         toast.loading("Processing 3D Scene...", { id: saveToast });
         const scene = designerRef.current.getScene();
         if (scene) await exportSceneToGLB(scene, `${projectTitle}_${timestamp}.glb`);
       }
 
       // 3. Upload AI Source Images
+      const uploadedImageNames: string[] = [];
       if (aiImages && aiImages.length > 0) {
         toast.loading(`Uploading ${aiImages.length} source images...`, { id: saveToast });
         for (const imgFile of aiImages) {
-          await uploadToAppScript(imgFile, `Source_${timestamp}_${imgFile.name}`, imgFile.type);
+          const fname = `Source_${timestamp}_${imgFile.name}`;
+          await uploadToAppScript(imgFile, fname, imgFile.type);
+          uploadedImageNames.push(fname);
         }
+      }
+
+      // 4. Save Record to Supabase
+      toast.loading("Finalizing cloud record...", { id: saveToast });
+      if (aiImages.length > 0 || roomData.panoramaUrl) {
+        await saveToSupabase({
+          type: 'ai',
+          projectTitle,
+          imageUrls: uploadedImageNames,
+          panoramaUrl: roomData.panoramaUrl
+        });
+      } else {
+        await saveToSupabase({
+          type: 'manual',
+          projectTitle,
+          layoutData: { items, roomData },
+          thumbnailUrl: `Preview_${projectTitle}_${timestamp}.png` // Store filename for lookup
+        });
       }
 
       toast.success("Project saved successfully!", { id: saveToast });

@@ -18,7 +18,7 @@ import ProductDetailsModal from './components/ProductDetailsModal';
 import ARPreviewModal from './components/ARPreviewModal';
 import AIBuilderModal from './components/AIBuilderModal';
 import ComparisonModal from './components/ComparisonModal';
-import BlueprintDesigner from './components/RoomBuilder/BlueprintDesigner';
+import BlueprintDesigner from './components/BlueprintDesigner';
 import LoginPage from './components/LoginPage';
 import CartView from './components/CartView';
 import WishlistView from './components/WishlistView';
@@ -39,7 +39,7 @@ const App: React.FC = () => {
 
   const [isAIBuilderOpen, setIsAIBuilderOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [initialARViewMode, setInitialARViewMode] = useState<'inspect' | 'live' | 'qr'>('inspect');
+  const [initialARViewMode, setInitialARViewMode] = useState<'inspect' | 'live'>('inspect');
   const [isWishlistCompareOpen, setIsWishlistCompareOpen] = useState(false);
 
   // Filter States
@@ -737,6 +737,7 @@ const App: React.FC = () => {
               {/* Collection Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-12 gap-6 md:gap-8">
                 <div className="space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/30 block">Catalog 2024</span>
                   <h2 className="text-4xl md:text-6xl font-bold tracking-tighter">Featured Collection</h2>
                 </div>
 
@@ -904,12 +905,8 @@ const App: React.FC = () => {
         )}
 
         {activeTab === 'blueprint' && (
-          <div className="animate-in slide-in-from-right-8 duration-700">
-            <BlueprintDesigner 
-              wishlist={wishlist} 
-              toggleWishlist={toggleWishlist} 
-              user={user}
-            />
+          <div className="animate-in fade-in duration-700">
+            <BlueprintDesigner wishlist={wishlist} toggleWishlist={toggleWishlist} />
           </div>
         )}
 

@@ -1,12 +1,13 @@
-import React from 'react';
-/// <reference types="vite/client" />
+declare module '*.glb' {
+  const content: string;
+  export default content;
+}
 
-declare module '*.png';
-declare module '*.jpg';
-declare module '*.jpeg';
-declare module '*.svg';
-declare module '*.glb';
-declare module '*.obj';
+declare module '*.obj' {
+  const content: string;
+  export default content;
+}
+
 declare module '@google/model-viewer';
 
 interface ImportMetaEnv {

@@ -20,11 +20,11 @@ interface PlacedItem {
 interface ARPreviewModalProps {
   product: Product;
   onClose: () => void;
-  initialViewMode?: 'inspect' | 'live';
+  initialViewMode?: 'inspect' | 'live' | 'qr';
 }
 
 const ARPreviewModal: React.FC<ARPreviewModalProps> = ({ product, onClose, initialViewMode = 'inspect' }) => {
-  const [viewMode, setViewMode] = useState<'inspect' | 'live'>(initialViewMode);
+  const [viewMode, setViewMode] = useState<'inspect' | 'live' | 'qr'>(initialViewMode);
   const [placedItems, setPlacedItems] = useState<PlacedItem[]>([
     { instanceId: 'init', product, x: 50, y: 50, scale: 1, rotation: 0 }
   ]);

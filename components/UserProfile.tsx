@@ -1,16 +1,20 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
     User, MapPin, ShieldCheck, Box, Bookmark, ArrowRight,
     Trash2, CreditCard, Ruler, Layout as LayoutIcon,
     Settings, LogOut, ChevronRight, Armchair, Star,
     Verified, MapPin as LocationIcon, CheckCircle,
-    ShoppingBag, Trash
+    ShoppingBag, Trash, Upload, Camera, Sparkles,
+    Image as ImageIcon, MoreVertical, Edit2, Save, X, Globe,
+    ChevronLeft, Loader2
 } from 'lucide-react';
 import { Product } from '../types';
 import { PRODUCTS } from '../data/mockData';
 import { supabase } from '../services/supabase';
+import { gdriveService, GDriveFile } from '../services/gdriveService';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface UserProfileProps {
     wishlist: string[];
@@ -19,301 +23,484 @@ interface UserProfileProps {
     onTabChange: (tab: any) => void;
 }
 
+type ProfileTab = 'settings' | 'manual' | 'ai';
+
 const UserProfile: React.FC<UserProfileProps> = ({
     wishlist,
     onToggleWishlist,
     onViewProduct,
     onTabChange
 }) => {
+    const [activeTab, setActiveTab] = useState<ProfileTab>('manual');
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [counts, setCounts] = useState({ rooms: 0, furniture: 0, saved: 0 });
     const [loading, setLoading] = useState(true);
+    const [manualDesigns, setManualDesigns] = useState<any[]>([]);
+    const [aiDesigns, setAiDesigns] = useState<any[]>([]);
+    const [driveFiles, setDriveFiles] = useState<GDriveFile[]>([]);
+    
+    // Editing State
+    const [isEditing, setIsEditing] = useState(false);
+    const [editName, setEditName] = useState('');
+    const [editAvatar, setEditAvatar] = useState('');
+    const [savingProfile, setSavingProfile] = useState(false);
 
     useEffect(() => {
-        fetchUserData();
+        fetchInitialData();
+        setupSubscriptions();
     }, []);
 
-    const fetchUserData = async () => {
+    const fetchInitialData = async () => {
         setLoading(true);
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-            setUser(user);
-            // Fetch profile data
-            const { data: profileData } = await supabase
-                .from('User')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-            setProfile(profileData);
-
-            // Fetch counts
-            const { count: roomCount } = await supabase
-                .from('RoomDesign')
-                .select('*', { count: 'exact', head: true })
-                .eq('userId', user.id);
-
-            const { count: arCount } = await supabase
-                .from('ArSession')
-                .select('modelsPlacedCount')
-                .eq('id', user.id); // This might be wrong logic, but let's assume we sum modelsPlacedCount
-
-            setCounts({
-                rooms: roomCount || 0,
-                furniture: 48, // Mock for now till we have real session tracking
-                saved: wishlist.length
-            });
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+            setUser(authUser);
+            await Promise.all([
+                fetchProfile(authUser.id),
+                fetchManualDesigns(authUser.id),
+                fetchAiDesigns(authUser.id),
+                fetchDriveFiles()
+            ]);
         }
         setLoading(false);
     };
 
+    const setupSubscriptions = () => {
+        const manualSub = supabase
+            .channel('manual_designs_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'RoomDesign' }, payload => {
+                console.log('Manual design change received:', payload);
+                fetchManualDesigns(user?.id || '');
+            })
+            .subscribe();
+
+        const aiSub = supabase
+            .channel('ai_designs_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'AiDesign' }, payload => {
+                console.log('AI design change received:', payload);
+                fetchAiDesigns(user?.id || '');
+            })
+            .subscribe();
+
+        const profileSub = supabase
+            .channel('profile_realtime')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'User' }, payload => {
+                if (payload.new.id === user?.id) {
+                    setProfile(payload.new);
+                }
+            })
+            .subscribe();
+
+        return () => {
+            manualSub.unsubscribe();
+            aiSub.unsubscribe();
+            profileSub.unsubscribe();
+        };
+    };
+
+    const fetchProfile = async (userId: string) => {
+        const { data } = await supabase.from('User').select('*').eq('id', userId).maybeSingle();
+        if (data) {
+            setProfile(data);
+            setEditName(data.name || '');
+            setEditAvatar(data.avatarUrl || '');
+        }
+    };
+
+    const fetchManualDesigns = async (userId: string) => {
+        const { data } = await supabase.from('RoomDesign').select('*').eq('userId', userId).order('createdAt', { ascending: false });
+        if (data) setManualDesigns(data);
+    };
+
+    const fetchAiDesigns = async (userId: string) => {
+        const { data } = await supabase.from('AiDesign').select('*').eq('userId', userId).order('createdAt', { ascending: false });
+        if (data) setAiDesigns(data);
+    };
+
+    const fetchDriveFiles = async () => {
+        const files = await gdriveService.listFiles('all');
+        setDriveFiles(files);
+    };
+
+    const handleUpdateProfile = async () => {
+        setSavingProfile(true);
+        try {
+            const { error } = await supabase
+                .from('User')
+                .update({
+                    name: editName,
+                    avatarUrl: editAvatar,
+                    updatedAt: new Date().toISOString()
+                })
+                .eq('id', user.id);
+
+            if (error) throw error;
+            toast.success("Profile updated successfully");
+            setIsEditing(false);
+            fetchProfile(user.id);
+        } catch (err: any) {
+            toast.error(err.message || "Failed to update profile");
+        } finally {
+            setSavingProfile(false);
+        }
+    };
+
+    const getFileUrl = (filename: string) => {
+        const file = driveFiles.find(f => f.name === filename);
+        return file ? file.url : `https://via.placeholder.com/400x300?text=${filename}`;
+    };
+
     const handleLogout = async () => {
         await supabase.auth.signOut();
-        toast.success('Logged out successfully');
         onTabChange('home');
         window.location.reload();
     };
 
-    // Get actual products from wishlist
-    const savedItems = PRODUCTS.filter(p => wishlist.includes(p.id));
-
-    // Mock data for "My Designs"
-    const designs = [
-        { id: 1, name: 'Minimalist Loft', date: '2 days ago', img: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=800' },
-        { id: 2, name: 'Home Office', date: '5 days ago', img: 'https://images.unsplash.com/photo-1518481612222-68bbe828eba1?auto=format&fit=crop&q=80&w=800' },
-        { id: 3, name: 'Master Bedroom', date: '1 week ago', img: 'https://images.unsplash.com/photo-1616594039964-ae9021a4f0a8?auto=format&fit=crop&q=80&w=800' },
-    ];
-
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+            <div className="flex flex-col items-center justify-center min-h-[600px] space-y-4">
+                <Loader2 className="animate-spin text-black/20" size={48} />
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Initializing Profile</p>
             </div>
         );
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-16 space-y-16 bg-[#FBFBF9]">
-            {/* User Profile Summary */}
-            <section className="flex flex-col md:flex-row items-center md:items-start gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <div className="relative group">
-                    <div className="h-32 w-32 rounded-full ring-4 ring-white shadow-2xl overflow-hidden transition-transform duration-500 group-hover:scale-105 bg-black/5 flex items-center justify-center">
-                        {profile?.avatarUrl ? (
-                            <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
-                        ) : (
-                            <User size={64} className="text-black/10" />
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-20 space-y-12">
+            
+            {/* Header Section */}
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
+                <div className="flex items-center gap-6 md:gap-10">
+                    <div className="relative group">
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[40px] bg-black/5 overflow-hidden border-4 border-white shadow-2xl transition-transform duration-700 group-hover:rotate-6 group-hover:scale-110">
+                            {profile?.avatarUrl ? (
+                                <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-zinc-100">
+                                    <User size={48} className="text-black/10" />
+                                </div>
+                            )}
+                        </div>
+                        <div className="absolute -bottom-2 -right-2 bg-black text-white p-2 rounded-2xl shadow-xl border-2 border-white">
+                            <Sparkles size={16} />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-black">{profile?.name || user?.email?.split('@')[0]}</h1>
+                            <Verified className="text-[#1754cf]" size={20} />
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-black/40 bg-black/5 px-3 py-1 rounded-full">{user?.email}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-[#1754cf] bg-[#1754cf]/10 px-3 py-1 rounded-full">PRO DESIGNER</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={() => setActiveTab('settings')}
+                        className="px-8 py-4 bg-white border border-black/5 text-black rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white hover:shadow-2xl transition-all shadow-xl shadow-black/5 flex items-center gap-3"
+                    >
+                        <Settings size={16} /> Edit Account
+                    </button>
+                    <button 
+                        onClick={handleLogout}
+                        className="p-4 bg-red-50 text-red-500 rounded-3xl hover:bg-red-500 hover:text-white transition-all shadow-xl shadow-red-500/5"
+                    >
+                        <LogOut size={20} />
+                    </button>
+                </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex items-center gap-8 border-b border-black/5 pb-2 overflow-x-auto no-scrollbar">
+                {[
+                    { id: 'manual', name: 'Manual Designs', icon: Box, count: manualDesigns.length },
+                    { id: 'ai', name: 'AI Generation', icon: Sparkles, count: aiDesigns.length },
+                    { id: 'settings', name: 'Settings', icon: Settings, count: 0 },
+                ].map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as ProfileTab)}
+                        className={`group flex items-center gap-4 pb-4 border-b-2 transition-all whitespace-nowrap ${
+                            activeTab === tab.id 
+                            ? 'border-black text-black' 
+                            : 'border-transparent text-black/20 hover:text-black/40'
+                        }`}
+                    >
+                        <tab.icon size={18} className={activeTab === tab.id ? 'opacity-100' : 'opacity-40'} />
+                        <span className="text-[11px] font-black uppercase tracking-[0.2em]">{tab.name}</span>
+                        {tab.count > 0 && (
+                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                                activeTab === tab.id ? 'bg-black text-white' : 'bg-black/5 text-black/30'
+                            }`}>
+                                {tab.count}
+                            </span>
                         )}
-                    </div>
-                    <div className="absolute bottom-1 right-1 bg-primary text-white p-1.5 rounded-full border-2 border-white flex items-center justify-center shadow-lg bg-[#1754cf]">
-                        <CheckCircle size={14} fill="white" className="text-[#1754cf]" />
-                    </div>
-                </div>
-
-                <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4">
-                    <div className="space-y-1">
-                        <div className="flex flex-col md:flex-row items-center gap-3">
-                            <h1 className="text-3xl md:text-4xl font-bold tracking-tighter text-slate-900">{profile?.name || user?.email?.split('@')[0] || 'User'}</h1>
-                            <span className="px-3 py-1 bg-[#1754cf]/10 text-[#1754cf] text-[10px] font-black rounded-full uppercase tracking-widest">Pro Member</span>
-                        </div>
-                        <div className="flex items-center justify-center md:justify-start gap-1.5 text-slate-500 font-bold uppercase tracking-widest text-[10px]">
-                            <LocationIcon size={12} />
-                            <span>San Francisco, CA</span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                        <button className="px-6 py-2.5 bg-[#1754cf] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#1754cf]/90 transition-all shadow-md">
-                            Edit Profile
-                        </button>
-                        <button className="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-all">
-                            Account Settings
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            {/* Stats Cards */}
-            <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                <div className="bg-white p-8 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-                    <div className="flex items-center justify-between mb-4">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Rooms Designed</p>
-                        <div className="p-2 bg-[#1754cf]/10 text-[#1754cf] rounded-xl group-hover:bg-[#1754cf] group-hover:text-white transition-colors">
-                            <LayoutIcon size={20} />
-                        </div>
-                    </div>
-                    <p className="text-4xl font-bold tracking-tighter text-slate-900">{counts.rooms}</p>
-                </div>
-
-                <div className="bg-white p-8 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-                    <div className="flex items-center justify-between mb-4">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Furniture Placed</p>
-                        <div className="p-2 bg-[#1754cf]/10 text-[#1754cf] rounded-xl group-hover:bg-[#1754cf] group-hover:text-white transition-colors">
-                            <Armchair size={20} />
-                        </div>
-                    </div>
-                    <p className="text-4xl font-bold tracking-tighter text-slate-900">{counts.furniture}</p>
-                </div>
-
-                <div className="bg-white p-8 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-                    <div className="flex items-center justify-between mb-4">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Saved Items</p>
-                        <div className="p-2 bg-[#1754cf]/10 text-[#1754cf] rounded-xl group-hover:bg-[#1754cf] group-hover:text-white transition-colors">
-                            <Bookmark size={20} />
-                        </div>
-                    </div>
-                    <p className="text-4xl font-bold tracking-tighter text-slate-900">{counts.saved}</p>
-                </div>
-            </section>
-
-            {/* My Designs Grid */}
-            <section className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold tracking-tight text-slate-900">My Designs</h2>
-                    <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-black transition-colors group">
-                        View All <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </button>
-                </div>
+                ))}
+            </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {designs.map((design) => (
-                        <div key={design.id} className="group relative aspect-[4/5] rounded-[24px] overflow-hidden bg-slate-100 shadow-lg cursor-pointer">
-                            <img
-                                src={design.img}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                alt={design.name}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8 space-y-1">
-                                <p className="text-white font-bold text-sm">{design.name}</p>
-                                <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest">Updated {design.date}</p>
+            {/* Tab Content */}
+            <div className="min-h-[500px]">
+                <AnimatePresence mode="wait">
+                    {activeTab === 'manual' && (
+                        <motion.div
+                            key="manual-tab"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="space-y-10"
+                        >
+                            <div className="flex items-center justify-between">
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Architectural Modules</p>
+                                <button onClick={() => onTabChange('blueprint')} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#1754cf] hover:underline">
+                                    New Studio Project <ArrowRight size={14} />
+                                </button>
                             </div>
-                        </div>
-                    ))}
-                    <div onClick={() => onTabChange('blueprint')} className="aspect-[4/5] rounded-[24px] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-4 text-slate-400 hover:text-[#1754cf] hover:border-[#1754cf] transition-all cursor-pointer group bg-white/40">
-                        <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <PlusIcon size={24} />
-                        </div>
-                        <p className="text-[10px] font-black uppercase tracking-widest">New Project</p>
-                    </div>
-                </div>
-            </section>
 
-            {/* Saved Furniture Section */}
-            <section className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold tracking-tight text-slate-900">Saved Furniture</h2>
-                </div>
+                            {manualDesigns.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {manualDesigns.map((design) => (
+                                        <div key={design.id} className="group bg-white rounded-[48px] overflow-hidden border border-black/5 shadow-xl hover:shadow-2xl transition-all duration-700">
+                                            <div className="aspect-[4/3] bg-zinc-50 relative overflow-hidden">
+                                                <img 
+                                                    src={getFileUrl(design.thumbnailUrl)} 
+                                                    alt={design.name} 
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                    <button className="px-6 py-2.5 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-transform">View Project</button>
+                                                </div>
+                                            </div>
+                                            <div className="p-8 space-y-4">
+                                                <div className="flex items-center justify-between">
+                                                    <h3 className="text-xl font-serif text-black">{design.name}</h3>
+                                                    <button className="p-2 hover:bg-red-50 text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100">
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-black/30 bg-zinc-50 px-3 py-1 rounded-full">
+                                                        {new Date(design.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-black/30 bg-zinc-50 px-3 py-1 rounded-full">
+                                                        {design.layoutData?.items?.length || 0} Models
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="py-32 flex flex-col items-center justify-center bg-white rounded-[60px] border-2 border-dashed border-black/5 space-y-6">
+                                    <div className="p-10 bg-black/5 rounded-[40px] text-black/10">
+                                        <Box size={64} />
+                                    </div>
+                                    <h4 className="text-2xl font-serif text-black/40">No Manual Designs Yet</h4>
+                                    <button onClick={() => onTabChange('blueprint')} className="px-10 py-5 bg-black text-white rounded-[28px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-black/20 hover:scale-105 active:scale-95 transition-all">Start Your First Design</button>
+                                </div>
+                            )}
+                        </motion.div>
+                    )}
 
-                {savedItems.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {savedItems.map((product) => (
-                            <div key={product.id} className="group flex items-center gap-4 bg-white p-4 rounded-[20px] border border-slate-100 shadow-sm hover:shadow-xl transition-all">
-                                <div onClick={() => onViewProduct(product)} className="h-24 w-24 bg-slate-50 rounded-xl overflow-hidden cursor-pointer relative">
-                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <Star size={20} className="text-white" fill="white" />
+                    {activeTab === 'ai' && (
+                        <motion.div
+                            key="ai-tab"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="space-y-10"
+                        >
+                            <div className="flex items-center justify-between">
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Neural Generations</p>
+                                <button onClick={() => onTabChange('blueprint')} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-purple-600 hover:underline">
+                                    Capture New Space <Sparkles size={14} />
+                                </button>
+                            </div>
+
+                            {aiDesigns.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {aiDesigns.map((design) => (
+                                        <div key={design.id} className="group bg-black text-white rounded-[48px] overflow-hidden shadow-2xl hover:shadow-purple-500/20 transition-all duration-700">
+                                            <div className="aspect-[16/9] bg-zinc-900 relative">
+                                                {design.panoramaUrl ? (
+                                                    <div className="w-full h-full flex items-center justify-center bg-purple-900/10">
+                                                        <Globe size={48} className="text-purple-500 animate-pulse" />
+                                                        <span className="absolute bottom-4 left-4 text-[8px] font-black uppercase tracking-widest bg-purple-500 px-2 py-0.5 rounded">Panorama Active</span>
+                                                    </div>
+                                                ) : (
+                                                    <img 
+                                                        src={getFileUrl(design.imageUrls?.[0])} 
+                                                        alt={design.name} 
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60"
+                                                    />
+                                                )}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-8">
+                                                    <h3 className="text-2xl font-serif text-white">{design.name}</h3>
+                                                </div>
+                                            </div>
+                                            <div className="p-8 space-y-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex -space-x-3 overflow-hidden">
+                                                        {design.imageUrls?.slice(0, 3).map((img: string, i: number) => (
+                                                            <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-zinc-800 overflow-hidden">
+                                                                <img src={getFileUrl(img)} className="w-full h-full object-cover" />
+                                                            </div>
+                                                        ))}
+                                                        {design.imageUrls?.length > 3 && (
+                                                            <div className="w-10 h-10 rounded-full border-2 border-black bg-zinc-900 flex items-center justify-center text-[10px] font-black">
+                                                                +{design.imageUrls.length - 3}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Source Captures</span>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 bg-white/10 px-4 py-1.5 rounded-full">
+                                                        AI SYNC: {new Date(design.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                    <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-purple-400">View Details <ArrowRight size={14} /></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="py-32 flex flex-col items-center justify-center bg-black rounded-[60px] border border-white/5 space-y-6">
+                                    <div className="p-10 bg-white/5 rounded-[40px] text-white/5">
+                                        <Sparkles size={64} />
+                                    </div>
+                                    <h4 className="text-2xl font-serif text-white/20">No Neural Models Yet</h4>
+                                    <button onClick={() => onTabChange('blueprint')} className="px-10 py-5 bg-white text-black rounded-[28px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all">Capture Your Room</button>
+                                </div>
+                            )}
+                        </motion.div>
+                    )}
+
+                    {activeTab === 'settings' && (
+                        <motion.div
+                            key="settings-tab"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="max-w-2xl mx-auto space-y-16"
+                        >
+                            <div className="space-y-10">
+                                <div className="space-y-4">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Account Configuration</p>
+                                    <h2 className="text-4xl font-serif tracking-tight text-black">Personal Information</h2>
+                                </div>
+
+                                <div className="space-y-8 p-10 bg-white rounded-[48px] border border-black/5 shadow-2xl shadow-black/5">
+                                    {/* Avatar Selection */}
+                                    <div className="flex flex-col items-center gap-6">
+                                        <div className="relative group cursor-pointer" onClick={() => setIsEditing(true)}>
+                                            <div className="w-32 h-32 rounded-[40px] bg-black/5 overflow-hidden border-4 border-white shadow-2xl">
+                                                {editAvatar ? (
+                                                    <img src={editAvatar} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center"><User size={48} className="text-black/10" /></div>
+                                                )}
+                                            </div>
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-[40px]">
+                                                <Camera size={24} className="text-white" />
+                                            </div>
+                                        </div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-black/20">Tap to Change Avatar</p>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4">Full Name</label>
+                                            <input 
+                                                type="text" 
+                                                value={editName}
+                                                onChange={(e) => setEditName(e.target.value)}
+                                                disabled={!isEditing}
+                                                className="w-full p-6 bg-zinc-50 rounded-3xl border border-black/5 focus:bg-white focus:border-black/20 focus:outline-none font-bold text-black transition-all disabled:opacity-50"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4">Email Address (Read-only)</label>
+                                            <input 
+                                                type="email" 
+                                                value={user?.email}
+                                                disabled
+                                                className="w-full p-6 bg-zinc-50/50 rounded-3xl border border-black/5 font-bold text-black/30 outline-none"
+                                            />
+                                        </div>
+                                        
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4">Avatar URL</label>
+                                            <input 
+                                                type="text" 
+                                                value={editAvatar}
+                                                onChange={(e) => setEditAvatar(e.target.value)}
+                                                disabled={!isEditing}
+                                                placeholder="https://..."
+                                                className="w-full p-6 bg-zinc-50 rounded-3xl border border-black/5 focus:bg-white focus:border-black/20 focus:outline-none font-bold text-black transition-all disabled:opacity-50"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 flex gap-4">
+                                        {isEditing ? (
+                                            <>
+                                                <button 
+                                                    onClick={handleUpdateProfile}
+                                                    disabled={savingProfile}
+                                                    className="flex-1 py-5 bg-black text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                                                >
+                                                    {savingProfile ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />} 
+                                                    Save Changes
+                                                </button>
+                                                <button 
+                                                    onClick={() => {
+                                                        setIsEditing(false);
+                                                        setEditName(profile?.name || '');
+                                                        setEditAvatar(profile?.avatarUrl || '');
+                                                    }}
+                                                    className="px-8 py-5 bg-zinc-100 text-black rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-zinc-200 transition-all"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button 
+                                                onClick={() => setIsEditing(true)}
+                                                className="w-full py-5 bg-white border border-black/5 text-black rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-xl shadow-black/5 flex items-center justify-center gap-3"
+                                            >
+                                                <Edit2 size={16} /> Enter Edit Mode
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="flex-1 space-y-1">
-                                    <h3 className="font-bold text-sm tracking-tight text-slate-900">{product.name}</h3>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{product.category} • ${product.price}</p>
-                                    <div className="flex items-center gap-4 pt-2">
-                                        <button
-                                            onClick={() => onTabChange('products')}
-                                            className="text-[9px] font-black uppercase tracking-widest text-[#1754cf] hover:scale-110 transition-transform"
-                                        >
-                                            Try in AR
-                                        </button>
-                                        <button
-                                            onClick={() => onToggleWishlist(product.id)}
-                                            className="text-slate-300 hover:text-red-500 transition-colors"
-                                        >
-                                            <Trash size={16} />
-                                        </button>
+                            </div>
+
+                            <div className="space-y-8">
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-500/40">Danger Zone</p>
+                                <button className="w-full p-8 border border-red-100 rounded-[48px] flex items-center justify-between hover:bg-red-50 transition-all group">
+                                    <div className="flex items-center gap-6">
+                                        <div className="p-4 bg-red-100 text-red-500 rounded-3xl group-hover:bg-red-500 group-hover:text-white transition-all">
+                                            <Trash size={20} />
+                                        </div>
+                                        <div className="text-left space-y-1">
+                                            <p className="font-bold text-black">Deactivate Account</p>
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-black/20">Permanently remove all your design data</p>
+                                        </div>
                                     </div>
-                                </div>
+                                    <ChevronRight size={20} className="text-black/10" />
+                                </button>
                             </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="py-20 text-center bg-white rounded-[40px] border border-slate-100 space-y-4">
-                        <Bookmark size={40} className="mx-auto text-slate-100" />
-                        <div className="space-y-1">
-                            <p className="font-bold text-sm text-slate-900">No items saved yet</p>
-                            <p className="text-xs text-slate-400">Start exploring our collection to find inspiration.</p>
-                        </div>
-                        <button onClick={() => onTabChange('products')} className="px-6 py-2 bg-[#1754cf] text-white rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md">
-                            Explore Collection
-                        </button>
-                    </div>
-                )}
-            </section>
-
-            {/* Settings/Account Options */}
-            <section className="max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
-                <h2 className="text-2xl font-bold tracking-tight mb-8 text-slate-900">Settings</h2>
-                <div className="space-y-3">
-                    <button className="w-full flex items-center justify-between p-5 bg-white rounded-[20px] border border-slate-100 hover:bg-slate-50 hover:shadow-lg transition-all group">
-                        <div className="flex items-center gap-5">
-                            <div className="p-3 rounded-2xl bg-[#1754cf]/10 text-[#1754cf] group-hover:bg-[#1754cf] group-hover:text-white transition-all">
-                                <User size={18} />
-                            </div>
-                            <div className="text-left space-y-0.5">
-                                <p className="font-bold text-sm text-slate-900">Edit Profile</p>
-                                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Update your personal information</p>
-                            </div>
-                        </div>
-                        <ChevronRight size={18} className="text-slate-200 group-hover:text-slate-400 transition-colors" />
-                    </button>
-
-                    <button className="w-full flex items-center justify-between p-5 bg-white rounded-[20px] border border-slate-100 hover:bg-slate-50 hover:shadow-lg transition-all group">
-                        <div className="flex items-center gap-5">
-                            <div className="p-3 rounded-2xl bg-[#1754cf]/10 text-[#1754cf] group-hover:bg-[#1754cf] group-hover:text-white transition-all">
-                                <CreditCard size={18} />
-                            </div>
-                            <div className="text-left space-y-0.5">
-                                <p className="font-bold text-sm text-slate-900">Payment Methods</p>
-                                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Manage your cards and billing address</p>
-                            </div>
-                        </div>
-                        <ChevronRight size={18} className="text-slate-200 group-hover:text-slate-400 transition-colors" />
-                    </button>
-
-                    <button className="w-full flex items-center justify-between p-5 bg-white rounded-[20px] border border-slate-100 hover:bg-slate-50 hover:shadow-lg transition-all group">
-                        <div className="flex items-center gap-5">
-                            <div className="p-3 rounded-2xl bg-[#1754cf]/10 text-[#1754cf] group-hover:bg-[#1754cf] group-hover:text-white transition-all">
-                                <Ruler size={18} />
-                            </div>
-                            <div className="text-left space-y-0.5">
-                                <p className="font-bold text-sm text-slate-900">AR Calibration</p>
-                                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Optimize AR accuracy for your device</p>
-                            </div>
-                        </div>
-                        <ChevronRight size={18} className="text-slate-200 group-hover:text-slate-400 transition-colors" />
-                    </button>
-
-                    <button onClick={handleLogout} className="w-full flex items-center justify-between p-5 bg-white rounded-[20px] border border-slate-100 hover:bg-red-50 hover:shadow-lg transition-all group">
-                        <div className="flex items-center gap-5">
-                            <div className="p-3 rounded-2xl bg-red-50 text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all">
-                                <LogOut size={18} />
-                            </div>
-                            <div className="text-left space-y-0.5">
-                                <p className="font-bold text-sm text-slate-900">Logout</p>
-                                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Sign out of your account</p>
-                            </div>
-                        </div>
-                        <ChevronRight size={18} className="text-slate-200 group-hover:text-slate-400 transition-colors" />
-                    </button>
-                </div>
-            </section>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 };
-
-const PlusIcon: React.FC<{ size: number }> = ({ size }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-);
 
 export default UserProfile;

@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 interface Props {
-  children?: ReactNode; // Define children here
+  children: ReactNode; // Explicitly define children
 }
 
 interface State {
@@ -9,7 +9,7 @@ interface State {
   error: Error | null;
 }
 
-// Pass Props as the first generic argument
+// Update the first generic from {} to Props
 export default class ErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -17,7 +17,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error } as State;
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, info: any) {
@@ -27,13 +27,16 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: 20, color: "red" }}>
+        <div style={{ padding: 20, color: "red", background: "#fff" }}>
           <h3>Something went wrong loading AR.</h3>
-          <pre>{this.state.error?.message}</pre>
+          <p>Please ensure you are on a mobile device and have given camera permissions.</p>
+          <pre style={{ fontSize: "12px" }}>{this.state.error?.message}</pre>
+          <button onClick={() => window.location.reload()}>Try Again</button>
         </div>
       );
     }
 
+    // No need to cast 'as React.ReactElement' anymore
     return this.props.children;
   }
 }
