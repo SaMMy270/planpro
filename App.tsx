@@ -366,8 +366,17 @@ const App: React.FC = () => {
   const triggerAR = (product: Product) => {
     setSelectedProduct(product);
     setShowDetails(false);
-    setInitialARViewMode('inspect');
-    setActiveTab('ar-preview');
+    
+    // If on mobile, skip the preview modal and go directly to AR session
+    if (window.innerWidth < 768) {
+      // Update URL so ARPage can read the correct ID
+      const newUrl = `${window.location.pathname}?id=${product.id}`;
+      window.history.pushState({ path: newUrl }, '', newUrl);
+      setActiveTab('ar');
+    } else {
+      setInitialARViewMode('inspect');
+      setActiveTab('ar-preview');
+    }
   };
 
   const triggerAI = (product: Product) => {
@@ -390,30 +399,52 @@ const App: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-[60] bg-white/80 backdrop-blur-md border-b border-black/5 px-4 md:px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setActiveTab('home')}>
+          <div className="flex items-center gap-2 cursor-pointer group" onClick={() => {
+            // Clear URL and go home
+            window.history.pushState({}, '', window.location.pathname);
+            setActiveTab('home');
+          }}>
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white rotate-[-12deg] group-hover:rotate-0 transition-transform">
               <LayoutIcon size={18} />
             </div>
             <h1 className="text-lg md:text-xl font-bold tracking-tighter uppercase">PlanPro</h1>
           </div>
           <div className="hidden md:flex items-center gap-8 text-[12px] font-bold uppercase tracking-widest text-black/40">
-            <button onClick={() => setActiveTab('home')} className={`hover:text-black transition-colors ${activeTab === 'home' ? 'text-black' : ''}`}>Home</button>
-            <button onClick={() => setActiveTab('products')} className={`hover:text-black transition-colors ${activeTab === 'products' ? 'text-black' : ''}`}>Collection</button>
-            <button onClick={() => setActiveTab('blueprint')} className={`hover:text-black transition-colors ${activeTab === 'blueprint' ? 'text-black' : ''}`}>Architect Tool</button>
+            <button onClick={() => {
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('home');
+            }} className={`hover:text-black transition-colors ${activeTab === 'home' ? 'text-black' : ''}`}>Home</button>
+            <button onClick={() => {
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('products');
+            }} className={`hover:text-black transition-colors ${activeTab === 'products' ? 'text-black' : ''}`}>Collection</button>
+            <button onClick={() => {
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('blueprint');
+            }} className={`hover:text-black transition-colors ${activeTab === 'blueprint' ? 'text-black' : ''}`}>Architect Tool</button>
           </div>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden sm:flex items-center gap-4 pr-4 border-r border-black/5">
-            <button onClick={() => setActiveTab('wishlist')} className="p-2 hover:bg-black/5 rounded-full transition-colors relative">
+            <button onClick={() => {
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('wishlist');
+            }} className="p-2 hover:bg-black/5 rounded-full transition-colors relative">
               <Heart size={20} />
               {wishlist.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />}
             </button>
-            <button onClick={() => setActiveTab('cart')} className="p-2 hover:bg-black/5 rounded-full transition-colors relative">
+            <button onClick={() => {
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('cart');
+            }} className="p-2 hover:bg-black/5 rounded-full transition-colors relative">
               <ShoppingCart size={20} />
               {cart.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />}
             </button>
             {user && (
-              <button onClick={() => setActiveTab('profile')} className={`p-2 hover:bg-black/5 rounded-full transition-colors relative ${activeTab === 'profile' ? 'bg-black text-white' : ''}`}>
+              <button onClick={() => {
+                 window.history.pushState({}, '', window.location.pathname);
+                 setActiveTab('profile');
+              }} className={`p-2 hover:bg-black/5 rounded-full transition-colors relative ${activeTab === 'profile' ? 'bg-black text-white' : ''}`}>
                 <User size={20} />
               </button>
             )}
@@ -431,13 +462,37 @@ const App: React.FC = () => {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-black/5 p-6 space-y-6 shadow-xl animate-in slide-in-from-top-4">
-          <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Home</button>
-          <button onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Collection</button>
-          <button onClick={() => { setActiveTab('blueprint'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Architect Tool</button>
+          <button onClick={() => { 
+             window.history.pushState({}, '', window.location.pathname);
+             setActiveTab('home'); 
+             setIsMobileMenuOpen(false); 
+          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Home</button>
+          <button onClick={() => { 
+             window.history.pushState({}, '', window.location.pathname);
+             setActiveTab('products'); 
+             setIsMobileMenuOpen(false); 
+          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Collection</button>
+          <button onClick={() => { 
+             window.history.pushState({}, '', window.location.pathname);
+             setActiveTab('blueprint'); 
+             setIsMobileMenuOpen(false); 
+          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Architect Tool</button>
           <div className="pt-4 border-t border-black/5 flex gap-6">
-            <button onClick={() => { setActiveTab('wishlist'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><Heart size={16} /> Wishlist</button>
-            <button onClick={() => { setActiveTab('cart'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><ShoppingCart size={16} /> Cart</button>
-            {user && <button onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><User size={16} /> Profile</button>}
+            <button onClick={() => { 
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('wishlist'); 
+               setIsMobileMenuOpen(false); 
+            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><Heart size={16} /> Wishlist</button>
+            <button onClick={() => { 
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('cart'); 
+               setIsMobileMenuOpen(false); 
+            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><ShoppingCart size={16} /> Cart</button>
+            {user && <button onClick={() => { 
+              window.history.pushState({}, '', window.location.pathname);
+              setActiveTab('profile'); 
+              setIsMobileMenuOpen(false); 
+            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40"><User size={16} /> Profile</button>}
           </div>
         </div>
       )}
@@ -536,7 +591,10 @@ const App: React.FC = () => {
           <div className="space-y-4">
             <h4 className="text-2xl md:text-3xl font-bold tracking-tight">Track your vision</h4>
             <p className="text-white/40 text-sm leading-relaxed">We provide real-time spatial monitoring and reminders to update your design based on your needs.</p>
-            <button onClick={() => setActiveTab('products')} className="bg-white text-black px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all">Learn more</button>
+            <button onClick={() => {
+               window.history.pushState({}, '', window.location.pathname);
+               setActiveTab('products');
+            }} className="bg-white text-black px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all">Learn more</button>
           </div>
           <div className="pt-4 relative">
             <div className="w-full aspect-square bg-[#E4E4F4] rounded-[32px] md:rounded-[40px] flex items-center justify-center rotate-[-5deg] group-hover:rotate-0 transition-transform overflow-hidden">
@@ -633,7 +691,10 @@ const App: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 md:gap-12 mb-16">
           <div className="col-span-1 md:col-span-1 space-y-6">
-            <div className="flex items-center gap-2" onClick={() => setActiveTab('home')}>
+            <div className="flex items-center gap-2" onClick={() => {
+              window.history.pushState({}, '', window.location.pathname);
+              setActiveTab('home');
+            }}>
               <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white rotate-[-12deg]">
                 <LayoutIcon size={18} />
               </div>
@@ -658,9 +719,11 @@ const App: React.FC = () => {
               <ul className="space-y-3 md:space-y-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-black/40">
                 {section.links.map(link => (
                   <li key={link} onClick={() => {
+                    window.history.pushState({}, '', window.location.pathname);
                     if (link === 'Home') setActiveTab('home');
                     if (link === 'Collection') setActiveTab('products');
                     if (link === 'Architect Tool') setActiveTab('blueprint');
+                   
                   }} className="hover:text-black cursor-pointer transition-colors">{link}</li>
                 ))}
               </ul>
@@ -676,8 +739,11 @@ const App: React.FC = () => {
 
   if (activeTab === 'ar') {
     return (
-      <div className="min-h-screen bg-black overflow-hidden">
-        <ARPage />
+      <div className="min-h-screen bg-black overflow-hidden relative">
+        <ARPage onBack={() => {
+          window.history.pushState({}, '', window.location.pathname);
+          setActiveTab('products');
+        }} />
         <Toaster position="top-center" />
       </div>
     );
@@ -721,7 +787,10 @@ const App: React.FC = () => {
                   </div>
                   <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight">Design is easy with PlanPro app</h3>
                   <p className="text-black/50 text-base md:text-lg leading-relaxed">We're constantly expanding our library of master artisans and growing our team of highly qualified interior planners.</p>
-                  <button onClick={() => setActiveTab('products')} className="bg-black text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl">Get Started</button>
+                  <button onClick={() => {
+                     window.history.pushState({}, '', window.location.pathname);
+                     setActiveTab('products');
+                  }} className="bg-black text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl">Get Started</button>
                 </div>
               </div>
             </section>
