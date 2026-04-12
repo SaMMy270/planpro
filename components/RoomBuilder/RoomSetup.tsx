@@ -274,9 +274,10 @@ function ShapePreview({ shape, dims, activeWall }: { shape: string, dims: any, a
         <svg viewBox="0 0 100 100" className="shape-svg">
             <polygon
                 points={pts.map(p => `${p.x},${p.y}`).join(' ')}
-                fill="#f8fafc"
-                stroke="#cbd5e1"
+                fill="#213a56"
+                stroke="#cdaa80"
                 strokeWidth="1"
+                fillOpacity="0.5"
             />
             {pts.map((p, i) => {
                 const nextP = pts[(i + 1) % pts.length];
@@ -285,7 +286,7 @@ function ShapePreview({ shape, dims, activeWall }: { shape: string, dims: any, a
                     <line
                         key={i}
                         x1={p.x} y1={p.y} x2={nextP.x} y2={nextP.y}
-                        stroke={isHighlit ? "#3b82f6" : "#475569"}
+                        stroke={isHighlit ? "#cdaa80" : "rgba(255,255,255,0.15)"}
                         strokeWidth={isHighlit ? "3" : "1.5"}
                     />
                 );

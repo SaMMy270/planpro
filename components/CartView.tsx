@@ -27,16 +27,16 @@ const CartView: React.FC<CartViewProps> = ({
     if (cart.length === 0) {
         return (
             <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center space-y-8">
-                <div className="w-24 h-24 bg-black/5 rounded-full flex items-center justify-center animate-pulse">
-                    <ShoppingBag size={40} className="text-black/20" />
+                <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center animate-pulse">
+                    <ShoppingBag size={40} className="text-primary/20" />
                 </div>
                 <div className="space-y-2">
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tighter uppercase">Your collection is empty</h2>
-                    <p className="text-black/40 text-sm max-w-xs mx-auto">Looks like you haven't added any pieces to your collection yet.</p>
+                    <h2 className="text-3xl md:text-4xl font-bold tracking-tighter uppercase text-primary">Your collection is empty</h2>
+                    <p className="text-body/40 text-sm max-w-xs mx-auto">Looks like you haven't added any pieces to your collection yet.</p>
                 </div>
                 <button
                     onClick={onContinueShopping}
-                    className="px-8 py-4 bg-black text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
+                    className="px-8 py-4 bg-primary text-background rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
                 >
                     Start Exploring <ArrowRight size={16} />
                 </button>
@@ -49,9 +49,9 @@ const CartView: React.FC<CartViewProps> = ({
             <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12">
                 {/* Cart Items List */}
                 <div className="lg:col-span-8 space-y-8">
-                    <div className="flex items-center justify-between border-b border-black/5 pb-6">
-                        <h2 className="text-3xl font-bold tracking-tighter uppercase">Your Collection</h2>
-                        <span className="text-xs font-bold text-black/40 uppercase tracking-widest">{cart.length} Items</span>
+                    <div className="flex items-center justify-between border-b border-primary/10 pb-6">
+                        <h2 className="text-3xl font-bold tracking-tighter uppercase text-primary">Your Collection</h2>
+                        <span className="text-xs font-bold text-primary/40 uppercase tracking-widest">{cart.length} Items</span>
                     </div>
 
                     <div className="space-y-6">
@@ -63,44 +63,44 @@ const CartView: React.FC<CartViewProps> = ({
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
-                                    className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-white rounded-[32px] border border-black/5 hover:shadow-xl transition-all group"
+                                    className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-secondary rounded-[32px] border border-text/5 hover:shadow-xl transition-all group"
                                 >
-                                    <div className="w-full sm:w-32 aspect-square rounded-2xl overflow-hidden bg-[#F5F5F3]">
+                                    <div className="w-full sm:w-32 aspect-square rounded-2xl overflow-hidden bg-background/50">
                                         <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                     </div>
 
                                     <div className="flex-1 space-y-1 text-center sm:text-left">
-                                        <span className="text-[10px] font-bold text-black/30 uppercase tracking-widest">{item.category}</span>
-                                        <h4 className="text-xl font-serif">{item.name}</h4>
-                                        <p className="text-sm text-black/40 line-clamp-1">{item.dimensions} • {item.material}</p>
+                                        <span className="text-[10px] font-bold text-text/30 uppercase tracking-widest">{item.category}</span>
+                                        <h4 className="text-xl font-serif text-text">{item.name}</h4>
+                                        <p className="text-sm text-text/40 line-clamp-1">{item.dimensions} • {item.material}</p>
                                     </div>
 
                                     <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-1 bg-black/5 p-1 rounded-xl">
+                                        <div className="flex items-center gap-1 bg-background p-1 rounded-xl">
                                             <button
                                                 onClick={() => onUpdateQty(item.id, -1)}
-                                                className="p-2 hover:bg-white rounded-lg transition-colors disabled:opacity-30"
+                                                className="p-2 hover:bg-secondary rounded-lg transition-colors disabled:opacity-30 text-body"
                                                 disabled={item.qty <= 1}
                                             >
                                                 <Minus size={14} />
                                             </button>
-                                            <span className="w-8 text-center font-bold text-sm">{item.qty}</span>
+                                            <span className="w-8 text-center font-bold text-sm text-body">{item.qty}</span>
                                             <button
                                                 onClick={() => onUpdateQty(item.id, 1)}
-                                                className="p-2 hover:bg-white rounded-lg transition-colors"
+                                                className="p-2 hover:bg-secondary rounded-lg transition-colors text-body"
                                             >
                                                 <Plus size={14} />
                                             </button>
                                         </div>
 
                                         <div className="text-right min-w-[80px]">
-                                            <p className="font-bold text-lg">₹{item.price * item.qty}</p>
-                                            <p className="text-[10px] text-black/30 font-bold uppercase tracking-tighter">₹{item.price} / unit</p>
+                                            <p className="font-bold text-lg text-text">₹{item.price * item.qty}</p>
+                                            <p className="text-[10px] text-text/30 font-bold uppercase tracking-tighter">₹{item.price} / unit</p>
                                         </div>
 
                                         <button
                                             onClick={() => onRemove(item.id)}
-                                            className="p-3 text-black/20 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                                            className="p-3 text-primary/20 hover:text-red-500 hover:bg-red-900/40 rounded-full transition-all"
                                         >
                                             <Trash2 size={18} />
                                         </button>
@@ -112,7 +112,7 @@ const CartView: React.FC<CartViewProps> = ({
 
                     <button
                         onClick={onContinueShopping}
-                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-black transition-colors group"
+                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors group"
                     >
                         <ChevronRight size={16} className="rotate-180 group-hover:-translate-x-1 transition-transform" /> Continue Shopping
                     </button>
@@ -120,40 +120,40 @@ const CartView: React.FC<CartViewProps> = ({
 
                 {/* Summary Sidebar */}
                 <div className="lg:col-span-4">
-                    <div className="bg-white rounded-[40px] p-8 md:p-10 border border-black/5 shadow-2xl sticky top-32 space-y-8">
-                        <h3 className="text-2xl font-bold tracking-tighter uppercase">Summary</h3>
+                    <div className="bg-background rounded-[40px] p-8 md:p-10 border border-text/5 shadow-2xl sticky top-32 space-y-8">
+                        <h3 className="text-2xl font-bold tracking-tighter uppercase text-text">Summary</h3>
 
                         <div className="space-y-4">
                             <div className="flex justify-between text-sm">
-                                <span className="text-black/40 font-bold uppercase tracking-widest">Subtotal</span>
-                                <span className="font-bold">₹{subtotal}</span>
+                                <span className="text-text/40 font-bold uppercase tracking-widest">Subtotal</span>
+                                <span className="font-bold text-text">₹{subtotal}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                                <span className="text-black/40 font-bold uppercase tracking-widest">Shipping</span>
-                                <span className="font-bold">{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
+                                <span className="text-text/40 font-bold uppercase tracking-widest">Shipping</span>
+                                <span className="font-bold text-text">{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
                             </div>
-                            <div className="pt-4 border-t border-black/5 flex justify-between items-end">
-                                <span className="text-xs font-bold uppercase tracking-[0.2em]">Total</span>
-                                <span className="text-4xl font-bold tracking-tighter">₹{total}</span>
+                            <div className="pt-4 border-t border-text/10 flex justify-between items-end">
+                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-text/60">Total</span>
+                                <span className="text-4xl font-bold tracking-tighter text-highlight">₹{total}</span>
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <button
                                 onClick={onCheckout}
-                                className="w-full py-5 bg-black text-white rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3 group"
+                                className="w-full py-5 bg-highlight text-background rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-highlight/10 flex items-center justify-center gap-3 group"
                             >
                                 Proceed to Checkout <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <p className="text-[9px] text-center text-black/30 font-bold uppercase tracking-widest">
+                            <p className="text-[9px] text-center text-primary/30 font-bold uppercase tracking-widest">
                                 Secure checkout powered by PlanPro Pay
                             </p>
                         </div>
 
-                        <div className="bg-[#FDE7D1]/30 p-6 rounded-3xl space-y-3">
-                            <h5 className="text-[10px] font-bold uppercase tracking-widest">PlanPro Membership</h5>
-                            <p className="text-[11px] text-black/60 leading-relaxed">Members get free shipping on all orders and early access to new collections.</p>
-                            <button className="text-[10px] font-bold uppercase tracking-widest underline underline-offset-4">Learn More</button>
+                        <div className="bg-primary/10 p-6 rounded-3xl space-y-3">
+                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-primary">PlanPro Membership</h5>
+                            <p className="text-[11px] text-body/60 leading-relaxed">Members get free shipping on all orders and early access to new collections.</p>
+                            <button className="text-[10px] font-bold uppercase tracking-widest underline underline-offset-4 text-primary">Learn More</button>
                         </div>
                     </div>
                 </div>

@@ -10,9 +10,9 @@ import Floor from "./Floor";
 
 // Wall surfaces for textured walls - Using stable Three.js example textures
 const WALL_TEXTURES = {
-    brick: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/brick_diffuse.jpg",
-    concrete: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/carbon/Carbon.png",
-    plaster: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/disturb.jpg",
+    brick: "../assets/texture/bricks.jpeg",
+    concrete: "../assets/texture/design.jpeg",
+    plaster: "../assets/texture/pattern.jpeg",
 };
 
 /*
@@ -141,7 +141,7 @@ function WallSegment({ width, height, color, texture, isHidden, position }: any)
         <mesh position={position} castShadow receiveShadow>
             <planeGeometry args={[safeW, safeH]} />
             <meshStandardMaterial 
-                color={wallTex ? "#ffffff" : (color || "#ffffff")} 
+                color={wallTex ? "#ffffff" : (color || "#2a2a2a")} 
                 map={wallTex || null}
                 side={THREE.DoubleSide} 
                 transparent={isHidden} 
@@ -206,7 +206,7 @@ function WallAperture({ wall, color, texture, isHidden, height = 2.5 }: any) {
             )}
             <mesh position={[holeCenterOnWall, sillH + holeH / 2, 0.01]}>
                 <planeGeometry args={[holeW, holeH]} />
-                <meshStandardMaterial color={isDoor ? "#1a1a1a" : "#87ceeb"} transparent opacity={isHidden ? 0.1 : 0.6} side={THREE.DoubleSide} />
+                <meshStandardMaterial color={isDoor ? "#111111" : "#87ceeb"} transparent opacity={isHidden ? 0.1 : 0.6} side={THREE.DoubleSide} />
             </mesh>
         </group>
     );
@@ -454,14 +454,14 @@ function SceneContent({
                                             position={[0, ceilingHeight / 2, 0]}
                                             width={wall.dist}
                                             height={ceilingHeight}
-                                            color={wallColor || "#ffffff"}
+                                            color={wallColor || "#2a2a2a"}
                                             texture={activeTexture}
                                             isHidden={isHidden}
                                         />
                                     ) : (
                                         <WallAperture 
                                             wall={wall} 
-                                            color={wallColor || "#ffffff"} 
+                                            color={wallColor || "#2a2a2a"} 
                                             texture={activeTexture}
                                             isHidden={isHidden} 
                                             height={ceilingHeight} 

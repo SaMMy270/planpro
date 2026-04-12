@@ -25,16 +25,16 @@ const WishlistView: React.FC<WishlistViewProps> = ({
     if (wishlist.length === 0) {
         return (
             <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center space-y-8">
-                <div className="w-24 h-24 bg-black/5 rounded-full flex items-center justify-center animate-pulse">
-                    <Heart size={40} className="text-black/20" />
+                <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center animate-pulse">
+                    <Heart size={40} className="text-primary/20" />
                 </div>
                 <div className="space-y-2">
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tighter uppercase">Your wishlist is empty</h2>
-                    <p className="text-black/40 text-sm max-w-xs mx-auto">Save items you love to your wishlist to keep track of them.</p>
+                    <h2 className="text-3xl md:text-4xl font-serif tracking-tight text-text lowercase first-letter:uppercase">Your wishlist is empty</h2>
+                    <p className="text-text/40 text-sm max-w-xs mx-auto">Save items you love to your wishlist to keep track of them.</p>
                 </div>
                 <button
                     onClick={onContinueShopping}
-                    className="px-8 py-4 bg-black text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
+                    className="px-8 py-4 bg-highlight text-background rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
                 >
                     Explore Collection <ArrowRight size={16} />
                 </button>
@@ -44,10 +44,10 @@ const WishlistView: React.FC<WishlistViewProps> = ({
 
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 space-y-12">
-            <div className="flex items-center justify-between border-b border-black/5 pb-6">
+            <div className="flex items-center justify-between border-b border-text/10 pb-6">
                 <div className="space-y-1">
-                    <h2 className="text-3xl font-bold tracking-tighter uppercase">Your Wishlist</h2>
-                    <p className="text-xs font-bold text-black/40 uppercase tracking-widest">Saved Items for later</p>
+                    <h2 className="text-3xl font-serif tracking-tight text-text">Your Wishlist</h2>
+                    <p className="text-[10px] font-bold text-text/30 uppercase tracking-[0.3em]">Saved Items for later</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <button
@@ -56,7 +56,7 @@ const WishlistView: React.FC<WishlistViewProps> = ({
                     >
                         <Sparkles size={14} className="group-hover:rotate-12 transition-transform" /> AI Smart Compare
                     </button>
-                    <span className="text-xs font-bold text-black/40 uppercase tracking-widest">{wishlist.length} Items</span>
+                    <span className="text-[10px] font-bold text-text/30 uppercase tracking-[0.3em]">{wishlist.length} Items</span>
                 </div>
             </div>
 
@@ -89,7 +89,7 @@ const WishlistView: React.FC<WishlistViewProps> = ({
             <div className="flex justify-center pt-12">
                 <button
                     onClick={onContinueShopping}
-                    className="px-8 py-4 border border-black/5 rounded-2xl font-bold text-xs uppercase tracking-widest hover:border-black transition-all flex items-center gap-2"
+                    className="px-8 py-4 border border-text/10 rounded-2xl font-bold text-xs uppercase tracking-widest hover:border-text transition-all flex items-center gap-2"
                 >
                     Continue Shopping <ArrowRight size={16} />
                 </button>

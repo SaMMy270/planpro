@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { ArrowLeft, ArrowRight, ChevronRight, Camera, Download, Check, Upload, ChevronLeft, Eye, EyeOff, Menu, Sparkles, Loader2, Box, Star, X, Maximize, Save, Plus, Layout, RotateCw, Trash2, MousePointer2, PanelLeft, PanelLeftClose }
+import { ArrowLeft, ArrowRight, ChevronRight, Camera, Download, Check, Upload, ChevronLeft, Eye, EyeOff, Menu, Sparkles, Loader2, Box, Star, X, Maximize, Save, Plus, Layout, RotateCw, Trash2, MousePointer2, PanelLeft, PanelLeftClose, Layers, ChevronDown, Settings }
 from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -37,12 +37,14 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
     dimensions: { length: 6, width: 4, ceilingHeight: 3 },
     units: 'METERS',
     openings: [],
-    wallColor: '#ffffff',
+    wallColor: '#2a2a2a',
     wallTexture: 'plain',
     floorTexture: 'plain',
     projectTitle: 'Untitled Project'
   });
 
+  const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
+  const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
   const [items, setItems] = useState<BlueprintItem[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<string>('3D');
@@ -369,27 +371,27 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="min-h-screen md:h-screen w-full pt-24 pb-12 bg-[#FBFBF9] flex flex-col items-center justify-center p-4 sm:p-6 text-black overflow-y-auto md:overflow-hidden relative"
+        className="min-h-screen md:h-screen w-full pt-24 pb-12 bg-background flex flex-col items-center justify-center p-4 sm:p-6 text-text overflow-y-auto md:overflow-hidden relative"
       >
-        <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-0 border border-black/5 rounded-[40px] overflow-hidden bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)]">
+        <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-0 border border-text/5 rounded-[40px] overflow-hidden bg-background shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)]">
           {/* Manual Designer Side */}
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="p-8 sm:p-12 md:p-24 flex flex-col justify-between border-b md:border-b-0 md:border-r border-black/5 group hover:bg-[#FBFBF9] transition-colors duration-700"
+            className="p-8 sm:p-12 md:p-24 flex flex-col justify-between border-b md:border-b-0 md:border-r border-text/5 group hover:bg-secondary/5 transition-colors duration-700"
           >
             <div className="space-y-8">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 block">Option 01</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-text/20 block">Option 01</span>
               <div className="space-y-4">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight">Manual <br /><span className="font-light">Designer</span></h2>
-                <p className="text-black/40 text-sm leading-relaxed max-w-xs">Precision-driven spatial planning. Build your environment from the ground up with custom dimensions and architectural modules.</p>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight text-primary">Manual <br /><span className="font-light text-text/60">Designer</span></h2>
+                <p className="text-text/40 text-sm leading-relaxed max-w-xs">Precision-driven spatial planning. Build your environment from the ground up with custom dimensions and architectural modules.</p>
               </div>
             </div>
             <motion.button
               whileHover={{ x: 10 }}
               onClick={initializeManualFlow}
-              className="flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-black text-black/40 transition-all mt-12"
+              className="flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-primary text-text/40 transition-all mt-12"
             >
               Enter Studio <ArrowRight size={16} />
             </motion.button>
@@ -400,22 +402,22 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="p-8 sm:p-12 md:p-24 flex flex-col justify-between bg-black text-white group relative overflow-hidden"
+            className="p-8 sm:p-12 md:p-24 flex flex-col justify-between bg-secondary text-highlight group relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-110 transition-transform duration-1000">
               <Sparkles size={200} strokeWidth={0.5} />
             </div>
             <div className="space-y-8 relative z-10">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 block">Option 02</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-highlight/20 block">Option 02</span>
               <div className="space-y-4">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight">AI Image <br /><span className="font-light text-white/60">Synthesis</span></h2>
-                <p className="text-white/40 text-sm leading-relaxed max-w-xs">Neural reconstruction from photography. Upload your space and let our engine generate a digital twin in seconds.</p>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight text-highlight">AI Image <br /><span className="font-light text-highlight/60">Synthesis</span></h2>
+                <p className="text-highlight/40 text-sm leading-relaxed max-w-xs">Neural reconstruction from photography. Upload your space and let our engine generate a digital twin in seconds.</p>
               </div>
             </div>
             <motion.button
               whileHover={{ x: 10 }}
               onClick={initializeAiFlow}
-              className="flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-white text-white/40 transition-all mt-12 relative z-10"
+              className="flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] font-bold group-hover:text-highlight text-highlight/40 transition-all mt-12 relative z-10"
             >
               Initialize Flow <ArrowRight size={16} />
             </motion.button>
@@ -427,7 +429,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-12 text-[9px] font-black uppercase tracking-[0.5em] text-black/10"
+          className="mt-12 text-[9px] font-black uppercase tracking-[0.5em] text-text/10"
         >
           PlanPro Architectural Suite © 2026
         </motion.div>
@@ -437,25 +439,25 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
   if (step === 'shape-selection') {
     const shapes = [
-      { id: 'SQUARE' as RoomShape, name: 'Square', icon: <div className="w-12 h-12 border border-black/20 rounded-sm" /> },
+      { id: 'SQUARE' as RoomShape, name: 'Square', icon: <div className="w-12 h-12 border-[2.5px] border-primary rounded-sm shadow-[0_0_20px_rgba(205,170,128,0.2)]" /> },
       {
         id: 'L_SHAPE' as RoomShape, name: 'L-Shaped', icon: (
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="stroke-black/20 stroke-[1.5]">
-            <path d="M10 10V38H38V24H24V10H10Z" />
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary group-hover:text-highlight transition-colors">
+            <path d="M10 10V38H38V24H24V10H10Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )
       },
       {
         id: 'T_SHAPE' as RoomShape, name: 'T-Shaped', icon: (
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="stroke-black/20 stroke-[1.5]">
-            <path d="M10 10H38V24H28V38H20V24H10V10Z" />
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary group-hover:text-highlight transition-colors">
+            <path d="M10 10H38V24H28V38H20V24H10V10Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )
       },
       {
         id: 'HEXAGON' as RoomShape, name: 'Hexagon', icon: (
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="stroke-black/20 stroke-[1.5]">
-            <path d="M24 6L39.5885 15V33L24 42L8.41154 33V15L24 6Z" />
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary group-hover:text-highlight transition-colors">
+            <path d="M24 6L39.5885 15V33L24 42L8.41154 33V15L24 6Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )
       },
@@ -466,21 +468,21 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="min-h-screen md:h-screen w-full pt-24 pb-12 bg-[#FBFBF9] flex flex-col items-center justify-center p-4 sm:p-6 text-black overflow-y-auto md:overflow-hidden relative"
+        className="min-h-screen md:h-screen w-full pt-24 pb-12 bg-background flex flex-col items-center justify-center p-4 sm:p-6 text-text overflow-y-auto md:overflow-hidden relative"
       >
         <motion.button
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           onClick={() => setStep('selection')}
-          className="absolute top-24 sm:top-32 left-6 sm:left-10 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-black/40 hover:text-black transition-colors"
+          className="absolute top-24 sm:top-32 left-6 sm:left-10 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-text/40 hover:text-primary transition-colors"
         >
           <ArrowLeft size={14} /> Back
         </motion.button>
 
         <div className="max-w-5xl w-full space-y-12 sm:space-y-24 text-center">
           <div className="space-y-4">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 block">Spatial Footprint</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight">Select <span className="font-light">Foundation</span></h2>
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-text/20 block">Spatial Footprint</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight text-primary">Select <span className="font-light text-text/60">Foundation</span></h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-12">
@@ -497,12 +499,12 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 }}
                 className="group flex flex-col items-center gap-8"
               >
-                <div className="w-full aspect-square rounded-[24px] sm:rounded-[40px] bg-white border border-black/5 flex items-center justify-center group-hover:border-black transition-all duration-500 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.05)]">
+                <div className="w-full aspect-square rounded-[24px] sm:rounded-[40px] bg-background border border-text/5 flex items-center justify-center group-hover:border-text transition-all duration-500 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.05)]">
                   <div className="scale-75 sm:scale-100">
                     {shape.icon}
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-black/30 group-hover:text-black transition-colors">{shape.name}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text/30 group-hover:text-text transition-colors">{shape.name}</span>
               </motion.button>
             ))}
           </div>
@@ -517,26 +519,26 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-[#FBFBF9] overflow-hidden pt-20"
+        className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-background overflow-hidden pt-20"
       >
         {/* Left Sidebar - Studio Controls */}
-        <div className="w-full lg:w-[400px] shrink-0 h-full bg-white flex flex-col p-6 lg:p-8 border-r border-black/5 shadow-[20px_0_40px_rgba(0,0,0,0.02)] z-20">
+        <div className="w-full lg:w-[400px] shrink-0 h-full bg-background flex flex-col p-6 lg:p-8 border-r border-text/5 shadow-[20px_0_40px_rgba(0,0,0,0.02)] z-20">
           <button 
             onClick={() => setStep('selection')}
-            className="flex items-center gap-3 text-black/30 hover:text-black mb-4 lg:mb-6 transition-all text-[10px] font-black uppercase tracking-[0.2em] group"
+            className="flex items-center gap-3 text-text/30 hover:text-primary mb-4 lg:mb-6 transition-all text-[10px] font-black uppercase tracking-[0.2em] group"
           >
             <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Selection
           </button>
 
           <div className="space-y-4 lg:space-y-6 flex-1 min-h-0 overflow-y-auto no-scrollbar pt-1">
             <div className="space-y-2">
-              <h2 className="text-2xl font-serif tracking-tight text-black">AI Room Generation</h2>
+              <h2 className="text-2xl font-serif tracking-tight text-text">AI Room Generation</h2>
             </div>
             
             <div className="space-y-5">
               {/* Ceiling Height */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-black/40 uppercase tracking-[0.2em]">Ceiling Height</label>
+                <label className="text-[10px] font-black text-text/40 uppercase tracking-[0.2em]">Ceiling Height</label>
                 <div className="relative group w-full">
                   <input 
                     type="number" 
@@ -552,27 +554,27 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                       if (roomData.units === 'FEET') val = toMetersFromDecimal(val);
                       updateRoom({ dimensions: { ...roomData.dimensions, ceilingHeight: val } });
                     }}
-                    className="w-full bg-[#F5F5F3] border border-black/5 rounded-2xl h-11 px-5 font-bold text-black text-sm outline-none focus:bg-white focus:border-black/20 transition-all"
+                    className="w-full bg-secondary/30 border border-text/5 rounded-2xl h-11 px-5 font-bold text-text text-sm outline-none focus:bg-background focus:border-text/20 transition-all"
                     placeholder="2.5"
                   />
-                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-black/20">{roomData.units === 'FEET' ? 'FT' : 'M'}</span>
+                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-text/20">{roomData.units === 'FEET' ? 'FT' : 'M'}</span>
                 </div>
               </div>
   
               {/* Wall Measurements */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-black text-black/40 uppercase tracking-[0.2em]">Wall Measurements</p>
-                  <div className="flex items-center bg-[#F5F5F3] border border-black/5 rounded-full p-1">
+                  <p className="text-[10px] font-black text-text/40 uppercase tracking-[0.2em]">Wall Measurements</p>
+                  <div className="flex items-center bg-secondary/30 border border-text/5 rounded-full p-1">
                     <button 
                       onClick={() => handleUnitToggle('METERS')} 
-                      className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all ${roomData.units !== 'FEET' ? 'bg-white text-black shadow-sm' : 'text-black/30 hover:text-black/60'}`}
+                      className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all ${roomData.units !== 'FEET' ? 'bg-background text-text shadow-sm' : 'text-text/30 hover:text-text/60'}`}
                     >
                       M
                     </button>
                     <button 
                       onClick={() => handleUnitToggle('FEET')} 
-                      className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all ${roomData.units === 'FEET' ? 'bg-white text-black shadow-sm' : 'text-black/30 hover:text-black/60'}`}
+                      className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all ${roomData.units === 'FEET' ? 'bg-background text-text shadow-sm' : 'text-text/30 hover:text-text/60'}`}
                     >
                       FT
                     </button>
@@ -581,7 +583,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
                 <div className="space-y-3">
                   {['Front Wall', 'Right Wall', 'Back Wall', 'Left Wall'].map((wall, i) => (
-                    <div key={wall} className="p-2.5 bg-[#F5F5F3] rounded-[20px] border border-black/5 group hover:bg-white hover:border-black/10 transition-all duration-300">
+                    <div key={wall} className="p-2.5 bg-secondary rounded-[20px] border border-text/5 group hover:bg-text/5 hover:border-text/10 transition-all duration-300">
                       <div className="flex items-center gap-3">
                         <span className="text-[9px] font-black text-black/20 uppercase tracking-[0.2em] w-14 shrink-0">{wall}</span>
                         
@@ -604,12 +606,12 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                                 if (i % 2 === 0) updateRoom({ dimensions: { ...roomData.dimensions, width: val } });
                                 else updateRoom({ dimensions: { ...roomData.dimensions, length: val } });
                               }}
-                              className="w-full h-11 bg-white border border-black/5 rounded-xl text-sm font-bold text-black outline-none focus:border-black/20 text-center"
+                              className="w-full h-11 bg-background border border-text/10 rounded-xl text-sm font-bold text-text outline-none focus:border-primary/20 text-center"
                             />
                             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-black/10">{roomData.units === 'FEET' ? 'FT' : 'M'}</span>
                           </div>
 
-                          <label className="flex-1 h-11 flex items-center justify-center gap-2 bg-black text-white rounded-xl cursor-pointer hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-black/5 hover:bg-zinc-900 group-hover:bg-zinc-900">
+                          <label className="flex-1 h-11 flex items-center justify-center gap-2 bg-highlight text-background rounded-xl cursor-pointer hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-highlight/5 hover:bg-highlight/90 group-hover:bg-highlight/90">
                             <input 
                               type="file" 
                               multiple 
@@ -632,19 +634,19 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 </div>
               </div>
             </div>
-
+ 
             <div className="pt-4 space-y-4">
-              <div className="px-6 py-3 bg-[#F5F5F3] rounded-2xl border border-black/5 flex items-center justify-between">
-                <span className="text-xs font-bold text-black">{aiImages.length} Photos Recorded</span>
+              <div className="px-6 py-3 bg-secondary/30 rounded-2xl border border-text/5 flex items-center justify-between">
+                <span className="text-xs font-bold text-text">{aiImages.length} Photos Recorded</span>
               </div>
-
+ 
               {!roomData.panoramaUrl ? (
                 <button 
                   onClick={handleStitchRoom}
                   disabled={isProcessing || aiImages.length < 4}
-                  className="w-full py-4 bg-black text-white rounded-[28px] font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-black/10 hover:bg-black/80 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:bg-black/5 disabled:text-black/20 disabled:scale-100"
+                  className="w-full py-4 bg-highlight text-background rounded-[28px] font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-highlight/10 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:bg-text/5 disabled:text-text/20 disabled:scale-100"
                 >
-                  {isProcessing ? <Loader2 className="animate-spin text-white/40" size={18} /> : <Sparkles size={18} />}
+                  {isProcessing ? <Loader2 className="animate-spin text-background/40" size={18} /> : <Sparkles size={18} />}
                   {aiImages.length < 4 ? `Upload ${4 - aiImages.length} More Photos` : 'Generate 3D Twin'}
                 </button>
               ) : (
@@ -654,13 +656,13 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                       setStep('designing');
                       setActiveSidebarTab('library');
                     }}
-                    className="w-full py-4 bg-black text-white rounded-[28px] font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-black/10 hover:bg-black/80 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
+                    className="w-full py-4 bg-highlight text-background rounded-[28px] font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-highlight/10 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
                   >
                     Enter 3D Studio <ArrowRight size={16} />
                   </button>
                   <button 
                     onClick={() => updateRoom({ panoramaUrl: undefined })}
-                    className="w-full py-3 bg-black/5 hover:bg-black/10 text-black rounded-[28px] font-black text-[9px] uppercase tracking-widest transition-all"
+                    className="w-full py-3 bg-text/5 hover:bg-text/10 text-text rounded-[28px] font-black text-[9px] uppercase tracking-widest transition-all"
                   >
                     Clear Results & Re-Stitch
                   </button>
@@ -669,28 +671,28 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
             </div>
           </div>
         </div>
-
+ 
         {/* Instructions Viewport */}
-        <div className="flex-1 relative bg-[#F5F5F3] flex flex-col items-center justify-center p-12 lg:p-24 overflow-hidden">
+        <div className="flex-1 relative bg-secondary/20 flex flex-col items-center justify-center p-12 lg:p-24 overflow-hidden">
           {/* Decorative Grid */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-            <div className="w-full h-full bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:60px_60px]"></div>
+            <div className="w-full h-full bg-[linear-gradient(to_right,var(--text)_1px,transparent_1px),linear-gradient(to_bottom,var(--text)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
           </div>
-
+ 
           {roomData.panoramaUrl ? (
-            <div className="relative z-10 w-full h-full bg-black/5 rounded-[40px] overflow-hidden border border-black/10 backdrop-blur-sm p-2 group">
+            <div className="relative z-10 w-full h-full bg-text/5 rounded-[40px] overflow-hidden border border-text/10 backdrop-blur-sm p-2 group">
               <DesignerRoom
                 roomData={roomData}
                 items={[]}
                 setItems={() => { }}
                 viewMode="3D"
               />
-              <div className="absolute top-8 left-8 p-4 bg-white/80 backdrop-blur-md rounded-2xl border border-black/5 shadow-xl">
-                 <p className="text-[10px] font-black uppercase tracking-widest text-black mb-1">Live Reconstruction</p>
-                 <p className="text-[8px] font-medium text-black/40">AI-Synthesized environment from {aiImages.length} frames</p>
+              <div className="absolute top-8 left-8 p-4 bg-background/80 backdrop-blur-md rounded-2xl border border-text/5 shadow-xl">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-text mb-1">Live Reconstruction</p>
+                 <p className="text-[8px] font-medium text-text/40">AI-Synthesized environment from {aiImages.length} frames</p>
               </div>
               <div className="absolute top-8 right-8 flex gap-2">
-                 <div className="px-4 py-2 bg-black text-white rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 animate-pulse">
+                 <div className="px-4 py-2 bg-highlight text-background rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 animate-pulse">
                     <Check size={12} /> Stitched
                  </div>
               </div>
@@ -698,7 +700,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           ) : aiImages.length === 0 ? (
             <div className="relative z-10 w-full max-w-2xl space-y-20">
               <div className="space-y-6">
-                <h3 className="text-4xl sm:text-5xl font-serif text-black leading-tight">Neural Reconstruction Requirements</h3>
+                <h3 className="text-4xl sm:text-5xl font-serif text-text leading-tight">Neural Reconstruction Requirements</h3>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10">
@@ -710,36 +712,36 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 ].map((item, idx) => (
                   <div key={idx} className="space-y-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full border border-black/10 flex items-center justify-center text-[10px] font-bold text-black/20">{idx + 1}</div>
-                      <span className="text-[10px] font-black text-black uppercase tracking-widest">{item.title}</span>
+                      <div className="w-6 h-6 rounded-full border border-text/10 flex items-center justify-center text-[10px] font-bold text-text/20">{idx + 1}</div>
+                      <span className="text-[10px] font-black text-text uppercase tracking-widest">{item.title}</span>
                     </div>
-                    <p className="text-sm text-black/40 leading-relaxed font-medium">{item.desc}</p>
+                    <p className="text-sm text-text/40 leading-relaxed font-medium">{item.desc}</p>
                   </div>
                 ))}
               </div>
-
+ 
               <div className="pt-10 flex items-center gap-6">
-                <div className="px-5 py-2.5 bg-white border border-black/5 rounded-full shadow-sm text-[10px] font-black uppercase tracking-widest text-black/40 flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
+                <div className="px-5 py-2.5 bg-background border border-text/5 rounded-full shadow-sm text-[10px] font-black uppercase tracking-widest text-text/40 flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-text animate-pulse" />
                   AI Reconstruction Engine Active
                 </div>
-                <p className="text-[10px] font-serif italic text-black/30">Pro Tip: Higher coverage results in deeper model accuracy.</p>
+                <p className="text-[10px] font-serif italic text-text/30">Pro Tip: Higher coverage results in deeper model accuracy.</p>
               </div>
             </div>
           ) : (
             <div className="relative z-10 w-full h-full flex flex-col pt-10 px-10">
-              <div className="flex items-center justify-between mb-12">
-                <div className="space-y-1">
-                  <h3 className="text-3xl font-serif text-black">Captured Environment</h3>
-                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.3em]">{aiImages.length} Images Recorded</p>
-                </div>
-                <button 
-                  onClick={() => setAiImages([])}
-                  className="px-6 py-3 bg-black/5 hover:bg-black/10 text-black rounded-full text-[9px] font-black uppercase tracking-widest transition-all"
-                >
-                  Clear Session
-                </button>
-              </div>
+               <div className="flex items-center justify-between mb-12">
+                 <div className="space-y-1">
+                   <h3 className="text-3xl font-serif text-text">Captured Environment</h3>
+                   <p className="text-[10px] font-black text-text/20 uppercase tracking-[0.3em]">{aiImages.length} Images Recorded</p>
+                 </div>
+                 <button 
+                   onClick={() => setAiImages([])}
+                   className="px-6 py-3 bg-text/5 hover:bg-text/10 text-text rounded-full text-[9px] font-black uppercase tracking-widest transition-all"
+                 >
+                   Clear Session
+                 </button>
+               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto no-scrollbar pb-20">
                 <AnimatePresence>
@@ -751,17 +753,16 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        className="aspect-[4/5] relative group bg-white rounded-3xl overflow-hidden border border-black/5 shadow-sm"
+                        className="aspect-[4/5] relative group bg-secondary rounded-3xl overflow-hidden border border-text/5 shadow-sm"
                       >
                         <img 
                           src={url} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" 
                           onLoad={() => URL.revokeObjectURL(url)}
                         />
-                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <button 
                           onClick={() => setAiImages(prev => prev.filter((_, i) => i !== idx))}
-                          className="absolute top-4 right-4 w-10 h-10 bg-black text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95"
+                          className="absolute top-4 right-4 w-10 h-10 bg-highlight text-background rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95"
                         >
                           <X size={18} />
                         </button>
@@ -770,7 +771,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                   })}
                   
                   {aiImages.length < 20 && (
-                    <label className="aspect-[4/5] border-2 border-dashed border-black/10 rounded-3xl flex flex-col items-center justify-center gap-6 cursor-pointer hover:border-black/20 hover:bg-black/[0.02] transition-all group">
+                    <label className="aspect-[4/5] border-2 border-dashed border-text/10 rounded-3xl flex flex-col items-center justify-center gap-6 cursor-pointer hover:border-text/20 hover:bg-text/[0.02] transition-all group">
                       <input 
                         type="file" 
                         multiple 
@@ -778,12 +779,12 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                         className="hidden" 
                         onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
                       />
-                      <div className="w-20 h-20 bg-black/[0.02] group-hover:bg-black group-hover:text-white rounded-full flex items-center justify-center transition-all shadow-xl shadow-black/5">
+                      <div className="w-20 h-20 bg-text/[0.02] group-hover:bg-text group-hover:text-highlight rounded-full flex items-center justify-center transition-all shadow-xl shadow-text/5">
                         <Plus size={32} />
                       </div>
                       <div className="text-center space-y-1">
-                        <span className="text-[12px] font-black text-black uppercase tracking-[0.2em] group-hover:text-black">Add Frame</span>
-                        <p className="text-[9px] font-medium text-black/30">Capture more angles</p>
+                        <span className="text-[12px] font-black text-text uppercase tracking-[0.2em] group-hover:text-text">Add Frame</span>
+                        <p className="text-[9px] font-medium text-text/30">Capture more angles</p>
                       </div>
                     </label>
                   )}
@@ -793,8 +794,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           )}
           
           {/* Subtle Corner Accents */}
-          <div className="absolute top-12 right-12 w-32 h-32 border-t border-r border-black/5" />
-          <div className="absolute bottom-12 left-12 w-32 h-32 border-b border-l border-black/5" />
+          <div className="absolute top-12 right-12 w-32 h-32 border-t border-r border-text/10" />
+          <div className="absolute bottom-12 left-12 w-32 h-32 border-b border-l border-text/10" />
         </div>
       </motion.div>
     );
@@ -804,7 +805,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
   if (step === 'dimension-setup') {
     return (
-      <div className="w-full min-h-[calc(100dvh-72px)] pt-20 bg-[#FBFBF9]">
+      <div className="w-full min-h-[calc(100dvh-72px)] pt-20 bg-background">
         <DimensionSetup
           data={roomData}
           onUpdate={updateRoom}
@@ -817,7 +818,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
   if (step === 'openings-setup') {
     return (
-      <div className="w-full min-h-[calc(100dvh-72px)] pt-20 bg-[#FBFBF9]">
+      <div className="w-full min-h-[calc(100dvh-72px)] pt-20 bg-background">
         <OpeningsSetup
           data={roomData}
           onUpdate={updateRoom}
@@ -904,17 +905,17 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
   // --- DESIGNER VIEW ---
   return (
-    <div className="flex flex-col h-screen w-full bg-[#F5F5F3] overflow-hidden relative">
+    <div className="flex flex-col h-screen w-full bg-secondary/10 overflow-hidden relative">
       <AnimatePresence>
         {hoveredProduct && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="fixed z-[300] w-[320px] bg-white border border-black/5 rounded-[40px] shadow-[0_40px_80px_rgba(0,0,0,0.15)] pointer-events-none flex flex-col overflow-hidden max-h-[85vh]"
+            className="fixed z-[300] w-[320px] bg-background border border-text/5 rounded-[40px] shadow-[0_40px_80px_rgba(0,0,0,0.15)] pointer-events-none flex flex-col overflow-hidden max-h-[85vh]"
             style={{ top: `${popupPos.top}px`, left: `${popupPos.left}px` }}
           >
-            <div className="aspect-[4/3] w-full overflow-hidden bg-[#F5F5F3]">
+            <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
               <img
                 src={hoveredProduct.image}
                 className="w-full h-full object-cover"
@@ -923,23 +924,23 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
             </div>
             <div className="p-8 space-y-5">
               <div className="space-y-1">
-                <span className="text-[9px] uppercase tracking-[0.3em] text-black/30 font-black block">
+                <span className="text-[9px] uppercase tracking-[0.3em] text-text/30 font-black block">
                   {hoveredProduct.category}
                 </span>
-                <h5 className="font-serif text-2xl leading-tight text-black">
+                <h5 className="font-serif text-2xl leading-tight text-text">
                   {hoveredProduct.name}
                 </h5>
               </div>
-              <div className="flex justify-between items-center py-4 border-y border-black/5">
-                <span className="text-2xl font-bold tracking-tighter text-black">
+              <div className="flex justify-between items-center py-4 border-y border-text/5">
+                <span className="text-2xl font-bold tracking-tighter text-text">
                   ${hoveredProduct.price}
                 </span>
-                <div className="flex items-center gap-1.5 bg-black/5 px-3 py-1.5 rounded-full">
-                  <Star size={10} className="fill-black text-black" />
+                <div className="flex items-center gap-1.5 bg-text/5 px-3 py-1.5 rounded-full">
+                  <Star size={10} className="fill-text text-text" />
                   <span className="text-[10px] font-black">{hoveredProduct.rating}</span>
                 </div>
               </div>
-              <p className="text-[11px] text-black/40 leading-relaxed font-medium italic">
+              <p className="text-[11px] text-text/40 leading-relaxed font-medium italic">
                 {hoveredProduct.description}
               </p>
             </div>
@@ -947,19 +948,19 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         )}
       </AnimatePresence>
 
-      <header className="fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-b border-black/5 flex items-center justify-between px-4 sm:px-8 z-[100]">
+      <header className="fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-md border-b border-text/5 flex items-center justify-between px-4 sm:px-8 z-[100]">
         <div className="flex items-center gap-6">
           <button
             onClick={() => setStep('selection')}
-            className="p-1.5 sm:p-2 hover:bg-black/5 rounded-full transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-text/5 rounded-full transition-colors"
           >
-            <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
+            <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-text" />
           </button>
 
           {/* Sidebar toggle — always visible on all screen sizes */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-1.5 hover:bg-black/5 rounded-full transition-colors flex items-center gap-1.5"
+            className="p-1.5 hover:bg-text/5 rounded-full transition-colors flex items-center gap-1.5 text-text"
             title={isSidebarOpen ? 'Hide Panel' : 'Show Panel'}
           >
             {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
@@ -969,7 +970,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
             {isEditingTitle ? (
               <input
                 autoFocus
-                className="text-sm sm:text-lg md:text-xl font-serif border-b border-black/20 focus:outline-none bg-transparent truncate"
+                className="text-sm sm:text-lg md:text-xl font-serif border-b border-text/20 focus:outline-none bg-transparent truncate"
                 value={roomData.projectTitle}
                 onBlur={() => setIsEditingTitle(false)}
                 onChange={(e) => updateRoom({ projectTitle: e.target.value })}
@@ -977,18 +978,18 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               />
             ) : (
               <h2
-                className="text-sm sm:text-lg md:text-xl font-serif flex items-center gap-1 sm:gap-2 cursor-pointer truncate"
+                className="text-sm sm:text-lg md:text-xl font-bold tracking-tight text-text flex items-center gap-1 sm:gap-2 cursor-pointer truncate"
                 onClick={() => setIsEditingTitle(true)}
               >
                 <span className="truncate">{roomData.projectTitle}</span>
                 <span className="text-[10px] opacity-20 flex-shrink-0">✏️</span>
               </h2>
             )}
-            <div className="flex items-center gap-2 sm:gap-3">
-              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-black/30 whitespace-nowrap">
-                Carpet Area:
+            <div className="flex items-center gap-1.5 sm:gap-3">
+              <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-widest text-text/30 whitespace-nowrap">
+                CARPET AREA:
               </span>
-              <span className="text-[9px] sm:text-[10px] font-bold text-black/60 whitespace-nowrap">
+              <span className="text-[8px] sm:text-[10px] font-bold text-highlight whitespace-nowrap">
                 {formatArea(carpetArea, roomData.units === 'METERS' ? 'METRIC' : 'IMPERIAL')}
               </span>
             </div>
@@ -998,60 +999,21 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           <button
             className={`px-3 sm:px-6 py-2 sm:py-2.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
               isPreviewActive
-                ? 'bg-black text-white shadow-xl'
-                : 'bg-black/5 text-black hover:bg-black/10'
+                ? 'bg-text text-highlight shadow-xl shadow-text/10'
+                : 'bg-text/5 text-text hover:bg-text/10'
             }`}
             onClick={togglePreview}
+            title={isPreviewActive ? 'Exit Studio' : 'Cinema View'}
           >
-            <span className="sm:hidden">{isPreviewActive ? '' : ''}</span>
-            <span className="hidden sm:inline">{isPreviewActive ? ' Exit Preview' : ' Full Preview'}</span>
+            {isPreviewActive ? <X size={14} className="sm:hidden" /> : <Maximize size={14} className="sm:hidden" />}
+            <span className="hidden sm:inline italic">{isPreviewActive ? ' Exit Studio' : ' Cinema View'}</span>
           </button>
 
-          <div className="w-px h-6 bg-black/10" />
 
-          <div className="hidden sm:flex items-center gap-2 bg-black/5 p-1 rounded-full">
-            <button
-              onClick={() => setViewMode('TOP')}
-              className={`p-2.5 rounded-full transition-all ${
-                viewMode === 'TOP' 
-                  ? 'bg-black text-white shadow-lg' 
-                  : 'text-black/40 hover:text-black hover:bg-black/5'
-              }`}
-              title="Blueprint View"
-            >
-              <Maximize size={16} />
-            </button>
-            <button
-              onClick={() => setViewMode('3D')}
-              className={`p-2.5 rounded-full transition-all ${
-                viewMode === '3D' 
-                  ? 'bg-black text-white shadow-lg' 
-                  : 'text-black/40 hover:text-black hover:bg-black/5'
-              }`}
-              title="Perspective View"
-            >
-              <Box size={16} />
-            </button>
-          </div>
-
-          <div className="w-px h-6 bg-black/10 mx-2" />
-
-          <button
-            onClick={() => setShowWalls(!showWalls)}
-            className={`p-2 sm:p-2.5 rounded-full transition-all flex items-center gap-1 sm:gap-2 ${
-              showWalls 
-                ? 'bg-black text-white shadow-lg' 
-                : 'bg-black/5 text-black hover:bg-black/10'
-            }`}
-            title={showWalls ? "Hide Walls" : "Show Walls"}
-          >
-            {showWalls ? <Eye size={16} className="sm:w-[18px] sm:h-[18px]" /> : <EyeOff size={16} className="sm:w-[18px] sm:h-[18px]" />}
-            <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest pr-1 hidden sm:inline">Walls</span>
-          </button>
 
           <button
             onClick={handleExportGLB}
-            className="p-2 sm:p-3 bg-black text-white rounded-full hover:scale-110 transition-transform shadow-lg"
+            className="p-2 sm:p-3 bg-primary text-text rounded-full hover:scale-110 transition-transform shadow-lg"
           >
             <Save size={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>
@@ -1063,7 +1025,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           <aside
             key="designer-sidebar"
             style={isMobile ? { width: '100%', height: 'auto', maxHeight: '420px' } : { width: '450px' }}
-            className={`fixed z-[150] bg-white border-black/5 flex flex-col overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-all duration-500 rounded-t-[2.5rem] lg:rounded-none lg:shadow-2xl ${
+            className={`fixed z-[150] bg-background border-text/5 flex flex-col overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-all duration-500 rounded-t-[2.5rem] lg:rounded-none lg:shadow-2xl ${
               isMobile 
                 ? `bottom-0 left-0 border-t ${isSidebarOpen ? 'translate-y-0' : 'translate-y-full opacity-0'}` 
                 : `top-20 bottom-0 left-0 border-r ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full opacity-0'}`
@@ -1077,27 +1039,26 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                     animate={{ y: 0 }}
                     exit={{ y: '100%' }}
                     transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                    className="absolute inset-0 z-[100] bg-white flex flex-col p-8"
+                    className="absolute inset-0 z-[100] bg-background flex flex-col p-8"
                   >
                     <div className="flex items-center justify-between mb-8">
                       <div>
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-black/30">Color Studio</span>
-                        <h3 className="text-xl font-serif mt-1">Wall Palette</h3>
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-text/30">Color Studio</span>
+                        <h3 className="text-xl font-serif mt-1 text-text">Wall Palette</h3>
                       </div>
                       <button 
                         onClick={() => {
                           saveToRecentColors(roomData.wallColor);
                           setIsColorPickerOpen(false);
                         }}
-                        className="p-3 hover:bg-black/5 rounded-full transition-all group"
+                        className="p-3 hover:bg-text/5 rounded-full transition-all group"
                       >
-                        <X size={20} className="text-black/30 group-hover:text-black" />
+                        <X size={20} className="text-text/30 group-hover:text-text" />
                       </button>
                     </div>
-
                     <div className="flex-1 flex flex-col items-center justify-center space-y-10">
                       <div className="relative group">
-                        <div className="absolute -inset-4 bg-black/5 rounded-[48px] blur-xl group-hover:bg-black/10 transition-all" />
+                        <div className="absolute -inset-4 bg-text/5 rounded-[48px] blur-xl group-hover:bg-text/10 transition-all" />
                         <HexColorPicker 
                           color={roomData.wallColor} 
                           onChange={handleColorChange} 
@@ -1105,15 +1066,15 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                           className="relative"
                         />
                       </div>
-
+ 
                       <div className="w-full grid grid-cols-2 gap-4">
-                        <div className="bg-black/[0.02] border border-black/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
-                          <span className="text-[8px] font-black uppercase tracking-widest text-black/20 mb-3">Live Result</span>
-                          <div className="w-14 h-14 rounded-full border-4 border-white shadow-2xl" style={{ backgroundColor: roomData.wallColor }} />
+                        <div className="bg-text/[0.02] border border-text/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
+                          <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-3">Live Result</span>
+                          <div className="w-14 h-14 rounded-full border-4 border-background shadow-2xl" style={{ backgroundColor: roomData.wallColor }} />
                         </div>
-                        <div className="bg-black/[0.02] border border-black/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
-                          <span className="text-[8px] font-black uppercase tracking-widest text-black/20 mb-3">Hex Pattern</span>
-                          <span className="text-xs font-bold tracking-tight text-black/80">{roomData.wallColor.toUpperCase()}</span>
+                        <div className="bg-text/[0.02] border border-text/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
+                          <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-3">Hex Pattern</span>
+                          <span className="text-xs font-bold tracking-tight text-text/80">{roomData.wallColor.toUpperCase()}</span>
                         </div>
                       </div>
                     </div>
@@ -1123,7 +1084,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                         saveToRecentColors(roomData.wallColor);
                         setIsColorPickerOpen(false);
                       }}
-                      className="w-full mt-10 py-6 rounded-[28px] bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-black/20"
+                      className="w-full mt-10 py-6 rounded-[28px] bg-text text-highlight text-[10px] font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-text/20"
                     >
                       Apply Selection
                     </button>
@@ -1131,14 +1092,14 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 )}
               </AnimatePresence>
               {/* ── Menu-style tab navigation ── */}
-              <div className="px-5 pt-4 pb-2 border-b border-black/[0.1] flex items-center justify-between lg:justify-start gap-4 sticky top-0 bg-white z-[60]">
+              <div className="px-5 pt-4 pb-2 border-b border-text/10 flex items-center justify-between lg:justify-start gap-4 sticky top-0 bg-background z-[60]">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setActiveSidebarTab('appearance')}
                     className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${
                       activeSidebarTab === 'appearance'
-                        ? 'bg-black text-white border-black shadow-xl shadow-black/20'
-                        : 'bg-transparent text-black/40 border-black/5 hover:border-black/20'
+                        ? 'bg-text text-highlight border-text shadow-xl shadow-text/20'
+                        : 'bg-transparent text-text/40 border-text/5 hover:border-text/20'
                     }`}
                   >
                     <Layout size={12} />
@@ -1148,8 +1109,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                     onClick={() => setActiveSidebarTab('library')}
                     className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${
                       activeSidebarTab === 'library'
-                        ? 'bg-black text-white border-black shadow-xl shadow-black/20'
-                        : 'bg-transparent text-black/40 border-black/5 hover:border-black/20'
+                        ? 'bg-text text-highlight border-text shadow-xl shadow-text/20'
+                        : 'bg-transparent text-text/40 border-text/5 hover:border-text/20'
                     }`}
                   >
                     <Box size={12} />
@@ -1160,7 +1121,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 {isMobile && (
                   <button 
                     onClick={() => setIsSidebarOpen(false)}
-                    className="p-3 bg-black/5 rounded-full text-black/20 hover:text-black transition-colors"
+                    className="p-3 bg-text/5 rounded-full text-text/20 hover:text-text transition-colors"
                   >
                     <X size={18} />
                   </button>
@@ -1175,14 +1136,14 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 {activeSidebarTab === 'appearance' && (
                   <div className={`flex ${isMobile ? 'flex-row items-start gap-12 pb-4' : 'flex-col space-y-8'}`}>
                     <section className="space-y-4 shrink-0">
-                      <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-black/20 flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full bg-black/20" />
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text/20 flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-text/20" />
                         Wall Color
                       </h4>
                       <div className={`grid ${isMobile ? 'grid-flow-col grid-rows-2' : 'grid-cols-6'} gap-3`}>
                         {(() => {
                           const presets = [
-                            '#ffffff', '#E4E4F4', '#FDE7D1', '#F5F5F3', '#000000', '#2d3436', '#636e72', '#b2bec3'
+                            '#2a2a2a', '#1a1a1b', '#353b48', '#2d3436', '#ffffff', '#E4E4F4', '#FDE7D1', '#F5F5F3'
                           ];
                           const isCustom = !presets.includes(roomData.wallColor);
                           
@@ -1194,8 +1155,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                                   onClick={() => updateRoom({ wallColor: col })}
                                   className={`aspect-square rounded-full border-2 transition-all ${
                                     roomData.wallColor === col
-                                      ? 'border-black scale-110 shadow-lg shadow-black/5'
-                                      : 'border-black/5'
+                                      ? 'border-text scale-110 shadow-lg shadow-text/5'
+                                      : 'border-text/5'
                                   }`}
                                   style={{ backgroundColor: col }}
                                 />
@@ -1210,12 +1171,12 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                                     onClick={() => col && updateRoom({ wallColor: col })}
                                     className={`aspect-square rounded-full border-2 transition-all ${
                                       col && roomData.wallColor === col
-                                        ? 'border-black scale-110 shadow-lg shadow-black/5'
-                                        : 'border-black/5'
-                                    } flex items-center justify-center ${!col ? 'border-dashed border-black/10 bg-black/[0.02]' : ''}`}
+                                        ? 'border-text scale-110 shadow-lg shadow-text/5'
+                                        : 'border-text/5'
+                                    } flex items-center justify-center ${!col ? 'border-dashed border-text/10 bg-text/[0.02]' : ''}`}
                                     style={{ backgroundColor: col || 'transparent' }}
                                   >
-                                    {!col && <div className="w-1.5 h-1.5 rounded-full bg-black/10" />}
+                                    {!col && <div className="w-1.5 h-1.5 rounded-full bg-text/10" />}
                                   </button>
                                 );
                               })}
@@ -1224,13 +1185,13 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                               <button
                                 onClick={() => setIsColorPickerOpen(true)}
                                 className={`aspect-square rounded-full border-2 transition-all hover:scale-110 flex items-center justify-center overflow-hidden ${
-                                  isCustom ? 'border-black shadow-lg shadow-black/10' : 'border-black/5 bg-black/5'
+                                  isCustom ? 'border-text shadow-lg shadow-text/10' : 'border-text/5 bg-text/5'
                                 }`}
                                 style={{ backgroundColor: isCustom ? roomData.wallColor : undefined }}
                               >
                                 <Plus 
                                   size={14} 
-                                  className={`transition-colors ${isCustom ? (['#ffffff','#FBFBF9','#F5F5F3'].includes(roomData.wallColor.toLowerCase()) ? 'text-black' : 'text-white') : 'text-black/30'}`} 
+                                  className={`transition-colors ${isCustom ? (['#ffffff','#FBFBF9','#F5F5F3'].includes(roomData.wallColor.toLowerCase()) ? 'text-text' : 'text-highlight') : 'text-text/30'}`} 
                                 />
                               </button>
                             </>
@@ -1239,18 +1200,18 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                       </div>
                     </section>
                     <section className="space-y-3">
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-black/30">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-text/30">
                         Wall Materials
                       </h4>
-                      <div className="flex gap-2 p-1 bg-black/5 rounded-2xl">
+                      <div className="flex gap-2 p-1 bg-text/5 rounded-2xl">
                         {['plain', 'brick', 'concrete', 'plaster'].map((mat) => (
                           <button
                             key={mat}
                             onClick={() => updateRoom({ wallTexture: mat as any })}
                             className={`flex-1 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
                               roomData.wallTexture === mat
-                                ? 'bg-black text-white shadow-lg'
-                                : 'text-black/40 hover:text-black'
+                                ? 'bg-text text-highlight shadow-lg'
+                                : 'text-text/40 hover:text-text'
                             }`}
                           >
                             {mat}
@@ -1259,7 +1220,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                       </div>
                     </section>
                     <section className="space-y-3">
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-black/30">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-text/30">
                         Floor Materials
                       </h4>
                       {['plain', 'wood', 'tiles'].map((mat) => (
@@ -1268,8 +1229,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                           onClick={() => updateRoom({ floorTexture: mat as any })}
                           className={`w-full p-4 rounded-2xl flex items-center justify-between border transition-all ${
                             roomData.floorTexture === mat
-                              ? 'bg-black text-white border-black'
-                              : 'bg-white border-black/5 text-black'
+                              ? 'bg-text text-highlight border-text'
+                              : 'bg-background border-text/5 text-text'
                           }`}
                         >
                           <span className="text-[10px] font-black uppercase tracking-widest">
@@ -1289,21 +1250,21 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                     {/* Categories UI */}
                     <div className={`space-y-4 ${isMobile ? 'w-48 shrink-0' : ''}`}>
                       <div className="flex items-center justify-between px-1">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-black/20">Collections</h4>
-                        {!isMobile && <span className="text-[8px] font-bold text-black/20 uppercase tracking-widest">{filteredLibraryProducts.length} Items</span>}
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text/20">Collections</h4>
+                        {!isMobile && <span className="text-[8px] font-bold text-text/20 uppercase tracking-widest">{filteredLibraryProducts.length} Items</span>}
                       </div>
                       
                       <div className="relative group/select">
                         <select
                           value={libraryCategory}
                           onChange={(e) => setLibraryCategory(e.target.value)}
-                          className="w-full bg-black/5 border-none rounded-2xl px-5 py-4 text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-black/5 appearance-none cursor-pointer transition-all hover:bg-black/10"
+                          className="w-full bg-secondary border border-text/10 rounded-2xl px-5 py-3 text-[10px] font-black uppercase tracking-widest focus:ring-1 focus:ring-primary/50 appearance-none cursor-pointer transition-all hover:bg-background text-text"
                         >
                           {categories.map(cat => (
                             <option key={cat} value={cat}>{cat}</option>
                           ))}
                         </select>
-                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-black/20">
+                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-text/30">
                           <ChevronRight size={14} className="rotate-90" />
                         </div>
                       </div>
@@ -1314,7 +1275,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                             <button
                               key={sub}
                               onClick={() => setLibrarySubcategory(sub)}
-                              className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${librarySubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-black text-white shadow-lg' : 'bg-white/50 border-black/5 text-black/30 hover:text-black hover:border-black/20'}`}
+                              className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${librarySubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-text text-highlight shadow-lg' : 'bg-text/5 border-text/5 text-text/30 hover:text-text hover:border-text/20'}`}
                             >
                               {sub}
                             </button>
@@ -1325,20 +1286,20 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
                     <div className={`grid ${isMobile ? 'grid-flow-col grid-rows-2 auto-cols-[80px]' : 'grid-cols-3'} gap-3 overflow-x-auto no-scrollbar`}>
                       {filteredLibraryProducts.map((p) => (
-                        <button
+                          <button
                           key={p.id}
                           onClick={() => addItemToPlacement(p)}
                           onMouseEnter={(e) => handleProductHover(e, p)}
                           onMouseLeave={() => setHoveredProduct(null)}
-                          className="aspect-square group bg-[#F5F5F3] rounded-2xl p-3 hover:bg-white hover:shadow-2xl hover:shadow-black/5 transition-all relative border border-transparent hover:border-black/5 overflow-hidden"
+                          className="aspect-square group bg-secondary/30 rounded-2xl p-3 hover:bg-background hover:shadow-2xl hover:shadow-text/5 transition-all relative border border-transparent hover:border-text/5 overflow-hidden"
                         >
                           <img
                             src={p.image}
                             className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                             alt={p.name}
                           />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <Plus size={20} className="text-white scale-75 group-hover:scale-100 transition-transform" />
+                          <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Plus size={20} className="text-text scale-75 group-hover:scale-100 transition-transform" />
                           </div>
                         </button>
                       ))}
@@ -1348,35 +1309,35 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               </div>
 
               {!isMobile && (
-                <div className="p-8 border-t border-black/5 bg-white">
+                <div className="p-8 border-t border-text/5 bg-background">
                   <button 
                     onClick={() => setIsBillOpen(true)}
-                    className="w-full relative group mb-6 overflow-hidden bg-[#F5F5F3] hover:bg-black transition-all duration-500 rounded-[32px] p-6 text-left"
+                    className="w-full relative group mb-6 overflow-hidden bg-secondary/30 hover:bg-text transition-all duration-500 rounded-[32px] p-6 text-left"
                   >
-                    <div className="flex justify-between items-start mb-1 relative z-10 transition-colors duration-500 group-hover:text-white">
+                    <div className="flex justify-between items-start mb-1 relative z-10 transition-colors duration-500 group-hover:text-highlight">
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-60 transition-opacity">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-60 transition-opacity text-text">
                           Statement Total
                         </span>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-black/5 group-hover:bg-white/10 rounded-full transition-colors">
+                          <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-text/5 group-hover:bg-background/10 rounded-full transition-colors text-text group-hover:text-highlight">
                             {items.length} Items
                           </span>
                         </div>
                       </div>
-                      <span className="text-3xl font-bold tracking-tighter">
+                      <span className="text-3xl font-bold tracking-tighter text-text group-hover:text-highlight">
                         ${items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-4 text-[9px] font-black uppercase tracking-widest text-black/20 group-hover:text-white/40 relative z-10 transition-colors duration-500">
+                    <div className="flex items-center gap-2 mt-4 text-[9px] font-black uppercase tracking-widest text-text/20 group-hover:text-highlight/40 relative z-10 transition-colors duration-500">
                       <Layout size={12} />
                       <span>Click to view detailed receipt</span>
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-text/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </button>
                   <button
                     onClick={handleSaveProject}
-                    className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl hover:scale-[1.02] transition-all"
+                    className="w-full py-4 bg-highlight text-background rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl hover:scale-[1.02] transition-all"
                   >
                     Save Project
                   </button>
@@ -1386,7 +1347,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         )}
 
         <section
-          className="w-full mt-20 bg-[#F5F5F3] relative transition-all duration-500"
+          className="w-full mt-20 bg-secondary/20 relative transition-all duration-500"
           style={isPreviewActive
             ? { height: '100%', marginTop: 0, paddingTop: 0 }
             : {
@@ -1400,7 +1361,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           <div
             ref={canvasContainerRef}
             className={`w-full h-full overflow-hidden transition-all duration-700 ${
-              isPreviewActive ? 'rounded-none shadow-none' : 'rounded-[28px] shadow-xl bg-white'
+              isPreviewActive ? 'rounded-none shadow-none' : 'rounded-[28px] shadow-xl bg-background'
             }`}
           >
             <DesignerRoom
@@ -1419,25 +1380,79 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               showWalls={showWalls}
             />
 
-            {/* Mobile Floating Bill & Saved Buttons */}
-            {isMobile && !isPreviewActive && (
-              <div className="absolute top-4 right-4 z-[100] flex flex-col gap-3">
-                <button
-                  onClick={() => setIsBillOpen(true)}
-                  className="h-12 px-5 bg-white/80 backdrop-blur-xl border border-black/5 rounded-full flex items-center justify-center gap-2 shadow-xl group hover:bg-black transition-all"
-                >
-                  <Layout size={18} className="text-black group-hover:text-white transition-colors" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-black group-hover:text-white">Bill</span>
-                  <div className="w-5 h-5 bg-black text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white group-hover:bg-white group-hover:text-black transition-colors">
-                    {items.length}
-                  </div>
-                </button>
-                <button
-                  onClick={handleSaveProject}
-                  className="w-12 h-12 bg-white/80 backdrop-blur-xl border border-black/5 rounded-full flex items-center justify-center shadow-xl group hover:bg-black transition-all"
-                >
-                  <Save size={20} className="text-black group-hover:text-white transition-colors" />
-                </button>
+            {/* Architectural Controls & Bill Buttons */}
+            {!isPreviewActive && (
+              <div className="absolute top-4 right-4 z-[100] flex flex-col gap-3 items-end">
+                {/* Mode & Visibility Toggles - Expandable Menu */}
+                <div className="flex flex-col gap-2 items-end">
+                  <motion.div 
+                    initial={false}
+                    animate={{ 
+                      height: isToolbarExpanded ? 'auto' : 0,
+                      opacity: isToolbarExpanded ? 1 : 0,
+                      marginBottom: isToolbarExpanded ? 8 : 0
+                    }}
+                    className="overflow-hidden flex flex-col gap-2 p-1 bg-background/80 backdrop-blur-xl border border-text/5 rounded-3xl shadow-2xl"
+                  >
+                    <button
+                      onClick={() => setViewMode('TOP')}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                        viewMode === 'TOP' ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
+                      }`}
+                      title="Plan View"
+                    >
+                      <Maximize size={18} />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('3D')}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                        viewMode === '3D' ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
+                      }`}
+                      title="3D Room View"
+                    >
+                      <Box size={18} />
+                    </button>
+                    <div className="w-5 h-px bg-text/10 mx-auto my-1" />
+                    <button
+                      onClick={() => setShowWalls(!showWalls)}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                        showWalls ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
+                      }`}
+                      title="Toggle Walls"
+                    >
+                      {showWalls ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </button>
+                  </motion.div>
+
+                  <button
+                    onClick={() => setIsToolbarExpanded(!isToolbarExpanded)}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-xl border border-text/5 ${
+                      isToolbarExpanded ? 'bg-text text-highlight' : 'bg-background/80 text-text'
+                    }`}
+                    title="Studio Settings"
+                  >
+                    <Layers size={20} />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-3 items-end">
+                  <button
+                    onClick={() => setIsBillOpen(true)}
+                    className="h-12 px-5 bg-background/80 backdrop-blur-xl border border-text/5 rounded-full flex items-center justify-center gap-2 shadow-xl group hover:bg-text transition-all"
+                  >
+                    <Layout size={18} className="text-text group-hover:text-highlight transition-colors" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-text group-hover:text-highlight hidden sm:inline">Bill</span>
+                    <div className="w-5 h-5 bg-text text-highlight text-[8px] font-black rounded-full flex items-center justify-center border-2 border-background group-hover:bg-highlight group-hover:text-text transition-colors">
+                      {items.length}
+                    </div>
+                  </button>
+                  <button
+                    onClick={handleSaveProject}
+                    className="w-12 h-12 bg-background/80 backdrop-blur-xl border border-text/5 rounded-full flex items-center justify-center shadow-xl group hover:bg-text transition-all"
+                  >
+                    <Save size={20} className="text-text group-hover:text-highlight transition-colors" />
+                  </button>
+                </div>
               </div>
             )}
 
@@ -1448,11 +1463,11 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 20, opacity: 0 }}
-                  className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center bg-white/80 backdrop-blur-xl p-2 rounded-[32px] border border-black/5 shadow-2xl gap-3"
+                  className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center bg-background/80 backdrop-blur-xl p-2 rounded-[32px] border border-text/5 shadow-2xl gap-3"
                 >
-                  <div className="flex flex-col px-4 border-r border-black/5">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-black/20 mb-0.5">Editing</span>
-                    <h4 className="text-[10px] font-bold truncate max-w-[120px]">
+                  <div className="flex flex-col px-4 border-r border-text/5">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-0.5">Editing</span>
+                    <h4 className="text-[10px] font-bold text-text truncate max-w-[120px]">
                       {items.find(it => it.id === selectedItemId)?.type || 'Object'}
                     </h4>
                   </div>
@@ -1469,7 +1484,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                         )
                       }
                       title="Rotate 45°"
-                      className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg"
+                      className="w-12 h-12 bg-highlight text-background rounded-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg"
                     >
                       <RotateCw size={18} />
                     </button>
@@ -1486,7 +1501,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                     <button
                       onClick={() => setSelectedItemId(null)}
                       title="Deselect"
-                      className="w-12 h-12 bg-black/5 text-black rounded-2xl flex items-center justify-center hover:bg-black/10 transition-all border border-black/5"
+                      className="w-12 h-12 bg-text/5 text-text rounded-2xl flex items-center justify-center hover:bg-text/10 transition-all border border-text/5"
                     >
                       <X size={18} />
                     </button>
@@ -1497,7 +1512,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           </div>
 
           {placingProduct && (
-            <div className="absolute top-12 left-1/2 -translate-x-1/2 z-40 bg-black text-white px-8 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-bounce">
+            <div className="absolute top-12 left-1/2 -translate-x-1/2 z-40 bg-highlight text-background px-8 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-bounce">
               <MousePointer2 size={16} />
               <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                 Click floor to place {placingProduct.name}
@@ -1522,58 +1537,58 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               initial={{ scale: 0.95, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 30 }}
-              className="relative w-full max-w-2xl bg-[#FBFBF9] rounded-[48px] shadow-[0_50px_100px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[85vh] border border-black/5"
+              className="relative w-full max-w-2xl bg-background rounded-[48px] shadow-[0_50px_100px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[85vh] border border-text/5"
             >
-              <div className="p-10 border-b border-black/5 flex items-center justify-between bg-white">
+              <div className="p-10 border-b border-text/5 flex items-center justify-between bg-background">
                 <div>
-                  <h3 className="text-3xl font-serif">Your Curated Bill</h3>
+                  <h3 className="text-2xl font-serif text-text">Your Curated Bill</h3>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-black/30 px-3 py-1 bg-black/5 rounded-full">
+                    <span className="text-[8px] font-black uppercase tracking-[0.2em] text-text/30 px-3 py-1 bg-text/5 rounded-full">
                       Project: {roomData.projectTitle}
                     </span>
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-black/30 px-3 py-1 bg-black/5 rounded-full">
+                    <span className="text-[8px] font-black uppercase tracking-[0.2em] text-text/30 px-3 py-1 bg-text/5 rounded-full">
                       {items.length} Products
                     </span>
                   </div>
                 </div>
                 <button 
                   onClick={() => setIsBillOpen(false)}
-                  className="p-4 hover:bg-black/5 rounded-full transition-all hover:rotate-90 group"
+                  className="p-4 hover:bg-text/5 rounded-full transition-all hover:rotate-90 group"
                 >
-                  <X size={24} className="text-black/20 group-hover:text-black" />
+                  <X size={24} className="text-text/20 group-hover:text-text" />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-10 space-y-6 custom-scrollbar bg-white/50">
+              <div className="flex-1 overflow-y-auto p-10 space-y-6 custom-scrollbar bg-background/50">
                 {items.length === 0 ? (
                   <div className="py-24 text-center space-y-4">
-                    <div className="w-20 h-20 bg-black/5 rounded-full flex items-center justify-center mx-auto">
-                      <Plus size={32} className="text-black/10" />
+                    <div className="w-20 h-20 bg-text/5 rounded-full flex items-center justify-center mx-auto">
+                      <Plus size={32} className="text-text/10" />
                     </div>
                     <div>
-                      <p className="text-lg font-serif text-black/40">Your receipt is empty</p>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-black/20 mt-1">Add items from the library to build your project</p>
+                      <p className="text-lg font-serif text-text/40">Your receipt is empty</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-text/20 mt-1">Add items from the library to build your project</p>
                     </div>
                   </div>
                 ) : (
-                  items.map((item) => {
+                    items.map((item) => {
                     const product = PRODUCTS.find(p => p.name === item.type);
                     return (
-                      <div key={item.id} className="flex items-center gap-6 p-6 rounded-[32px] bg-white border border-black/5 shadow-sm hover:shadow-xl hover:shadow-black/[0.02] transition-all group">
-                        <div className="w-24 h-24 bg-[#F5F5F3] rounded-[24px] overflow-hidden p-4 group-hover:scale-105 transition-transform duration-500">
+                      <div key={item.id} className="flex items-center gap-6 p-6 rounded-[32px] bg-background border border-text/5 shadow-sm hover:shadow-xl hover:shadow-text/[0.02] transition-all group">
+                        <div className="w-24 h-24 bg-secondary/30 rounded-[24px] overflow-hidden p-4 group-hover:scale-105 transition-transform duration-500">
                           <img src={product?.image} className="w-full h-full object-contain" alt={item.type} />
                         </div>
                         <div className="flex-1 space-y-1">
-                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-black/30">{product?.category}</span>
-                          <h4 className="text-lg font-serif leading-tight">{item.type}</h4>
+                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text/30">{product?.category}</span>
+                          <h4 className="text-lg font-serif leading-tight text-text">{item.type}</h4>
                           <div className="flex items-center gap-3 pt-1">
-                            <span className="text-[9px] font-bold text-black/40">ID: {item.id}</span>
-                            <div className="w-1 h-1 rounded-full bg-black/10" />
-                            <span className="text-[9px] font-bold text-black/40">Status: In Scene</span>
+                            <span className="text-[9px] font-bold text-text/40">ID: {item.id}</span>
+                            <div className="w-1 h-1 rounded-full bg-text/10" />
+                            <span className="text-[9px] font-bold text-text/40">Status: In Scene</span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="text-xl font-bold tracking-tighter">${product?.price}</span>
+                          <span className="text-xl font-bold tracking-tighter text-text">${product?.price}</span>
                         </div>
                       </div>
                     );
@@ -1581,13 +1596,13 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 )}
               </div>
 
-              <div className="p-10 bg-white border-t border-black/5">
+              <div className="p-10 bg-background border-t border-text/5">
                 <div className="flex justify-between items-center mb-10 px-4">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-black/30 block">Statement Total</span>
-                    <span className="text-[8px] font-bold text-[#1AA06D] uppercase tracking-widest">Inclusive of all taxes</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text/20 block">Statement Total</span>
+                    <span className="text-[7px] font-bold text-[#1AA06D] uppercase tracking-widest opacity-80">Inclusive of all taxes</span>
                   </div>
-                  <span className="text-4xl font-bold tracking-tighter">
+                  <span className="text-3xl font-bold tracking-tighter text-text">
                     $
                     {items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0)}
                   </span>
@@ -1595,7 +1610,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 <div className="flex gap-4">
                   <button
                     onClick={() => setIsBillOpen(false)}
-                    className="flex-1 py-6 rounded-[24px] border border-black/10 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-black/5 transition-all text-black/40 hover:text-black"
+                    className="flex-1 py-6 rounded-[24px] border border-text/10 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-text/5 transition-all text-text/40 hover:text-text"
                   >
                     Back to Design
                   </button>
@@ -1604,7 +1619,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                       toast.success("Design catalog added to cart!");
                       setIsBillOpen(false);
                     }}
-                    className="flex-[1.5] py-6 rounded-[24px] bg-black text-white text-[10px] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-black/20 flex items-center justify-center gap-3"
+                    className="flex-[1.5] py-6 rounded-[24px] bg-highlight text-background text-[10px] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-highlight/20 flex items-center justify-center gap-3"
                   >
                     <Plus size={16} />
                     Checkout All Items

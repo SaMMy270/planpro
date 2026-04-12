@@ -11,7 +11,13 @@
       theme: {
         extend: {
           colors: {
-            primary: '#1754cf',
+            text: 'var(--text)',
+            body: 'var(--body)',
+            background: 'var(--background)',
+            primary: 'var(--primary)',
+            secondary: 'var(--secondary)',
+            accent: 'var(--accent)',
+            highlight: 'var(--highlight)',
           }
         }
       }
@@ -19,16 +25,26 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --text: #f8fafc;
+      --body: #f8fafc;
+      --background: #0f1e3f;
+      --primary: #cdaa80;
+      --secondary: #213a56;
+      --accent: #997953;
+      --highlight: #cdaa80;
+    }
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Outfit', sans-serif !important;
       scroll-behavior: smooth;
-      background: #FBFBF9;
+      background: radial-gradient(circle at top right, var(--secondary), var(--background) 70%);
+      color: var(--text);
       overflow-x: hidden;
     }
     .font-serif {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Bodoni Moda', serif !important;
     }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
@@ -123,7 +139,7 @@
   </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="text-[#1A1A1A]">
+<body class="text-text">
   <div id="root"></div>
 <script type="module" src="/index.tsx"></script>
 </body>

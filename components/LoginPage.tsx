@@ -15,9 +15,34 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!isLogin && !fullName.trim()) {
+      newErrors.fullName = 'Please enter your full name';
+    }
+
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
     setLoading(true);
 
     try {
@@ -68,7 +93,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[200] bg-[#FBFBF9] flex flex-col h-screen overflow-hidden animate-in fade-in duration-500">
+    <div className="fixed inset-0 z-[200] bg-background flex flex-col h-screen overflow-hidden animate-in fade-in duration-500">
 
       {/* Top Header Layer - Fixed position, no blur to prevent rendering issues */}
       <div className="w-full max-w-7xl mx-auto p-4 md:p-8 flex justify-between items-center absolute top-0 left-0 right-0 z-20">
@@ -76,11 +101,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
           onClick={onBack}
           className="flex items-center gap-2 group transition-all"
         >
-          <ChevronLeft size={18} className="text-black/40 group-hover:text-black transition-colors" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-black/40 group-hover:text-black transition-colors">BACK TO STORE</span>
+          <ChevronLeft size={18} className="text-primary/40 group-hover:text-primary transition-colors" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40 group-hover:text-primary transition-colors">BACK TO STORE</span>
         </button>
 
-        <div className="w-8 h-8 md:w-10 md:h-10 bg-black rounded-xl flex items-center justify-center text-white rotate-[-8deg] shadow-xl">
+        <div className="w-8 h-8 md:w-10 md:h-10 bg-highlight rounded-xl flex items-center justify-center text-background rotate-[-8deg] shadow-xl">
           <LayoutIcon size={18} className="md:size-[20px]" />
         </div>
       </div>
@@ -91,10 +116,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
 
           {/* Titles - Scaled for better vertical fit */}
           <div className="space-y-1 text-center">
-            <h2 className="text-3xl md:text-5xl font-serif text-black tracking-tight leading-tight">
+            <h2 className="text-3xl md:text-5xl font-serif text-primary tracking-tight leading-tight">
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </h2>
-            <p className="text-black/50 text-[10px] md:text-sm font-medium">Please enter your PlanPro Passport details.</p>
+            <p className="text-body/50 text-[10px] md:text-sm font-medium">Please enter your PlanPro Passport details.</p>
           </div>
 
           {/* Form - Tighter spacing to fit within height */}
@@ -102,48 +127,51 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
 
             {!isLogin && (
               <div className="space-y-1 md:space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-black/50 ml-1">FULL NAME</label>
+                <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary/50 ml-1">FULL NAME</label>
                 <div className="relative group">
-                  <User className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-black transition-colors" size={16} />
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={16} />
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full pl-12 pr-6 py-3.5 md:py-4 bg-white border border-black/5 focus:border-black/20 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium placeholder:text-black/20 shadow-sm"
+                    className={`w-full pl-12 pr-6 py-3.5 md:py-4 bg-secondary border ${errors.fullName ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
                     required
                   />
+                  {errors.fullName && <p className="text-[10px] text-red-400 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.fullName}</p>}
                 </div>
               </div>
             )}
 
             <div className="space-y-1 md:space-y-2">
-              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-black/50 ml-1">EMAIL ADDRESS</label>
+              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary/50 ml-1">EMAIL ADDRESS</label>
               <div className="relative group">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-black transition-colors" size={16} />
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={16} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full pl-12 pr-6 py-3.5 md:py-4 bg-white border border-black/5 focus:border-black/20 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium placeholder:text-black/20 shadow-sm"
+                  className={`w-full pl-12 pr-6 py-3.5 md:py-4 bg-background border ${errors.email ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
                   required
                 />
+                {errors.email && <p className="text-[10px] text-red-500 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.email}</p>}
               </div>
             </div>
 
             <div className="space-y-1 md:space-y-2">
-              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-black/50 ml-1">PASSWORD</label>
+              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary/50 ml-1">PASSWORD</label>
               <div className="relative group">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-black transition-colors" size={16} />
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={16} />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-6 py-3.5 md:py-4 bg-white border border-black/5 focus:border-black/20 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium placeholder:text-black/20 shadow-sm"
+                  className={`w-full pl-12 pr-6 py-3.5 md:py-4 bg-background border ${errors.password ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
                   required
                 />
+                {errors.password && <p className="text-[10px] text-red-500 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.password}</p>}
               </div>
             </div>
 
@@ -151,17 +179,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded-md border-black/10 text-black focus:ring-black/20 transition-all cursor-pointer appearance-none bg-white border checked:bg-black"
+                  className="w-4 h-4 rounded-md border-primary/10 text-primary focus:ring-primary/20 transition-all cursor-pointer appearance-none bg-secondary border checked:bg-primary"
                 />
-                <span className="text-black/50 font-semibold group-hover:text-black transition-colors">Remember me</span>
+                <span className="text-body/50 font-semibold group-hover:text-primary transition-colors">Remember me</span>
               </label>
-              <button type="button" className="font-bold text-black hover:opacity-60 transition-opacity">Forgot Password?</button>
+              <button type="button" className="font-bold text-primary hover:opacity-60 transition-opacity">Forgot Password?</button>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 md:py-4 bg-black text-white rounded-[20px] md:rounded-[24px] font-bold uppercase tracking-widest text-[10px] md:text-[11px] flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-95 transition-all shadow-xl shadow-black/10 group mt-2 disabled:opacity-50"
+              className="w-full py-3.5 md:py-4 bg-highlight text-background rounded-[20px] md:rounded-[24px] font-bold uppercase tracking-widest text-[10px] md:text-[11px] flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-95 transition-all shadow-xl shadow-highlight/10 group mt-2 disabled:opacity-50"
             >
               {loading ? 'PROCESSING...' : (isLogin ? 'SIGN IN' : 'JOIN PLANPRO')} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
@@ -169,11 +197,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
 
           {/* Switch & Social */}
           <div className="space-y-6 md:space-y-8 pt-2">
-            <p className="text-[11px] md:text-sm font-medium text-black/60 text-center">
+            <p className="text-[11px] md:text-sm font-medium text-body/60 text-center">
               {isLogin ? "Don't have an account?" : "Already a member?"} {' '}
               <button
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-black font-extrabold hover:underline"
+                className="text-primary font-extrabold hover:underline"
               >
                 {isLogin ? 'Sign Up' : 'Log In'}
               </button>
@@ -182,17 +210,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
             {isLogin && (
               <div className="space-y-4 md:space-y-8 animate-in fade-in duration-500">
                 <div className="relative">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-black/10"></div></div>
-                  <div className="relative flex justify-center text-[9px] uppercase tracking-[0.3em] font-black text-black/50">
-                    <span className="bg-[#FBFBF9] px-6">OR CONTINUE WITH</span>
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-primary/10"></div></div>
+                  <div className="relative flex justify-center text-[9px] uppercase tracking-[0.3em] font-black text-text/50">
+                    <span className="bg-background px-6">OR CONTINUE WITH</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 md:gap-4">
-                  <button className="flex items-center justify-center gap-3 py-3 rounded-[16px] md:rounded-[20px] bg-white border border-black/5 hover:border-black hover:shadow-lg transition-all text-[9px] md:text-[10px] font-bold uppercase tracking-widest group">
+                  <button className="flex items-center justify-center gap-3 py-3 rounded-[16px] md:rounded-[20px] bg-secondary border border-text/5 hover:border-primary hover:shadow-lg transition-all text-[9px] md:text-[10px] font-bold uppercase tracking-widest group text-text">
                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-4 h-4 group-hover:scale-110 transition-transform" /> GOOGLE
                   </button>
-                  <button className="flex items-center justify-center gap-3 py-3 rounded-[16px] md:rounded-[20px] bg-white border border-black/5 hover:border-black hover:shadow-lg transition-all text-[9px] md:text-[10px] font-bold uppercase tracking-widest group">
+                  <button className="flex items-center justify-center gap-3 py-3 rounded-[16px] md:rounded-[20px] bg-secondary border border-text/5 hover:border-primary hover:shadow-lg transition-all text-[9px] md:text-[10px] font-bold uppercase tracking-widest group text-text">
                     <Facebook size={16} className="text-[#1877F2] group-hover:scale-110 transition-transform" /> FACEBOOK
                   </button>
                 </div>

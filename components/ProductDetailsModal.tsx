@@ -63,13 +63,13 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 lg:p-12 overflow-hidden">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose} />
 
-      <div className="relative bg-white w-full max-w-7xl h-full md:h-auto md:max-h-[90vh] md:rounded-[40px] shadow-2xl overflow-y-auto custom-scrollbar flex flex-col animate-in slide-in-from-bottom-12 duration-500">
+      <div className="relative bg-background w-full max-w-7xl h-full md:h-auto md:max-h-[90vh] md:rounded-[40px] shadow-2xl overflow-y-auto custom-scrollbar flex flex-col animate-in slide-in-from-bottom-12 duration-500">
 
         {/* Header/Close */}
         <div className="sticky top-0 right-0 p-6 flex justify-end z-50 pointer-events-none">
           <button
             onClick={onClose}
-            className="p-3 rounded-full bg-white shadow-xl hover:bg-black hover:text-white transition-all pointer-events-auto active:scale-90"
+            className="p-3 rounded-full bg-background shadow-xl hover:bg-highlight hover:text-background transition-all pointer-events-auto active:scale-90 border border-text/5"
           >
             <X size={24} />
           </button>
@@ -80,7 +80,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
 
             {/* Left: Gallery with Sliding Animation */}
             <div className="space-y-6 animate-image-reveal">
-              <div className="relative aspect-square bg-[#F5F5F3] rounded-[32px] overflow-hidden group shadow-inner">
+              <div className="relative aspect-square bg-primary/5 rounded-[32px] overflow-hidden group shadow-inner">
                 {/* Image Container with Sliding Transition */}
                 <div className="w-full h-full relative overflow-hidden flex">
                   {gallery.map((img, i) => (
@@ -104,25 +104,25 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 {/* Navigation Arrows */}
                 <button
                   onClick={prevImg}
-                  className={`absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all hover:bg-black hover:text-white active:scale-90 z-20 ${controlsVisible ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'}`}
+                  className={`absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-secondary/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all hover:bg-highlight hover:text-background active:scale-90 z-20 ${controlsVisible ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'}`}
                 >
                   <ChevronLeft size={24} />
                 </button>
                 <button
                   onClick={nextImg}
-                  className={`absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all hover:bg-black hover:text-white active:scale-90 z-20 ${controlsVisible ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'}`}
+                  className={`absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-secondary/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all hover:bg-highlight hover:text-background active:scale-90 z-20 ${controlsVisible ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'}`}
                 >
                   <ChevronRight size={24} />
                 </button>
 
                 {/* Badge */}
-                <div className="absolute top-6 left-6 px-4 py-1.5 bg-green-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg z-10 transition-opacity" style={{ opacity: is3DActive ? 0 : 1 }}>
+                <div className="absolute top-6 left-6 px-4 py-1.5 bg-accent text-body text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg z-10 transition-opacity" style={{ opacity: is3DActive ? 0 : 1 }}>
                   In Stock
                 </div>
 
                 {/* 3D View Over-Layer */}
                 {is3DActive && product.model && (
-                  <div className="absolute inset-0 z-40 bg-white">
+                  <div className="absolute inset-0 z-40 bg-background">
                     <Scene3D modelUrl={product.model} textureUrl={product.texture} />
                   </div>
                 )}
@@ -131,7 +131,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 {product.model && (
                   <button
                     onClick={() => setIs3DActive(!is3DActive)}
-                    className={`absolute bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all z-50 shadow-2xl ${is3DActive ? 'bg-black text-white' : 'bg-white/80 backdrop-blur-md text-black hover:bg-black hover:text-white'}`}
+                    className={`absolute bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all z-50 shadow-2xl ${is3DActive ? 'bg-primary text-text' : 'bg-background/80 backdrop-blur-md text-text hover:bg-highlight hover:text-background'}`}
                   >
                     {is3DActive ? 'PHOTO VIEW' : 'VIEW IN 3D'}
                   </button>
@@ -144,7 +144,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   <button
                     key={i}
                     onClick={() => handleImgChange(i)}
-                    className={`w-24 h-24 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all duration-500 ${selectedImg === i ? 'border-black scale-105 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                    className={`w-24 h-24 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all duration-500 ${selectedImg === i ? 'border-primary scale-105 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'}`}
                   >
                     <img src={img} className="w-full h-full object-cover" />
                   </button>
@@ -155,47 +155,47 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
             {/* Right: Detailed Info */}
             <div className={`space-y-8 transition-all duration-700 delay-300 ${controlsVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-black/30 block mb-2">{product.category}</span>
-                <h2 className="text-4xl md:text-5xl font-serif leading-tight">{product.name}</h2>
+                <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-primary/30 block mb-2">{product.category}</span>
+                <h2 className="text-2xl md:text-4xl font-serif leading-tight text-primary">{product.name}</h2>
 
                 <div className="flex items-center gap-6 mt-4">
-                  <div className="flex items-center gap-1 text-amber-400">
+                  <div className="flex items-center gap-1 text-highlight">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={16} fill={i < Math.round(product.rating || 0) ? "currentColor" : "none"} />
                     ))}
-                    <span className="text-sm font-bold text-black ml-1">{(product.rating || 0).toFixed(1)}</span>
+                    <span className="text-sm font-bold text-text ml-1">{(product.rating || 0).toFixed(1)}</span>
                   </div>
-                  <span className="text-sm font-bold text-black/40">({product.reviews?.length || 0} Review{product.reviews?.length !== 1 ? 's' : ''})</span>
+                  <span className="text-sm font-bold text-text/40">({product.reviews?.length || 0} Review{product.reviews?.length !== 1 ? 's' : ''})</span>
                 </div>
               </div>
 
               <div className="flex items-baseline gap-4">
-                <span className="text-4xl font-bold tracking-tighter">₹{product.price}.00</span>
-                <span className="text-xl text-black/20 line-through font-medium">₹1250.00</span>
+                <span className="text-3xl font-bold tracking-tighter text-text">₹{product.price}.00</span>
+                <span className="text-lg text-text/20 line-through font-medium">₹1250.00</span>
               </div>
 
-              <p className="text-black/50 leading-relaxed text-sm max-w-lg line-clamp-3">
+              <p className="text-text/50 leading-relaxed text-[13px] max-w-lg line-clamp-3">
                 {product.description}
               </p>
 
               {/* Selection Controls */}
               <div className="space-y-6">
                 <div className="flex items-center gap-8">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-black/30">Quantity</span>
-                  <div className="flex items-center p-1.5 bg-[#F5F5F3] border border-black/5 rounded-2xl shadow-inner">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-text/30">Quantity</span>
+                  <div className="flex items-center p-1.5 bg-background border border-text/5 rounded-2xl shadow-inner">
                     <button
                       onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm hover:bg-black hover:text-white transition-all active:scale-90 text-black/40 hover:text-white"
+                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-secondary shadow-sm hover:bg-text hover:text-secondary transition-all active:scale-90 text-text/40 hover:text-secondary"
                       aria-label="Decrease quantity"
                     >
                       <Minus size={16} />
                     </button>
-                    <span className="w-12 text-center font-bold text-sm text-black tabular-nums">
+                    <span className="w-12 text-center font-bold text-sm text-body tabular-nums">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(q => q + 1)}
-                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm hover:bg-black hover:text-white transition-all active:scale-90 text-black/40 hover:text-white"
+                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-secondary shadow-sm hover:bg-text hover:text-secondary transition-all active:scale-90 text-text/40 hover:text-secondary"
                       aria-label="Increase quantity"
                     >
                       <Plus size={16} />
@@ -206,47 +206,47 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 <div className="flex flex-wrap gap-4">
                   <button
                     onClick={() => onAddToCart(product.id)}
-                    className="flex-1 min-w-[140px] py-4 bg-black text-white rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-black/80 transition-all active:scale-95 shadow-xl shadow-black/10"
+                    className="flex-1 min-w-[140px] py-4 bg-highlight text-background rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-primary hover:text-text transition-all active:scale-95 shadow-xl shadow-highlight/10"
                   >
                     Add To Cart
                   </button>
                   <button
                     onClick={() => onAR(product)}
-                    className="flex-1 min-w-[140px] py-4 border-2 border-black text-black rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-all active:scale-95 shadow-lg group"
+                    className="flex-1 min-w-[140px] py-4 border-2 border-text text-text rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-highlight hover:text-background transition-all active:scale-95 shadow-lg group"
                   >
                     <Box size={18} className="group-hover:rotate-12 transition-transform" /> AR PREVIEW
                   </button>
                   <button
                     onClick={() => onToggleWishlist(product.id)}
-                    className={`p-4 rounded-2xl border transition-all active:scale-90 ${isWishlisted ? 'bg-red-50 border-red-100 text-red-500' : 'bg-white border-black/10 hover:border-black text-black/40'}`}
+                    className={`p-4 rounded-2xl border transition-all active:scale-90 ${isWishlisted ? 'bg-red-500/10 border-red-500/50 text-red-500' : 'bg-background border-text/10 hover:border-primary text-text/40'}`}
                   >
                     <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} />
                   </button>
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-black/5 space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-black/30">
-                  <span className="text-black/50">SKU :</span> LM-{product.id}00-S
+              <div className="pt-8 border-t border-primary/10 space-y-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary/30">
+                  <span className="text-primary/50">SKU :</span> LM-{product.id}00-S
                 </p>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-black/30">
-                  <span className="text-black/50">Tags :</span> Modern, Living, Premium, {product.category}
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary/30">
+                  <span className="text-primary/50">Tags :</span> Modern, Living, Premium, {product.category}
                 </p>
               </div>
             </div>
           </div>
 
           {/* Bottom Tabs & Reviews */}
-          <div className="mt-24 border-t border-black/5">
-            <div className="flex justify-center border-b border-black/5">
+          <div className="mt-24 border-t border-primary/10">
+            <div className="flex justify-center border-b border-primary/10">
               {(['description', 'additional', 'review'] as Tab[]).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-12 py-6 text-xs font-bold uppercase tracking-widest transition-all relative ${activeTab === tab ? 'text-black' : 'text-black/30 hover:text-black/60'}`}
+                  className={`px-12 py-6 text-xs font-bold uppercase tracking-widest transition-all relative ${activeTab === tab ? 'text-primary' : 'text-primary/30 hover:text-primary/60'}`}
                 >
                   {tab === 'additional' ? 'Additional Information' : tab}
-                  {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-1 bg-black animate-in fade-in" />}
+                  {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary animate-in fade-in" />}
                 </button>
               ))}
             </div>
@@ -254,22 +254,22 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
             <div className="py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {activeTab === 'description' && (
                 <div className="space-y-6 animate-fade-up max-w-3xl mx-auto">
-                  <h4 className="text-xl font-serif mb-4">Product Description</h4>
-                  <p className="text-black/60 leading-relaxed min-h-[150px]">{product.description}</p>
+                  <h4 className="text-xl font-serif mb-4 text-primary">Product Description</h4>
+                  <p className="text-body/60 leading-relaxed min-h-[150px]">{product.description}</p>
                 </div>
               )}
 
               {activeTab === 'additional' && (
                 <div className="space-y-6 animate-fade-up max-w-3xl mx-auto">
-                  <h4 className="text-xl font-serif mb-4">Additional Information</h4>
+                  <h4 className="text-xl font-serif mb-4 text-primary">Additional Information</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[150px]">
-                    <div className="bg-[#FBFBF9] p-6 rounded-2xl border border-black/5">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-black/30 block mb-2">Dimensions</span>
-                      <p className="font-medium text-black/80">{product.dimensions}</p>
+                    <div className="bg-background p-6 rounded-2xl border border-primary/10">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-primary/30 block mb-2">Dimensions</span>
+                      <p className="font-medium text-body/80">{product.dimensions}</p>
                     </div>
-                    <div className="bg-[#FBFBF9] p-6 rounded-2xl border border-black/5">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-black/30 block mb-2">Material</span>
-                      <p className="font-medium text-black/80">{product.material}</p>
+                    <div className="bg-background p-6 rounded-2xl border border-primary/10">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-primary/30 block mb-2">Material</span>
+                      <p className="font-medium text-body/80">{product.material}</p>
                     </div>
                   </div>
                 </div>
@@ -278,14 +278,14 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
               {activeTab === 'review' && (
                 <div className="space-y-16">
                   {/* Rating Summary */}
-                  <div className="flex flex-col md:flex-row gap-12 items-center md:items-start bg-[#FBFBF9] p-10 rounded-[32px]">
+                  <div className="flex flex-col md:flex-row gap-12 items-center md:items-start bg-background p-10 rounded-[32px] border border-primary/5">
                     <div className="text-center md:text-left space-y-2">
-                      <div className="text-6xl font-bold tracking-tighter">{(product.rating || 0).toFixed(1)}</div>
-                      <div className="text-xs font-bold uppercase tracking-[0.2em] text-black/30">Out of 5</div>
-                      <div className="flex justify-center md:justify-start text-amber-400">
+                      <div className="text-6xl font-bold tracking-tighter text-primary">{(product.rating || 0).toFixed(1)}</div>
+                      <div className="text-xs font-bold uppercase tracking-[0.2em] text-primary/30">Out of 5</div>
+                      <div className="flex justify-center md:justify-start text-primary">
                         {[...Array(5)].map((_, i) => <Star key={i} size={18} fill={i < Math.round(product.rating || 0) ? "currentColor" : "none"} />)}
                       </div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-black/40 pt-2">({product.reviews?.length || 0} Review{product.reviews?.length !== 1 ? 's' : ''})</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-body/40 pt-2">({product.reviews?.length || 0} Review{product.reviews?.length !== 1 ? 's' : ''})</p>
                     </div>
 
                     <div className="flex-1 w-full max-w-md space-y-3">
@@ -294,10 +294,10 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                         const percent = product.reviews?.length ? (count / product.reviews.length) * 100 : 0;
                         return (
                           <div key={num} className="flex items-center gap-4">
-                            <span className="text-xs font-bold w-12">{num} Star</span>
-                            <div className="flex-1 h-2 bg-black/5 rounded-full overflow-hidden">
+                            <span className="text-xs font-bold w-12 text-body/60">{num} Star</span>
+                            <div className="flex-1 h-2 bg-primary/5 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-amber-400 rounded-full transition-all duration-1000"
+                                className="h-full bg-primary rounded-full transition-all duration-1000"
                                 style={{ width: `${percent}%` }}
                               />
                             </div>
@@ -310,9 +310,9 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   {/* Review List */}
                   <div className="space-y-12">
                     <div className="flex justify-between items-center">
-                      <h4 className="text-xl font-serif">Review List</h4>
-                      <div className="flex items-center gap-2 text-xs font-bold text-black/40">
-                        Sort by : <span className="text-black uppercase cursor-pointer hover:underline">Newest</span>
+                      <h4 className="text-xl font-serif text-primary">Review List</h4>
+                      <div className="flex items-center gap-2 text-xs font-bold text-body/40">
+                        Sort by : <span className="text-primary uppercase cursor-pointer hover:underline">Newest</span>
                       </div>
                     </div>
 
@@ -326,20 +326,20 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <h5 className="font-bold text-sm">{rev.user}</h5>
-                                  <CheckCircle2 size={14} className="text-green-500" />
-                                  <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 opacity-60">(Verified)</span>
+                                  <h5 className="font-bold text-sm text-body">{rev.user}</h5>
+                                  <CheckCircle2 size={14} className="text-accent" />
+                                  <span className="text-[10px] font-bold uppercase tracking-widest text-accent opacity-60">(Verified)</span>
                                 </div>
                                 <div className="flex items-center gap-4 mt-1">
-                                  <div className="flex text-amber-400">
+                                  <div className="flex text-primary">
                                     {[...Array(5)].map((_, i) => <Star key={i} size={12} fill={i < Math.round(rev.rating) ? "currentColor" : "none"} />)}
                                   </div>
-                                  <span className="text-[10px] font-bold text-black/30">Recent</span>
+                                  <span className="text-[10px] font-bold text-body/30">Recent</span>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <p className="text-sm text-black/60 leading-relaxed max-w-3xl">{rev.comment}</p>
+                          <p className="text-sm text-body/60 leading-relaxed max-w-3xl">{rev.comment}</p>
                         </div>
                       ))}
                       {!product.reviews?.length && (
@@ -356,7 +356,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
         {/* Floating Studio Button */}
         <div className={`fixed bottom-12 right-12 z-[110] transition-all duration-1000 delay-500 ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
           {showStudioMenu && (
-            <div className="absolute bottom-16 right-0 w-64 bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-black/5 p-4 animate-in slide-in-from-bottom-4 fade-in duration-300">
+            <div className="absolute bottom-16 right-0 w-64 bg-secondary rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-primary/10 p-4 animate-in slide-in-from-bottom-4 fade-in duration-300 transition-all">
               <div className="space-y-2">
                 {[
                   { icon: <Box size={18} />, label: 'AR Spatial View', action: onAR },
@@ -366,7 +366,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   <button
                     key={i}
                     onClick={() => { item.action(product); setShowStudioMenu(false); }}
-                    className="w-full p-4 rounded-2xl bg-black/5 hover:bg-black hover:text-white transition-all text-left flex items-center gap-3 group"
+                    className="w-full p-4 rounded-2xl bg-background hover:bg-highlight hover:text-background transition-all text-left flex items-center gap-3 group"
                   >
                     <span className="transition-transform group-hover:scale-110">{item.icon}</span>
                     <span className="text-[10px] font-bold uppercase tracking-widest">{item.label}</span>
@@ -378,10 +378,10 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
 
           <button
             onClick={() => setShowStudioMenu(!showStudioMenu)}
-            className="flex items-center gap-8 bg-white pl-8 pr-2 py-2 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group active:scale-95 border border-black/5"
+            className="flex items-center gap-8 bg-secondary pl-8 pr-2 py-2 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all group active:scale-95 border border-text/5"
           >
-            <span className="text-sm font-bold tracking-tight text-black">Explore Studio</span>
-            <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white transition-transform group-hover:rotate-12">
+            <span className="text-sm font-bold tracking-tight text-text">Explore Studio</span>
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-secondary transition-transform group-hover:rotate-12">
               <Sparkles size={18} />
             </div>
           </button>

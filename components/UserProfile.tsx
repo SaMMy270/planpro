@@ -159,8 +159,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[600px] space-y-4">
-                <Loader2 className="animate-spin text-black/20" size={48} />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Initializing Profile</p>
+                <Loader2 className="animate-spin text-primary/20" size={48} />
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/20">Initializing Profile</p>
             </div>
         );
     }
@@ -172,27 +172,27 @@ const UserProfile: React.FC<UserProfileProps> = ({
             <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
                 <div className="flex items-center gap-6 md:gap-10">
                     <div className="relative group">
-                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[40px] bg-black/5 overflow-hidden border-4 border-white shadow-2xl transition-transform duration-700 group-hover:rotate-6 group-hover:scale-110">
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[40px] bg-background overflow-hidden border-4 border-primary shadow-2xl transition-transform duration-700 group-hover:rotate-6 group-hover:scale-110">
                             {profile?.avatarUrl ? (
                                 <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-zinc-100">
-                                    <User size={48} className="text-black/10" />
+                                <div className="w-full h-full flex items-center justify-center bg-background/50">
+                                    <User size={48} className="text-text/10" />
                                 </div>
                             )}
                         </div>
-                        <div className="absolute -bottom-2 -right-2 bg-black text-white p-2 rounded-2xl shadow-xl border-2 border-white">
+                        <div className="absolute -bottom-2 -right-2 bg-text text-highlight p-2 rounded-2xl shadow-xl border-2 border-background">
                             <Sparkles size={16} />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-black">{profile?.name || user?.email?.split('@')[0]}</h1>
-                            <Verified className="text-[#1754cf]" size={20} />
+                            <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-text">{profile?.name || user?.email?.split('@')[0]}</h1>
+                            <Verified className="text-primary" size={20} />
                         </div>
                         <div className="flex items-center gap-4">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/40 bg-black/5 px-3 py-1 rounded-full">{user?.email}</span>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-[#1754cf] bg-[#1754cf]/10 px-3 py-1 rounded-full">PRO DESIGNER</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-text/40 bg-secondary/30 px-3 py-1 rounded-full">{user?.email}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-text bg-highlight px-3 py-1 rounded-full">PRO DESIGNER</span>
                         </div>
                     </div>
                 </div>
@@ -200,13 +200,13 @@ const UserProfile: React.FC<UserProfileProps> = ({
                 <div className="flex items-center gap-3">
                     <button 
                         onClick={() => setActiveTab('settings')}
-                        className="px-8 py-4 bg-white border border-black/5 text-black rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white hover:shadow-2xl transition-all shadow-xl shadow-black/5 flex items-center gap-3"
+                        className="px-8 py-4 bg-highlight text-background rounded-3xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-highlight/10 flex items-center gap-3"
                     >
                         <Settings size={16} /> Edit Account
                     </button>
                     <button 
                         onClick={handleLogout}
-                        className="p-4 bg-red-50 text-red-500 rounded-3xl hover:bg-red-500 hover:text-white transition-all shadow-xl shadow-red-500/5"
+                        className="p-4 bg-red-500/10 text-red-500 rounded-3xl hover:bg-red-500 hover:text-white transition-all shadow-xl shadow-red-500/5 border border-red-500/20"
                     >
                         <LogOut size={20} />
                     </button>
@@ -214,7 +214,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex items-center gap-8 border-b border-black/5 pb-2 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-8 border-b border-primary/10 pb-2 overflow-x-auto no-scrollbar">
                 {[
                     { id: 'manual', name: 'Manual Designs', icon: Box, count: manualDesigns.length },
                     { id: 'ai', name: 'AI Generation', icon: Sparkles, count: aiDesigns.length },
@@ -225,15 +225,15 @@ const UserProfile: React.FC<UserProfileProps> = ({
                         onClick={() => setActiveTab(tab.id as ProfileTab)}
                         className={`group flex items-center gap-4 pb-4 border-b-2 transition-all whitespace-nowrap ${
                             activeTab === tab.id 
-                            ? 'border-black text-black' 
-                            : 'border-transparent text-black/20 hover:text-black/40'
+                            ? 'border-primary text-text font-black' 
+                            : 'border-transparent text-text/20 hover:text-text/40'
                         }`}
                     >
                         <tab.icon size={18} className={activeTab === tab.id ? 'opacity-100' : 'opacity-40'} />
                         <span className="text-[11px] font-black uppercase tracking-[0.2em]">{tab.name}</span>
                         {tab.count > 0 && (
                             <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                                activeTab === tab.id ? 'bg-black text-white' : 'bg-black/5 text-black/30'
+                                activeTab === tab.id ? 'bg-highlight text-text shadow-sm' : 'bg-text/5 text-text/30'
                             }`}>
                                 {tab.count}
                             </span>
@@ -254,8 +254,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
                             className="space-y-10"
                         >
                             <div className="flex items-center justify-between">
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Architectural Modules</p>
-                                <button onClick={() => onTabChange('blueprint')} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#1754cf] hover:underline">
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/20">Architectural Modules</p>
+                                <button onClick={() => onTabChange('blueprint')} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
                                     New Studio Project <ArrowRight size={14} />
                                 </button>
                             </div>
@@ -263,29 +263,29 @@ const UserProfile: React.FC<UserProfileProps> = ({
                             {manualDesigns.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {manualDesigns.map((design) => (
-                                        <div key={design.id} className="group bg-white rounded-[48px] overflow-hidden border border-black/5 shadow-xl hover:shadow-2xl transition-all duration-700">
-                                            <div className="aspect-[4/3] bg-zinc-50 relative overflow-hidden">
+                                        <div key={design.id} className="group bg-secondary rounded-[48px] overflow-hidden border border-text/5 shadow-xl hover:shadow-2xl transition-all duration-700">
+                                            <div className="aspect-[4/3] bg-secondary/5 relative overflow-hidden">
                                                 <img 
                                                     src={getFileUrl(design.thumbnailUrl)} 
                                                     alt={design.name} 
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                    <button className="px-6 py-2.5 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-transform">View Project</button>
+                                                <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
+                                                    <button className="px-8 py-3 bg-text text-highlight rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-transform">Open Studio</button>
                                                 </div>
                                             </div>
                                             <div className="p-8 space-y-4">
                                                 <div className="flex items-center justify-between">
-                                                    <h3 className="text-xl font-serif text-black">{design.name}</h3>
-                                                    <button className="p-2 hover:bg-red-50 text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100">
+                                                    <h3 className="text-xl font-bold tracking-tight text-text">{design.name}</h3>
+                                                    <button className="p-2 hover:bg-red-500/10 text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100">
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                                 <div className="flex items-center gap-4">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest text-black/30 bg-zinc-50 px-3 py-1 rounded-full">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-text/30 bg-secondary/10 px-3 py-1 rounded-full">
                                                         {new Date(design.createdAt).toLocaleDateString()}
                                                     </span>
-                                                    <span className="text-[9px] font-black uppercase tracking-widest text-black/30 bg-zinc-50 px-3 py-1 rounded-full">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/5 px-3 py-1 rounded-full">
                                                         {design.layoutData?.items?.length || 0} Models
                                                     </span>
                                                 </div>
@@ -294,12 +294,12 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                     ))}
                                 </div>
                             ) : (
-                                <div className="py-32 flex flex-col items-center justify-center bg-white rounded-[60px] border-2 border-dashed border-black/5 space-y-6">
-                                    <div className="p-10 bg-black/5 rounded-[40px] text-black/10">
+                                <div className="py-32 flex flex-col items-center justify-center bg-background rounded-[60px] border-2 border-dashed border-text/5 space-y-6">
+                                    <div className="p-10 bg-text/5 rounded-[40px] text-text/10">
                                         <Box size={64} />
                                     </div>
-                                    <h4 className="text-2xl font-serif text-black/40">No Manual Designs Yet</h4>
-                                    <button onClick={() => onTabChange('blueprint')} className="px-10 py-5 bg-black text-white rounded-[28px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-black/20 hover:scale-105 active:scale-95 transition-all">Start Your First Design</button>
+                                    <h4 className="text-2xl font-serif text-text/40">No Manual Designs Yet</h4>
+                                    <button onClick={() => onTabChange('blueprint')} className="px-10 py-5 bg-highlight text-background rounded-[28px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-highlight/20 hover:scale-105 active:scale-95 transition-all">Start Your First Design</button>
                                 </div>
                             )}
                         </motion.div>
@@ -314,8 +314,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
                             className="space-y-10"
                         >
                             <div className="flex items-center justify-between">
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Neural Generations</p>
-                                <button onClick={() => onTabChange('blueprint')} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-purple-600 hover:underline">
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/20">Neural Generations</p>
+                                <button onClick={() => onTabChange('blueprint')} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
                                     Capture New Space <Sparkles size={14} />
                                 </button>
                             </div>
@@ -323,12 +323,12 @@ const UserProfile: React.FC<UserProfileProps> = ({
                             {aiDesigns.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {aiDesigns.map((design) => (
-                                        <div key={design.id} className="group bg-black text-white rounded-[48px] overflow-hidden shadow-2xl hover:shadow-purple-500/20 transition-all duration-700">
-                                            <div className="aspect-[16/9] bg-zinc-900 relative">
+                                        <div key={design.id} className="group bg-secondary text-body rounded-[48px] overflow-hidden shadow-2xl hover:shadow-primary/20 transition-all duration-700 border border-primary/5">
+                                            <div className="aspect-[16/9] bg-background relative">
                                                 {design.panoramaUrl ? (
-                                                    <div className="w-full h-full flex items-center justify-center bg-purple-900/10">
-                                                        <Globe size={48} className="text-purple-500 animate-pulse" />
-                                                        <span className="absolute bottom-4 left-4 text-[8px] font-black uppercase tracking-widest bg-purple-500 px-2 py-0.5 rounded">Panorama Active</span>
+                                                    <div className="w-full h-full flex items-center justify-center bg-primary/10">
+                                                        <Globe size={48} className="text-primary animate-pulse" />
+                                                        <span className="absolute bottom-4 left-4 text-[8px] font-black uppercase tracking-widest bg-primary text-background px-2 py-0.5 rounded">Panorama Active</span>
                                                     </div>
                                                 ) : (
                                                     <img 
@@ -337,43 +337,43 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60"
                                                     />
                                                 )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-8">
-                                                    <h3 className="text-2xl font-serif text-white">{design.name}</h3>
+                                                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent flex flex-col justify-end p-8">
+                                                    <h3 className="text-2xl font-serif text-primary">{design.name}</h3>
                                                 </div>
                                             </div>
                                             <div className="p-8 space-y-6">
                                                 <div className="flex items-center gap-3">
                                                     <div className="flex -space-x-3 overflow-hidden">
                                                         {design.imageUrls?.slice(0, 3).map((img: string, i: number) => (
-                                                            <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-zinc-800 overflow-hidden">
+                                                            <div key={i} className="w-10 h-10 rounded-full border-2 border-secondary bg-background overflow-hidden">
                                                                 <img src={getFileUrl(img)} className="w-full h-full object-cover" />
                                                             </div>
                                                         ))}
                                                         {design.imageUrls?.length > 3 && (
-                                                            <div className="w-10 h-10 rounded-full border-2 border-black bg-zinc-900 flex items-center justify-center text-[10px] font-black">
+                                                            <div className="w-10 h-10 rounded-full border-2 border-secondary bg-background flex items-center justify-center text-[10px] font-black">
                                                                 +{design.imageUrls.length - 3}
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Source Captures</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-body/20">Source Captures</span>
                                                 </div>
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 bg-white/10 px-4 py-1.5 rounded-full">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-body/40 bg-background px-4 py-1.5 rounded-full">
                                                         AI SYNC: {new Date(design.createdAt).toLocaleDateString()}
                                                     </span>
-                                                    <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-purple-400">View Details <ArrowRight size={14} /></button>
+                                                    <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">View Details <ArrowRight size={14} /></button>
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <div className="py-32 flex flex-col items-center justify-center bg-black rounded-[60px] border border-white/5 space-y-6">
-                                    <div className="p-10 bg-white/5 rounded-[40px] text-white/5">
+                                <div className="py-32 flex flex-col items-center justify-center bg-secondary rounded-[60px] border border-primary/5 space-y-6">
+                                    <div className="p-10 bg-background rounded-[40px] text-primary/5">
                                         <Sparkles size={64} />
                                     </div>
-                                    <h4 className="text-2xl font-serif text-white/20">No Neural Models Yet</h4>
-                                    <button onClick={() => onTabChange('blueprint')} className="px-10 py-5 bg-white text-black rounded-[28px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all">Capture Your Room</button>
+                                    <h4 className="text-2xl font-serif text-primary/20">No Neural Models Yet</h4>
+                                    <button onClick={() => onTabChange('blueprint')} className="px-10 py-5 bg-primary text-background rounded-[28px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all">Capture Your Room</button>
                                 </div>
                             )}
                         </motion.div>
@@ -389,59 +389,59 @@ const UserProfile: React.FC<UserProfileProps> = ({
                         >
                             <div className="space-y-10">
                                 <div className="space-y-4">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20">Account Configuration</p>
-                                    <h2 className="text-4xl font-serif tracking-tight text-black">Personal Information</h2>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/20">Account Configuration</p>
+                                    <h2 className="text-4xl font-serif tracking-tight text-primary">Personal Information</h2>
                                 </div>
 
-                                <div className="space-y-8 p-10 bg-white rounded-[48px] border border-black/5 shadow-2xl shadow-black/5">
+                                <div className="space-y-8 p-10 bg-secondary rounded-[48px] border border-primary/5 shadow-2xl shadow-background/5">
                                     {/* Avatar Selection */}
                                     <div className="flex flex-col items-center gap-6">
                                         <div className="relative group cursor-pointer" onClick={() => setIsEditing(true)}>
-                                            <div className="w-32 h-32 rounded-[40px] bg-black/5 overflow-hidden border-4 border-white shadow-2xl">
+                                            <div className="w-32 h-32 rounded-[40px] bg-background overflow-hidden border-4 border-primary shadow-2xl">
                                                 {editAvatar ? (
                                                     <img src={editAvatar} className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center"><User size={48} className="text-black/10" /></div>
+                                                    <div className="w-full h-full flex items-center justify-center"><User size={48} className="text-primary/10" /></div>
                                                 )}
                                             </div>
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-[40px]">
-                                                <Camera size={24} className="text-white" />
+                                            <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-[40px]">
+                                                <Camera size={24} className="text-primary" />
                                             </div>
                                         </div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-black/20">Tap to Change Avatar</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/20">Tap to Change Avatar</p>
                                     </div>
 
                                     <div className="space-y-6">
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4">Full Name</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-4">Full Name</label>
                                             <input 
                                                 type="text" 
                                                 value={editName}
                                                 onChange={(e) => setEditName(e.target.value)}
                                                 disabled={!isEditing}
-                                                className="w-full p-6 bg-zinc-50 rounded-3xl border border-black/5 focus:bg-white focus:border-black/20 focus:outline-none font-bold text-black transition-all disabled:opacity-50"
+                                                className="w-full p-6 bg-background rounded-3xl border border-primary/5 focus:bg-secondary focus:border-primary/20 focus:outline-none font-bold text-body transition-all disabled:opacity-50"
                                             />
                                         </div>
 
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4">Email Address (Read-only)</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-4">Email Address (Read-only)</label>
                                             <input 
                                                 type="email" 
                                                 value={user?.email}
                                                 disabled
-                                                className="w-full p-6 bg-zinc-50/50 rounded-3xl border border-black/5 font-bold text-black/30 outline-none"
+                                                className="w-full p-6 bg-background/50 rounded-3xl border border-primary/5 font-bold text-body/30 outline-none"
                                             />
                                         </div>
                                         
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4">Avatar URL</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-4">Avatar URL</label>
                                             <input 
                                                 type="text" 
                                                 value={editAvatar}
                                                 onChange={(e) => setEditAvatar(e.target.value)}
                                                 disabled={!isEditing}
                                                 placeholder="https://..."
-                                                className="w-full p-6 bg-zinc-50 rounded-3xl border border-black/5 focus:bg-white focus:border-black/20 focus:outline-none font-bold text-black transition-all disabled:opacity-50"
+                                                className="w-full p-6 bg-background rounded-3xl border border-primary/5 focus:bg-secondary focus:border-primary/20 focus:outline-none font-bold text-body transition-all disabled:opacity-50"
                                             />
                                         </div>
                                     </div>
@@ -452,9 +452,9 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                                 <button 
                                                     onClick={handleUpdateProfile}
                                                     disabled={savingProfile}
-                                                    className="flex-1 py-5 bg-black text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                                                    className="flex-1 py-5 bg-highlight text-background rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                                                 >
-                                                    {savingProfile ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />} 
+                                                    {savingProfile ? <Loader2 className="animate-spin text-background/40" size={16} /> : <Save size={16} />} 
                                                     Save Changes
                                                 </button>
                                                 <button 
@@ -463,7 +463,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                                         setEditName(profile?.name || '');
                                                         setEditAvatar(profile?.avatarUrl || '');
                                                     }}
-                                                    className="px-8 py-5 bg-zinc-100 text-black rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-zinc-200 transition-all"
+                                                    className="px-8 py-5 bg-secondary text-text/60 rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-secondary transition-all"
                                                 >
                                                     Cancel
                                                 </button>
@@ -471,7 +471,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                         ) : (
                                             <button 
                                                 onClick={() => setIsEditing(true)}
-                                                className="w-full py-5 bg-white border border-black/5 text-black rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-xl shadow-black/5 flex items-center justify-center gap-3"
+                                                className="w-full py-5 bg-highlight text-background rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-highlight/80 transition-all shadow-xl shadow-highlight/5 flex items-center justify-center gap-3"
                                             >
                                                 <Edit2 size={16} /> Enter Edit Mode
                                             </button>
@@ -482,17 +482,17 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
                             <div className="space-y-8">
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-500/40">Danger Zone</p>
-                                <button className="w-full p-8 border border-red-100 rounded-[48px] flex items-center justify-between hover:bg-red-50 transition-all group">
+                                <button className="w-full p-8 border border-red-900/40 rounded-[48px] flex items-center justify-between hover:bg-red-900/10 transition-all group">
                                     <div className="flex items-center gap-6">
-                                        <div className="p-4 bg-red-100 text-red-500 rounded-3xl group-hover:bg-red-500 group-hover:text-white transition-all">
+                                        <div className="p-4 bg-red-900/40 text-red-500 rounded-3xl group-hover:bg-red-500 group-hover:text-white transition-all">
                                             <Trash size={20} />
                                         </div>
                                         <div className="text-left space-y-1">
-                                            <p className="font-bold text-black">Deactivate Account</p>
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-black/20">Permanently remove all your design data</p>
+                                            <p className="font-bold text-text">Deactivate Account</p>
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-text/30">Permanently remove all your design data</p>
                                         </div>
                                     </div>
-                                    <ChevronRight size={20} className="text-black/10" />
+                                    <ChevronRight size={20} className="text-text/10" />
                                 </button>
                             </div>
                         </motion.div>

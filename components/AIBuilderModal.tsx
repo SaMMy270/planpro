@@ -85,20 +85,20 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-      <div className="relative bg-[#FBFBF9] w-full max-w-5xl h-[85vh] rounded-[40px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-8 duration-500 flex flex-col md:flex-row">
+      <div className="relative bg-background w-full max-w-5xl h-[85vh] rounded-[40px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-8 duration-500 flex flex-col md:flex-row border border-text/5">
 
         {/* Left Panel: Preview / Viewport */}
-        <div className="flex-1 bg-[#F5F5F3] flex items-center justify-center relative overflow-hidden group">
-          <div className="absolute inset-0 opacity-40 pointer-events-none">
-            <div className="w-full h-full bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+        <div className="flex-1 bg-background/50 flex items-center justify-center relative overflow-hidden group">
+          <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <div className="w-full h-full bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:40px_40px]"></div>
           </div>
 
           {showCamera ? (
             <div className="w-full h-full relative z-10">
               <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
               <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4">
-                <button onClick={capturePhoto} className="w-16 h-16 rounded-full bg-white border-4 border-black/10 flex items-center justify-center shadow-2xl active:scale-90 transition-all">
-                  <div className="w-12 h-12 rounded-full border-2 border-black/20" />
+                <button onClick={capturePhoto} className="w-16 h-16 rounded-full bg-background border-4 border-highlight/20 flex items-center justify-center shadow-2xl active:scale-90 transition-all">
+                  <div className="w-12 h-12 rounded-full border-2 border-highlight" />
                 </button>
                 <button onClick={stopCamera} className="p-4 rounded-full bg-black/10 backdrop-blur-md text-white hover:bg-black hover:text-white transition-all">
                   <X size={20} />
@@ -107,23 +107,23 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
             </div>
           ) : !image ? (
             <div className="text-center space-y-6 max-w-sm px-6 relative z-10">
-              <div className="w-24 h-24 bg-white rounded-[32px] flex items-center justify-center mx-auto border border-black/5 shadow-xl">
-                <ImageIcon size={40} className="text-black/10" />
+              <div className="w-24 h-24 bg-secondary rounded-[32px] flex items-center justify-center mx-auto border border-text/5 shadow-xl">
+                <ImageIcon size={40} className="text-text/10" />
               </div>
               <div className="space-y-2">
-                <h4 className="text-xl font-serif text-black">Capture Your Space</h4>
-                <p className="text-black/40 text-sm">Upload a photo or use your camera to see how our collection fits in your room.</p>
+                <h4 className="text-xl font-bold tracking-tight text-text">Capture Your Space</h4>
+                <p className="text-text/40 text-sm">Upload a photo or use your camera to see how our collection fits in your room.</p>
               </div>
               <div className="flex flex-col gap-3 pt-4">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-xl"
+                  className="w-full py-4 bg-highlight text-background rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-xl"
                 >
                   <Upload size={16} /> Choose Photo
                 </button>
                 <button
                   onClick={startCamera}
-                  className="w-full py-4 bg-white text-black border border-black/10 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-all shadow-sm"
+                  className="w-full py-4 bg-background text-text border border-text/10 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:bg-secondary transition-all shadow-sm"
                 >
                   <Camera size={16} /> Use Camera
                 </button>
@@ -134,7 +134,7 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
             <>
               <img src={result || image} className="w-full h-full object-contain relative z-10" alt="Room preview" />
               <div className="absolute top-6 left-6 flex gap-2 z-20">
-                <div className="px-4 py-2 bg-white/80 backdrop-blur-md text-black text-[9px] font-black uppercase tracking-widest rounded-full border border-black/5 shadow-sm">
+                <div className="px-4 py-2 bg-background/80 backdrop-blur-md text-text text-[9px] font-black uppercase tracking-widest rounded-full border border-text/5 shadow-sm">
                   {result ? 'AI Vision Applied' : 'Base Environment'}
                 </div>
               </div>
@@ -142,57 +142,57 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
           )}
 
           {isLoading && (
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-xl flex flex-col items-center justify-center text-black gap-6 z-50">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-xl flex flex-col items-center justify-center text-text gap-6 z-50">
               <div className="relative">
-                <div className="absolute -inset-4 bg-black/5 rounded-full animate-ping opacity-20" />
-                <Loader2 className="animate-spin text-black/20" size={64} strokeWidth={1.5} />
+                <div className="absolute -inset-4 bg-primary/20 rounded-full animate-ping opacity-20" />
+                <Loader2 className="animate-spin text-primary/40" size={64} strokeWidth={1.5} />
               </div>
               <div className="text-center space-y-2">
-                <p className="font-serif text-3xl animate-pulse">Designing Space...</p>
-                <p className="text-black/30 text-[10px] font-black uppercase tracking-[0.2em]">Calculating spatial depth & shadows</p>
+                <p className="font-bold text-3xl animate-pulse tracking-tight">Designing Space...</p>
+                <p className="text-text/30 text-[10px] font-black uppercase tracking-[0.2em]">Calculating spatial depth & shadows</p>
               </div>
             </div>
           )}
         </div>
 
         {/* Right Panel: Studio Controls */}
-        <div className="w-full md:w-[360px] p-10 flex flex-col justify-between bg-white z-10 border-l border-black/5">
+        <div className="w-full md:w-[360px] p-10 flex flex-col justify-between bg-secondary z-10 border-l border-text/5">
           <div className="space-y-10">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-2xl font-serif">AI Studio</h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-black/30 mt-1">Spatial Engine v3.0</p>
+                <h3 className="text-2xl font-bold tracking-tight text-text">AI Studio</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text/30 mt-1">Spatial Engine v3.0</p>
               </div>
-              <button onClick={onClose} className="p-2.5 rounded-full hover:bg-black/5 transition-all active:scale-90">
+              <button onClick={onClose} className="p-2.5 rounded-full hover:bg-text/5 transition-all active:scale-90 text-text">
                 <X size={20} />
               </button>
             </div>
 
             <div className="space-y-6">
               {/* Product Info Card */}
-              <div className="p-5 bg-[#F5F5F3] rounded-[24px] flex items-center gap-4 border border-black/5 shadow-inner">
-                <div className="w-16 h-16 rounded-xl overflow-hidden bg-white shadow-sm flex-shrink-0 border border-black/5">
+              <div className="p-5 bg-background/50 rounded-[24px] flex items-center gap-4 border border-text/5 shadow-inner">
+                <div className="w-16 h-16 rounded-xl overflow-hidden bg-secondary shadow-sm flex-shrink-0 border border-text/5">
                   <img src={product?.image} className="w-full h-full object-cover" alt={product?.name} />
                 </div>
                 <div className="overflow-hidden">
-                  <span className="text-[9px] uppercase font-black tracking-widest text-black/30 block mb-0.5">{product?.category}</span>
-                  <p className="font-bold text-sm truncate text-black/80">{product?.name}</p>
+                  <span className="text-[9px] uppercase font-black tracking-widest text-text/30 block mb-0.5">{product?.category}</span>
+                  <p className="font-bold text-sm truncate text-text/80">{product?.name}</p>
                 </div>
               </div>
 
               {image && !result && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                  <div className="p-5 bg-black/5 rounded-[24px] border border-black/5">
-                    <p className="text-[10px] text-black/60 font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <div className="p-5 bg-primary/10 rounded-[24px] border border-primary/10">
+                    <p className="text-[10px] text-primary font-black uppercase tracking-widest mb-2 flex items-center gap-2">
                       <RefreshCw size={12} className="animate-spin-slow" /> Scene Ready
                     </p>
-                    <p className="text-[11px] text-black/40 font-medium leading-relaxed">
+                    <p className="text-[11px] text-text/40 font-medium leading-relaxed">
                       Our neural engine will now map your environment and place the object with physics-accurate lighting.
                     </p>
                   </div>
                   <button
                     onClick={() => { setImage(null); setResult(null); }}
-                    className="w-full py-4 border border-black/5 rounded-[20px] text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black hover:border-black transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4 border border-text/5 rounded-[20px] text-[10px] font-black uppercase tracking-widest text-text/30 hover:text-text hover:border-text transition-all flex items-center justify-center gap-2"
                   >
                     <RefreshCw size={14} /> Replace Photo
                   </button>
@@ -201,18 +201,18 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
 
               {result && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                  <div className="p-5 bg-green-50 border border-green-100 rounded-[24px]">
-                    <p className="text-[10px] text-green-700 font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <div className="p-5 bg-accent/10 border border-accent/20 rounded-[24px]">
+                    <p className="text-[10px] text-accent font-black uppercase tracking-widest mb-2 flex items-center gap-2">
                       <Check size={12} /> Render Complete
                     </p>
-                    <p className="text-[11px] text-green-900/40 font-medium leading-relaxed">
+                    <p className="text-[11px] text-text/40 font-medium leading-relaxed">
                       Perspective and ambient occlusion have been optimized for your room's specific lighting profile.
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={() => setResult(null)}
-                      className="py-4 border border-black/5 rounded-[20px] text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black hover:border-black transition-all"
+                      className="py-4 border border-text/5 rounded-[20px] text-[10px] font-black uppercase tracking-widest text-text/30 hover:text-text hover:border-text transition-all"
                     >
                       Reset View
                     </button>
@@ -231,7 +231,7 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
                           toast.error("Failed to save design", { id });
                         }
                       }}
-                      className="py-4 bg-black text-white rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:bg-black/80 transition-all shadow-xl shadow-black/10"
+                      className="py-4 bg-highlight text-background rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-highlight/10"
                     >
                       Save Design
                     </button>
@@ -245,14 +245,14 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
             <button
               onClick={runAIBuilder}
               disabled={!image || isLoading || !product || !!result}
-              className="w-full py-5 bg-black text-white rounded-[28px] flex items-center justify-center gap-4 hover:bg-black/80 hover:scale-[1.01] active:scale-95 disabled:bg-black/5 disabled:text-black/20 disabled:scale-100 transition-all shadow-2xl shadow-black/20 group"
+              className="w-full py-5 bg-highlight text-background rounded-[28px] flex items-center justify-center gap-4 hover:scale-[1.01] active:scale-95 disabled:bg-text/5 disabled:text-text/20 disabled:scale-100 transition-all shadow-2xl shadow-highlight/10 group"
             >
               <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
               <span className="text-[11px] font-black uppercase tracking-[0.3em]">Generate Vision</span>
             </button>
             <div className="flex flex-col items-center gap-1.5 opacity-20">
-              <p className="text-[8px] font-black uppercase tracking-[0.4em]">PlanPro Spatial Engine</p>
-              <div className="w-12 h-0.5 bg-black rounded-full"></div>
+              <p className="text-[8px] font-black uppercase tracking-[0.4em] text-text">PlanPro Spatial Engine</p>
+              <div className="w-12 h-0.5 bg-primary rounded-full"></div>
             </div>
           </div>
         </div>
