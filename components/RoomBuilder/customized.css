@@ -107,13 +107,13 @@
 }
 
 .unit-toggle button.active {
-    background: var(--highlight);
+    background: var(--primary);
     color: var(--background);
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+    box-shadow: 0 4px 15px rgba(117, 135, 196, 0.4);
 }
 
 .unit-toggle button.active:hover {
-    background: var(--highlight);
+    background: var(--primary);
     opacity: 0.9;
     transform: translateY(-1px);
 }
@@ -163,7 +163,7 @@
     outline: none;
     border-color: var(--highlight);
     background: var(--background);
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.05);
+    box-shadow: 0 0 0 4px rgba(248, 232, 193, 0.15);
 }
 
 .unit-label {
@@ -211,9 +211,9 @@
 }
 
 .btn-primary:hover {
-    opacity: 0.9;
+    opacity: 0.95;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(251, 191, 36, 0.2);
+    box-shadow: 0 8px 25px rgba(248, 232, 193, 0.25);
 }
 
 .btn-primary:active {
@@ -373,14 +373,14 @@
     border-color: transparent;
     background-color: var(--highlight);
     color: var(--background);
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    box-shadow: 0 4px 15px rgba(248, 232, 193, 0.4);
 }
 
 .active-door:hover,
 .active-win:hover {
     background-color: var(--highlight);
-    opacity: 0.9;
-    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
+    opacity: 1;
+    box-shadow: 0 10px 25px rgba(248, 232, 193, 0.5);
     transform: translateY(-2px);
 }
 

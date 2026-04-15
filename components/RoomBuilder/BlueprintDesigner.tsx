@@ -20,9 +20,10 @@ interface BlueprintDesignerProps {
   wishlist: string[];
   toggleWishlist: (id: string) => Promise<void>;
   user: any;
+  onBack?: () => void;
 }
 
-const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleWishlist, user }) => {
+const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleWishlist, user, onBack }) => {
   // --- REFS ---
   const designerRef = useRef<any>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -371,8 +372,17 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="min-h-screen md:h-screen w-full pt-24 pb-12 bg-background flex flex-col items-center justify-center p-4 sm:p-6 text-text overflow-y-auto md:overflow-hidden relative"
+        className="min-h-screen md:h-screen w-full py-12 bg-background flex flex-col items-center justify-center p-4 sm:p-6 text-text overflow-y-auto md:overflow-hidden relative"
       >
+        {/* Floating back button */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-secondary/80 backdrop-blur-md border border-text/10 rounded-full text-[10px] font-black uppercase tracking-widest text-text hover:bg-primary hover:text-background hover:border-primary transition-all shadow-lg z-50"
+          >
+            <ArrowLeft size={14} /> Back
+          </button>
+        )}
         <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-0 border border-text/5 rounded-[40px] overflow-hidden bg-background shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)]">
           {/* Manual Designer Side */}
           <motion.div
@@ -468,13 +478,13 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="min-h-screen md:h-screen w-full pt-24 pb-12 bg-background flex flex-col items-center justify-center p-4 sm:p-6 text-text overflow-y-auto md:overflow-hidden relative"
+        className="min-h-screen md:h-screen w-full py-12 bg-background flex flex-col items-center justify-center p-4 sm:p-6 text-text overflow-y-auto md:overflow-hidden relative"
       >
         <motion.button
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           onClick={() => setStep('selection')}
-          className="absolute top-24 sm:top-32 left-6 sm:left-10 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-text/40 hover:text-primary transition-colors"
+          className="absolute top-10 sm:top-14 left-6 sm:left-10 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-text/40 hover:text-primary transition-colors"
         >
           <ArrowLeft size={14} /> Back
         </motion.button>
@@ -519,16 +529,19 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-background overflow-hidden pt-20"
+        className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-background overflow-hidden"
       >
         {/* Left Sidebar - Studio Controls */}
         <div className="w-full lg:w-[400px] shrink-0 h-full bg-background flex flex-col p-6 lg:p-8 border-r border-text/5 shadow-[20px_0_40px_rgba(0,0,0,0.02)] z-20">
-          <button 
-            onClick={() => setStep('selection')}
-            className="flex items-center gap-3 text-text/30 hover:text-primary mb-4 lg:mb-6 transition-all text-[10px] font-black uppercase tracking-[0.2em] group"
-          >
-            <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Selection
-          </button>
+          <div className="flex items-center gap-4 mb-4 lg:mb-6">
+            <button 
+              onClick={() => setStep('selection')}
+              className="flex items-center gap-2 text-text/40 hover:text-primary transition-all text-[10px] font-black uppercase tracking-[0.2em] group bg-secondary/30 px-3 py-1.5 rounded-full"
+            >
+              <ChevronLeft size={12} className="group-hover:-translate-x-1 transition-transform" /> Back
+            </button>
+            
+          </div>
 
           <div className="space-y-4 lg:space-y-6 flex-1 min-h-0 overflow-y-auto no-scrollbar pt-1">
             <div className="space-y-2">
@@ -585,7 +598,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                   {['Front Wall', 'Right Wall', 'Back Wall', 'Left Wall'].map((wall, i) => (
                     <div key={wall} className="p-2.5 bg-secondary rounded-[20px] border border-text/5 group hover:bg-text/5 hover:border-text/10 transition-all duration-300">
                       <div className="flex items-center gap-3">
-                        <span className="text-[9px] font-black text-black/20 uppercase tracking-[0.2em] w-14 shrink-0">{wall}</span>
+                        <span className="text-[9px] font-black text-text/60 uppercase tracking-[0.2em] w-14 shrink-0">{wall}</span>
                         
                         <div className="flex-1 flex items-center gap-2.5">
                           <div className="relative w-24 shrink-0">
@@ -608,7 +621,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                               }}
                               className="w-full h-11 bg-background border border-text/10 rounded-xl text-sm font-bold text-text outline-none focus:border-primary/20 text-center"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-black/10">{roomData.units === 'FEET' ? 'FT' : 'M'}</span>
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-text/30">{roomData.units === 'FEET' ? 'FT' : 'M'}</span>
                           </div>
 
                           <label className="flex-1 h-11 flex items-center justify-center gap-2 bg-highlight text-background rounded-xl cursor-pointer hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-highlight/5 hover:bg-highlight/90 group-hover:bg-highlight/90">
@@ -805,7 +818,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
   if (step === 'dimension-setup') {
     return (
-      <div className="w-full min-h-[calc(100dvh-72px)] pt-20 bg-background">
+      <div className="w-full min-h-screen bg-background flex items-center justify-center">
+        
         <DimensionSetup
           data={roomData}
           onUpdate={updateRoom}
@@ -818,7 +832,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
   if (step === 'openings-setup') {
     return (
-      <div className="w-full min-h-[calc(100dvh-72px)] pt-20 bg-background">
+      <div className="w-full min-h-screen bg-background flex items-center justify-center">
+        
         <OpeningsSetup
           data={roomData}
           onUpdate={updateRoom}
@@ -933,7 +948,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               </div>
               <div className="flex justify-between items-center py-4 border-y border-text/5">
                 <span className="text-2xl font-bold tracking-tighter text-text">
-                  ${hoveredProduct.price}
+                  ₹{hoveredProduct.price}
                 </span>
                 <div className="flex items-center gap-1.5 bg-text/5 px-3 py-1.5 rounded-full">
                   <Star size={10} className="fill-text text-text" />
@@ -949,13 +964,16 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
       </AnimatePresence>
 
       <header className="fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-md border-b border-text/5 flex items-center justify-between px-4 sm:px-8 z-[100]">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-6">
           <button
             onClick={() => setStep('selection')}
             className="p-1.5 sm:p-2 hover:bg-text/5 rounded-full transition-colors"
+            title="Back to step selection"
           >
             <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-text" />
           </button>
+
+          
 
           {/* Sidebar toggle — always visible on all screen sizes */}
           <button
@@ -1012,10 +1030,12 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
 
 
           <button
-            onClick={handleExportGLB}
-            className="p-2 sm:p-3 bg-primary text-text rounded-full hover:scale-110 transition-transform shadow-lg"
+            onClick={handleSaveProject}
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-secondary border border-text/10 rounded-full flex items-center justify-center text-highlight shadow-[0_0_30px_rgba(193,200,228,0.2)] hover:scale-110 active:scale-95 transition-all group relative overflow-hidden"
+            title="Save Project"
           >
-            <Save size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <div className="absolute inset-0 bg-highlight/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Save size={18} className="relative z-10 sm:w-[20px] sm:h-[20px]" />
           </button>
         </div>
       </header>
@@ -1094,28 +1114,30 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               {/* ── Menu-style tab navigation ── */}
               <div className="px-5 pt-4 pb-2 border-b border-text/10 flex items-center justify-between lg:justify-start gap-4 sticky top-0 bg-background z-[60]">
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setActiveSidebarTab('appearance')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${
-                      activeSidebarTab === 'appearance'
-                        ? 'bg-text text-highlight border-text shadow-xl shadow-text/20'
-                        : 'bg-transparent text-text/40 border-text/5 hover:border-text/20'
-                    }`}
-                  >
-                    <Layout size={12} />
-                    Appearance
-                  </button>
-                  <button
-                    onClick={() => setActiveSidebarTab('library')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${
-                      activeSidebarTab === 'library'
-                        ? 'bg-text text-highlight border-text shadow-xl shadow-text/20'
-                        : 'bg-transparent text-text/40 border-text/5 hover:border-text/20'
-                    }`}
-                  >
-                    <Box size={12} />
-                    Library
-                  </button>
+                  <div className="flex bg-secondary/50 p-1 rounded-2xl border border-text/10">
+                    <button
+                      onClick={() => setActiveSidebarTab('appearance')}
+                      className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        activeSidebarTab === 'appearance'
+                          ? 'bg-text text-background shadow-[0_5px_15px_rgba(248,232,193,0.3)] scale-100'
+                          : 'text-text/30 hover:text-text/50 scale-95'
+                      }`}
+                    >
+                      <Layout size={12} />
+                      Appearance
+                    </button>
+                    <button
+                      onClick={() => setActiveSidebarTab('library')}
+                      className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        activeSidebarTab === 'library'
+                          ? 'bg-text text-background shadow-[0_5px_15px_rgba(248,232,193,0.3)] scale-100'
+                          : 'text-text/30 hover:text-text/50 scale-95'
+                      }`}
+                    >
+                      <Box size={12} />
+                      Library
+                    </button>
+                  </div>
                 </div>
 
                 {isMobile && (
@@ -1275,7 +1297,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                             <button
                               key={sub}
                               onClick={() => setLibrarySubcategory(sub)}
-                              className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${librarySubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-text text-highlight shadow-lg' : 'bg-text/5 border-text/5 text-text/30 hover:text-text hover:border-text/20'}`}
+                              className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${librarySubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-primary border-primary text-background shadow-[0_4px_10px_rgba(193,200,228,0.3)]' : 'bg-text/5 border-text/10 text-text/30 hover:text-text hover:border-text/20'}`}
                             >
                               {sub}
                             </button>
@@ -1326,7 +1348,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                         </div>
                       </div>
                       <span className="text-3xl font-bold tracking-tighter text-text group-hover:text-highlight">
-                        ${items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0)}
+                        ₹{items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 mt-4 text-[9px] font-black uppercase tracking-widest text-text/20 group-hover:text-highlight/40 relative z-10 transition-colors duration-500">
@@ -1335,12 +1357,11 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-tr from-text/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </button>
-                  <button
-                    onClick={handleSaveProject}
-                    className="w-full py-4 bg-highlight text-background rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl hover:scale-[1.02] transition-all"
-                  >
-                    Save Project
-                  </button>
+                  <div className="pt-4 flex justify-center border-t border-text/5 mt-4">
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-text/20">
+                      Scroll to see inventory status
+                    </p>
+                  </div>
                 </div>
               )}
             </aside>
@@ -1416,12 +1437,24 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                     <button
                       onClick={() => setShowWalls(!showWalls)}
                       className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
-                        showWalls ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
+                        showWalls ? 'bg-highlight text-background ring-4 ring-highlight/10 shadow-[0_0_25px_rgba(248,232,193,0.5)]' : 'bg-background/40 text-text/20 hover:text-text/40 border border-text/10'
                       }`}
-                      title="Toggle Walls"
+                      title={showWalls ? "Hide Walls" : "Show Walls"}
                     >
-                      {showWalls ? <Eye size={18} /> : <EyeOff size={18} />}
+                      {showWalls ? <Eye size={18} className="animate-pulse" /> : <EyeOff size={18} />}
                     </button>
+                    {isMobile && (
+                      <>
+                        <div className="w-5 h-px bg-text/10 mx-auto my-1" />
+                        <button
+                          onClick={() => setIsBillOpen(true)}
+                          className="w-10 h-10 rounded-2xl flex items-center justify-center text-text/40 hover:text-text hover:bg-text/5 border border-text/10 transition-all"
+                          title="View Bill"
+                        >
+                          <Layout size={18} />
+                        </button>
+                      </>
+                    )}
                   </motion.div>
 
                   <button
@@ -1435,24 +1468,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                   </button>
                 </div>
 
-                <div className="flex flex-col gap-3 items-end">
-                  <button
-                    onClick={() => setIsBillOpen(true)}
-                    className="h-12 px-5 bg-background/80 backdrop-blur-xl border border-text/5 rounded-full flex items-center justify-center gap-2 shadow-xl group hover:bg-text transition-all"
-                  >
-                    <Layout size={18} className="text-text group-hover:text-highlight transition-colors" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-text group-hover:text-highlight hidden sm:inline">Bill</span>
-                    <div className="w-5 h-5 bg-text text-highlight text-[8px] font-black rounded-full flex items-center justify-center border-2 border-background group-hover:bg-highlight group-hover:text-text transition-colors">
-                      {items.length}
-                    </div>
-                  </button>
-                  <button
-                    onClick={handleSaveProject}
-                    className="w-12 h-12 bg-background/80 backdrop-blur-xl border border-text/5 rounded-full flex items-center justify-center shadow-xl group hover:bg-text transition-all"
-                  >
-                    <Save size={20} className="text-text group-hover:text-highlight transition-colors" />
-                  </button>
-                </div>
+
               </div>
             )}
 
@@ -1588,7 +1604,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="text-xl font-bold tracking-tighter text-text">${product?.price}</span>
+                          <span className="text-xl font-bold tracking-tighter text-text">₹{product?.price}</span>
                         </div>
                       </div>
                     );
@@ -1603,7 +1619,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                     <span className="text-[7px] font-bold text-[#1AA06D] uppercase tracking-widest opacity-80">Inclusive of all taxes</span>
                   </div>
                   <span className="text-3xl font-bold tracking-tighter text-text">
-                    $
+                    ₹
                     {items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0)}
                   </span>
                 </div>

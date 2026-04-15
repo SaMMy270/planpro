@@ -396,32 +396,31 @@ const App: React.FC = () => {
   };
 
   const Navbar = () => (
-    <nav className="fixed top-0 left-0 right-0 z-[60] bg-background/80 backdrop-blur-md border-b border-primary/10 px-4 md:px-6 py-4">
+    <nav className="fixed top-0 left-0 right-0 z-[60] bg-background/80 backdrop-blur-xl border-b border-primary/10 px-4 md:px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-10">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => {
-            // Clear URL and go home
             window.history.pushState({}, '', window.location.pathname);
             setActiveTab('home');
           }}>
-            <div className="w-8 h-8 bg-text rounded-lg flex items-center justify-center text-secondary rotate-[-12deg] group-hover:rotate-0 transition-transform">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-background rotate-[-12deg] group-hover:rotate-0 transition-all duration-500 shadow-lg">
               <LayoutIcon size={18} />
             </div>
-            <h1 className="text-lg md:text-xl font-bold tracking-tighter uppercase">PlanPro</h1>
+            <h1 className="text-lg md:text-xl font-bold tracking-tighter uppercase bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">PlanPro</h1>
           </div>
           <div className="hidden md:flex items-center gap-8 text-[12px] font-bold uppercase tracking-widest text-primary/40">
             <button onClick={() => {
                window.history.pushState({}, '', window.location.pathname);
                setActiveTab('home');
-            }} className={`hover:text-primary transition-colors ${activeTab === 'home' ? 'text-primary' : ''}`}>Home</button>
+            }} className="nav-link hover:text-primary transition-colors relative">Home</button>
             <button onClick={() => {
                window.history.pushState({}, '', window.location.pathname);
                setActiveTab('products');
-            }} className={`hover:text-primary transition-colors ${activeTab === 'products' ? 'text-primary' : ''}`}>Collection</button>
+            }} className="nav-link hover:text-primary transition-colors relative">Collection</button>
             <button onClick={() => {
                window.history.pushState({}, '', window.location.pathname);
                setActiveTab('blueprint');
-            }} className={`hover:text-primary transition-colors ${activeTab === 'blueprint' ? 'text-primary' : ''}`}>Architect Tool</button>
+            }} className="nav-link hover:text-primary transition-colors relative">Architect Tool</button>
           </div>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
@@ -429,70 +428,72 @@ const App: React.FC = () => {
             <button onClick={() => {
                window.history.pushState({}, '', window.location.pathname);
                setActiveTab('wishlist');
-            }} className="p-2 hover:bg-primary/10 rounded-full transition-colors relative">
-              <Heart size={20} />
-              {wishlist.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />}
+            }} className="p-2 hover:bg-primary/10 rounded-full transition-all relative group">
+              <Heart size={20} className="group-hover:scale-110 transition-transform" />
+              {wishlist.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />}
             </button>
             <button onClick={() => {
                window.history.pushState({}, '', window.location.pathname);
                setActiveTab('cart');
-            }} className="p-2 hover:bg-primary/10 rounded-full transition-colors relative">
-              <ShoppingCart size={20} />
-              {cart.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />}
+            }} className="p-2 hover:bg-primary/10 rounded-full transition-all relative group">
+              <ShoppingCart size={20} className="group-hover:scale-110 transition-transform" />
+              {cart.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />}
             </button>
             {user && (
               <button onClick={() => {
                  window.history.pushState({}, '', window.location.pathname);
                  setActiveTab('profile');
-              }} className={`p-2 hover:bg-primary/10 rounded-full transition-colors relative ${activeTab === 'profile' ? 'bg-primary text-background' : ''}`}>
-                <User size={20} />
+              }} className={`p-2 hover:bg-primary/10 rounded-full transition-all relative group ${activeTab === 'profile' ? 'bg-primary text-background' : ''}`}>
+                <User size={20} className="group-hover:scale-110 transition-transform" />
               </button>
             )}
           </div>
           <button
             onClick={() => user ? handleLogout() : setActiveTab('login')}
-            className="px-4 md:px-6 py-2 bg-highlight text-background rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-lg shadow-highlight/10"
+            className="px-4 md:px-6 py-2 bg-gradient-to-r from-primary to-accent text-background rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-lg shadow-primary/20"
           >
             {user ? 'Log Out' : 'Log In'}
           </button>
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2"><Menu size={20} /></button>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 hover:bg-primary/10 rounded-full transition-all">
+            <Menu size={20} />
+          </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-primary/10 p-6 space-y-6 shadow-xl animate-in slide-in-from-top-4">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-primary/10 p-6 space-y-6 shadow-2xl animate-in slide-in-from-top-4 duration-300">
           <button onClick={() => { 
              window.history.pushState({}, '', window.location.pathname);
              setActiveTab('home'); 
              setIsMobileMenuOpen(false); 
-          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Home</button>
+          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Home</button>
           <button onClick={() => { 
              window.history.pushState({}, '', window.location.pathname);
              setActiveTab('products'); 
              setIsMobileMenuOpen(false); 
-          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Collection</button>
+          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Collection</button>
           <button onClick={() => { 
              window.history.pushState({}, '', window.location.pathname);
              setActiveTab('blueprint'); 
              setIsMobileMenuOpen(false); 
-          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest">Architect Tool</button>
+          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Architect Tool</button>
           <div className="pt-4 border-t border-primary/10 flex gap-6">
             <button onClick={() => { 
                window.history.pushState({}, '', window.location.pathname);
                setActiveTab('wishlist'); 
                setIsMobileMenuOpen(false); 
-            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40"><Heart size={16} /> Wishlist</button>
+            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40 hover:text-primary transition-colors"><Heart size={16} /> Wishlist</button>
             <button onClick={() => { 
                window.history.pushState({}, '', window.location.pathname);
                setActiveTab('cart'); 
                setIsMobileMenuOpen(false); 
-            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40"><ShoppingCart size={16} /> Cart</button>
+            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40 hover:text-primary transition-colors"><ShoppingCart size={16} /> Cart</button>
             {user && <button onClick={() => { 
               window.history.pushState({}, '', window.location.pathname);
               setActiveTab('profile'); 
               setIsMobileMenuOpen(false); 
-            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40"><User size={16} /> Profile</button>}
+            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40 hover:text-primary transition-colors"><User size={16} /> Profile</button>}
           </div>
         </div>
       )}
@@ -501,15 +502,18 @@ const App: React.FC = () => {
 
   const Hero = () => (
     <section className="pt-28 md:pt-32 pb-8 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden relative">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 items-start">
+      <div className="absolute top-10 right-0 w-[500px] h-[500px] rounded-full animate-pulse" style={{ background: 'radial-gradient(circle, rgba(207,160,98,0.12) 0%, transparent 70%)', filter: 'blur(60px)' }}></div>
+      <div className="absolute bottom-10 left-0 w-72 h-72 rounded-full animate-pulse" style={{ animationDelay: '2s', background: 'radial-gradient(circle, rgba(138,112,76,0.15) 0%, transparent 70%)', filter: 'blur(50px)' }}></div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 items-start relative z-10">
         <div className="lg:col-span-5 space-y-6 md:space-y-8">
           <div className="space-y-4">
-            <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-serif tracking-tight leading-[1.1] animate-fade-up text-text">
+            <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-serif tracking-tight leading-[1.1] animate-fade-up text-primary">
               MODERN HOME <br />
-              FURNITURE <span className="italic text-primary">&</span> DECOR
+              FURNITURE <span className="italic gradient-text">&</span> DECOR
             </h2>
             <div className="flex items-center gap-4 animate-fade-up stagger-1">
-              <div className="px-4 py-2 bg-gradient-to-br from-highlight to-accent rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-background">
+              <div className="px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg animate-gold-glow" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', color: 'var(--background)' }}>
                 Elegance Redefined
               </div>
               <p className="text-text/60 text-base md:text-lg max-w-sm leading-relaxed">
@@ -517,29 +521,28 @@ const App: React.FC = () => {
               </p>
             </div>
           </div>
-
           <div className="flex items-center gap-6 pt-2 md:pt-4 animate-fade-up stagger-3">
             <div className="flex -space-x-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="w-8 md:w-10 h-8 md:h-10 rounded-full border-2 border-background bg-secondary overflow-hidden shadow-sm">
+                <div key={i} className="w-8 md:w-10 h-8 md:h-10 rounded-full border-2 overflow-hidden shadow-sm hover:scale-110 transition-transform" style={{ borderColor: 'rgba(207,160,98,0.4)', background: 'var(--secondary)' }}>
                   <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" />
                 </div>
               ))}
             </div>
             <div>
-              <p className="text-lg md:text-xl font-bold tracking-tight text-text">+100k</p>
-              <p className="text-[9px] md:text-[10px] font-bold text-text/30 uppercase tracking-widest">Happy clients</p>
+              <p className="text-lg md:text-xl font-bold tracking-tight text-primary">+100k</p>
+              <p className="text-[9px] md:text-[10px] font-bold text-text/40 uppercase tracking-widest">Happy clients</p>
             </div>
           </div>
         </div>
 
-        <div className="lg:col-span-4 relative animate-scale-in">
-          <div className="bg-primary/20 rounded-[40px] md:rounded-[60px] p-6 md:p-8 aspect-[4/5] relative overflow-hidden group shadow-2xl">
+        <div className="lg:col-span-4 relative animate-scale-in stagger-2">
+          <div className="rounded-[40px] md:rounded-[60px] p-6 md:p-8 aspect-[4/5] relative overflow-hidden group shadow-2xl animate-border-glow" style={{ background: 'linear-gradient(135deg, rgba(207,160,98,0.15), rgba(138,112,76,0.15))', border: '1px solid rgba(207,160,98,0.25)' }}>
             <div className="absolute top-6 md:top-8 left-6 md:left-8 space-y-2 z-10">
               <h4 className="text-xl md:text-2xl font-bold tracking-tight leading-tight text-primary">How does your<br />space feel today?</h4>
               <div className="flex gap-2">
-                <div className="bg-secondary px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[8px] md:text-[10px] font-bold uppercase tracking-wider shadow-sm text-text">Spacious</div>
-                <div className="bg-secondary px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[8px] md:text-[10px] font-bold uppercase tracking-wider shadow-sm text-text">Cozy</div>
+                <div className="px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[8px] md:text-[10px] font-bold uppercase tracking-wider shadow-sm text-text" style={{ background: 'var(--secondary)' }}>Spacious</div>
+                <div className="px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[8px] md:text-[10px] font-bold uppercase tracking-wider shadow-sm text-text" style={{ background: 'var(--secondary)' }}>Cozy</div>
               </div>
             </div>
             <img
@@ -547,11 +550,11 @@ const App: React.FC = () => {
               className="absolute bottom-[-10%] left-[-10%] w-[120%] rotate-[15deg] group-hover:rotate-[10deg] transition-transform duration-1000"
               alt="UI Preview"
             />
-            <div className="absolute bottom-6 md:bottom-8 right-6 md:right-8 bg-background/90 backdrop-blur-md p-4 md:p-6 rounded-[24px] md:rounded-[32px] shadow-2xl w-40 md:w-48 animate-float">
+            <div className="absolute bottom-6 md:bottom-8 right-6 md:right-8 backdrop-blur-md p-4 md:p-6 rounded-[24px] md:rounded-[32px] shadow-2xl w-40 md:w-48 animate-float" style={{ background: 'rgba(20,19,17,0.92)', border: '1px solid rgba(207,160,98,0.2)' }}>
               <div className="flex gap-1 mb-2">
-                <Star size={10} fill="currentColor" className="text-highlight" />
-                <Star size={10} fill="currentColor" className="text-highlight" />
-                <Star size={10} fill="currentColor" className="text-highlight" />
+                <Star size={10} fill="currentColor" className="text-primary" />
+                <Star size={10} fill="currentColor" className="text-primary" />
+                <Star size={10} fill="currentColor" className="text-primary" />
               </div>
               <p className="text-[9px] md:text-[10px] font-bold leading-tight text-text">"This transformed my studio apartment in minutes."</p>
             </div>
@@ -559,22 +562,22 @@ const App: React.FC = () => {
         </div>
 
         <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6">
-          <div className="bg-secondary/10 p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-1 shadow-sm border border-text/5">
+          <div className="p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-3 hover:shadow-xl transition-all glass-card">
             <p className="text-xs md:text-sm font-bold text-text/70 mb-4">There is a little clutter,<br />but in general I feel good</p>
             <div className="flex gap-3">
-              <div className="w-8 md:w-10 h-8 md:h-10 bg-background rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">🏠</div>
-              <div className="w-8 md:w-10 h-8 md:h-10 bg-background rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">🌿</div>
-              <div className="w-8 md:w-10 h-8 md:h-10 bg-background rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center">✨</div>
+              <div className="w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center hover:scale-110 transition-transform cursor-pointer animate-leaf-sway" style={{ background: 'var(--secondary)' }}>🏠</div>
+              <div className="w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center hover:scale-110 transition-transform cursor-pointer animate-leaf-sway" style={{ animationDelay: '0.4s', background: 'var(--secondary)' }}>🌿</div>
+              <div className="w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center shadow-sm text-base md:text-lg text-center hover:scale-110 transition-transform cursor-pointer animate-leaf-sway" style={{ animationDelay: '0.8s', background: 'var(--secondary)' }}>✨</div>
             </div>
           </div>
 
-          <div className="bg-secondary p-6 md:p-8 rounded-[32px] md:rounded-[40px] text-highlight animate-fade-up stagger-2 shadow-2xl border border-text/5">
-            <p className="text-[9px] md:text-[10px] font-bold text-highlight/40 uppercase tracking-widest mb-1 md:mb-2">App Store Rating</p>
-            <h4 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-highlight">4.9</h4>
+          <div className="p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-4 shadow-2xl hover-lift" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest mb-1 md:mb-2" style={{ color: 'rgba(20,19,17,0.55)' }}>App Store Rating</p>
+            <h4 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4" style={{ color: 'var(--background)' }}>4.9</h4>
             <div className="flex gap-1 mb-2">
-              {[1, 2, 3, 4, 5].map(i => <Star key={i} size={14} fill="currentColor" className="text-highlight" />)}
+              {[1, 2, 3, 4, 5].map(i => <Star key={i} size={14} fill="currentColor" className="star-rating" style={{ color: 'var(--background)' }} />)}
             </div>
-            <p className="text-[9px] md:text-[10px] font-bold text-highlight/40 tracking-widest uppercase">456 REVIEWS</p>
+            <p className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase" style={{ color: 'rgba(20,19,17,0.55)' }}>456 REVIEWS</p>
           </div>
         </div>
       </div>
@@ -582,61 +585,59 @@ const App: React.FC = () => {
   );
 
   const ServicesSection = () => (
-    <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto">
+    <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto relative">
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 w-px h-16" style={{ background: 'linear-gradient(to bottom, transparent, rgba(207,160,98,0.4), transparent)' }}></div>
       <div className="text-center space-y-4 mb-16 md:mb-20 animate-fade-up">
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-highlight/50">Our Expertise</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: 'rgba(207,160,98,0.6)' }}>Our Expertise</p>
         <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight text-primary">Services we provide</h3>
-        <p className="text-text/30 text-base md:text-lg max-w-md mx-auto">Instant visualization, blueprint creation, and curated furniture suggestions.</p>
+        <p className="text-text/40 text-base md:text-lg max-w-md mx-auto">Instant visualization, blueprint creation, and curated furniture suggestions.</p>
+        <div className="flex justify-center"><div className="h-px w-24" style={{ background: 'linear-gradient(to right, transparent, var(--primary), transparent)' }}></div></div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        <div className="bg-secondary/40 border border-highlight/20 rounded-[40px] md:rounded-[48px] p-8 md:p-10 text-text space-y-8 animate-fade-up group hover-lift shadow-2xl">
+        <div className="p-8 md:p-10 space-y-8 animate-fade-right group hover-lift shadow-2xl rounded-[40px] md:rounded-[48px]" style={{ background: 'linear-gradient(135deg, var(--secondary), rgba(30,28,26,0.8))', border: '1px solid rgba(207,160,98,0.15)' }}>
           <div className="space-y-4">
-            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-highlight">Track your vision</h4>
+            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Track your vision</h4>
             <p className="text-text/60 text-sm leading-relaxed">We provide real-time spatial monitoring and reminders to update your design based on your needs.</p>
-            <button onClick={() => {
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('products');
-            }} className="bg-highlight text-background px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all">Learn more</button>
+            <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className="px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Learn more</button>
           </div>
           <div className="pt-4 relative">
-            <div className="w-full aspect-square bg-background/50 rounded-[32px] md:rounded-[40px] flex items-center justify-center rotate-[-5deg] group-hover:rotate-0 transition-transform overflow-hidden border border-text/5">
+            <div className="w-full aspect-square rounded-[32px] md:rounded-[40px] flex items-center justify-center rotate-[-5deg] group-hover:rotate-0 transition-transform overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(207,160,98,0.1)' }}>
               <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&q=80&w=400" className="w-3/4 drop-shadow-2xl" alt="Design" />
             </div>
           </div>
         </div>
 
-          <div className="bg-secondary/40 rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-up stagger-1 group hover-lift border border-primary/10">
+        <div className="rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-up stagger-1 group hover-lift" style={{ background: 'linear-gradient(135deg, rgba(207,160,98,0.1), rgba(138,112,76,0.1))', border: '1px solid rgba(207,160,98,0.2)' }}>
           <div className="space-y-4">
             <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Control spatial data</h4>
-            <p className="text-body/40 text-sm leading-relaxed">A full cycle of diagnostics and layout recommendations from top-tier interior experts.</p>
+            <p className="text-text/40 text-sm leading-relaxed">A full cycle of diagnostics and layout recommendations from top-tier interior experts.</p>
           </div>
           <div className="relative h-56 md:h-64 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center justify-center">
-              <Box size={100} className="md:size-[120px] text-black/5 rotate-12" />
+              <Box size={100} className="md:size-[120px] rotate-12 animate-rotate-slow" style={{ color: 'rgba(207,160,98,0.12)' }} />
             </div>
-            <div className="bg-background/80 backdrop-blur-md p-5 md:p-6 rounded-2xl md:rounded-3xl shadow-xl rotate-[10deg] group-hover:rotate-0 transition-transform">
+            <div className="backdrop-blur-md p-5 md:p-6 rounded-2xl md:rounded-3xl shadow-xl rotate-[10deg] group-hover:rotate-0 transition-transform" style={{ background: 'rgba(20,19,17,0.85)', border: '1px solid rgba(207,160,98,0.2)' }}>
               <div className="flex gap-2 mb-3">
-                <div className="w-2 h-2 rounded-full bg-accent"></div>
-                <div className="w-2 h-2 rounded-full bg-primary"></div>
-                <div className="w-2 h-2 rounded-full bg-secondary"></div>
+                <div className="w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }}></div>
+                <div className="w-2 h-2 rounded-full" style={{ background: 'var(--primary)' }}></div>
+                <div className="w-2 h-2 rounded-full" style={{ background: 'var(--secondary)' }}></div>
               </div>
-              <p className="text-[10px] font-bold text-body/30 mb-1 uppercase tracking-tighter">OCCUPANCY</p>
+              <p className="text-[10px] font-bold mb-1 uppercase tracking-tighter" style={{ color: 'rgba(207,160,98,0.4)' }}>OCCUPANCY</p>
               <p className="text-lg md:text-xl font-bold tracking-tight text-primary">84% Efficiency</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-background/50 border border-primary/10 rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-up stagger-2 group hover-lift shadow-sm">
+        <div className="rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-left group hover-lift" style={{ background: 'linear-gradient(135deg, rgba(138,112,76,0.18), rgba(207,160,98,0.12))', border: '1px solid rgba(207,160,98,0.15)' }}>
           <div className="space-y-4">
             <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Design faster</h4>
-            <p className="text-body/40 text-sm leading-relaxed">Get advice, curated moodboards and AR previews instantly from your smartphone.</p>
+            <p className="text-text/40 text-sm leading-relaxed">Get advice, curated moodboards and AR previews instantly from your smartphone.</p>
           </div>
-          <div className="bg-accent/40 rounded-[32px] md:rounded-[40px] p-6 md:p-8 aspect-square relative overflow-hidden">
-            <Smartphone className="absolute bottom-[-20%] right-[-10%] w-3/4 h-3/4 text-primary/10 rotate-[-15deg]" />
-            <div className="absolute top-6 md:top-8 left-6 md:left-8 bg-background p-4 rounded-2xl shadow-lg rotate-[-5deg] group-hover:rotate-0 transition-transform">
-              <p className="text-[10px] font-bold text-primary/30 uppercase tracking-tighter">AI SUGGESTION</p>
-              <p className="text-xs md:text-sm font-bold text-body">Cloud Sofa fits here.</p>
+          <div className="rounded-[32px] md:rounded-[40px] p-6 md:p-8 aspect-square relative overflow-hidden" style={{ background: 'rgba(30,28,26,0.4)' }}>
+            <Smartphone className="absolute bottom-[-20%] right-[-10%] w-3/4 h-3/4 rotate-[-15deg]" style={{ color: 'rgba(207,160,98,0.08)' }} />
+            <div className="absolute top-6 md:top-8 left-6 md:left-8 p-4 rounded-2xl shadow-lg rotate-[-5deg] group-hover:rotate-0 transition-transform" style={{ background: 'rgba(20,19,17,0.9)', border: '1px solid rgba(207,160,98,0.2)' }}>
+              <p className="text-[10px] font-bold uppercase tracking-tighter" style={{ color: 'rgba(207,160,98,0.5)' }}>AI SUGGESTION</p>
+              <p className="text-xs md:text-sm font-bold text-text">Cloud Sofa fits here.</p>
             </div>
           </div>
         </div>
@@ -648,41 +649,40 @@ const App: React.FC = () => {
     <section className="py-16 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-16 md:mb-20 animate-fade-up space-y-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-highlight/50">The Process</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: 'rgba(207,160,98,0.6)' }}>The Process</p>
           <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight text-primary">How it works</h3>
+          <div className="flex justify-center"><div className="h-px w-24" style={{ background: 'linear-gradient(to right, transparent, var(--primary), transparent)' }}></div></div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
-          <div className="bg-background/40 p-8 md:p-12 rounded-[40px] md:rounded-[60px] shadow-sm animate-fade-up border border-highlight/5 space-y-8 md:space-y-10 group">
+          <div className="p-8 md:p-12 rounded-[40px] md:rounded-[60px] animate-fade-right space-y-8 md:space-y-10 group" style={{ background: 'rgba(30,28,26,0.5)', border: '1px solid rgba(207,160,98,0.15)', backdropFilter: 'blur(10px)' }}>
             <div className="space-y-4">
-              <h4 className="text-3xl md:text-4xl font-serif tracking-tight text-highlight">Select your vision</h4>
-              <p className="text-text/40 text-sm md:text-base leading-relaxed">Choose styles and dimensions that accurately describe your aesthetic goal.</p>
+              <h4 className="text-3xl md:text-4xl font-serif tracking-tight text-primary">Select your vision</h4>
+              <p className="text-text/50 text-sm md:text-base leading-relaxed">Choose styles and dimensions that accurately describe your aesthetic goal.</p>
             </div>
-            <div className="bg-secondary/10 p-6 md:p-8 rounded-[32px] md:rounded-[40px] space-y-4">
-              <p className="text-[10px] font-bold text-primary/30 uppercase tracking-widest">What vision is on your mind?</p>
-              <div className="bg-background p-4 rounded-2xl border border-primary/10 flex items-center gap-3">
-                <Search size={16} className="text-primary/20" />
-                <span className="text-sm font-bold opacity-20">Minimalist |</span>
+            <div className="p-6 md:p-8 rounded-[32px] md:rounded-[40px] space-y-4" style={{ background: 'rgba(20,19,17,0.6)' }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(207,160,98,0.4)' }}>What vision is on your mind?</p>
+              <div className="p-4 rounded-2xl flex items-center gap-3" style={{ background: 'rgba(20,19,17,0.8)', border: '1px solid rgba(207,160,98,0.15)' }}>
+                <Search size={16} style={{ color: 'rgba(207,160,98,0.3)' }} />
+                <span className="text-sm font-bold" style={{ color: 'rgba(240,235,225,0.3)' }}>Minimalist |</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                <span className="px-4 py-2 bg-background rounded-full text-[10px] font-bold border border-primary/10 hover:bg-primary hover:text-background transition-all cursor-pointer uppercase tracking-widest">Modern</span>
-                <span className="px-4 py-2 bg-background rounded-full text-[10px] font-bold border border-primary/10 hover:bg-primary hover:text-background transition-all cursor-pointer uppercase tracking-widest">Industrial</span>
+                <span className="px-4 py-2 rounded-full text-[10px] font-bold cursor-pointer uppercase tracking-widest transition-all hover:scale-105" style={{ background: 'rgba(207,160,98,0.12)', border: '1px solid rgba(207,160,98,0.25)', color: 'var(--primary)' }}>Modern</span>
+                <span className="px-4 py-2 rounded-full text-[10px] font-bold cursor-pointer uppercase tracking-widest transition-all hover:scale-105" style={{ background: 'rgba(207,160,98,0.12)', border: '1px solid rgba(207,160,98,0.25)', color: 'var(--primary)' }}>Industrial</span>
               </div>
             </div>
           </div>
-
-          <div className="bg-secondary p-8 md:p-12 rounded-[40px] md:rounded-[60px] animate-fade-up stagger-1 space-y-8 md:space-y-10 group overflow-hidden relative shadow-lg border border-highlight/5">
+          <div className="p-8 md:p-12 rounded-[40px] md:rounded-[60px] animate-fade-left stagger-1 space-y-8 md:space-y-10 group overflow-hidden relative shadow-lg" style={{ background: 'linear-gradient(135deg, var(--secondary), #3D5247)', border: '1px solid rgba(207,160,98,0.2)' }}>
             <div className="space-y-4 relative z-10">
-              <h4 className="text-3xl md:text-4xl font-serif tracking-tight text-highlight">Describe details</h4>
-              <p className="text-text/40 text-sm md:text-base leading-relaxed">Tell us what's going on so we can find the best solution for your floor plan.</p>
+              <h4 className="text-3xl md:text-4xl font-serif tracking-tight text-primary">Describe details</h4>
+              <p className="text-text/50 text-sm md:text-base leading-relaxed">Tell us what's going on so we can find the best solution for your floor plan.</p>
             </div>
             <div className="relative flex justify-center h-64 md:h-72">
-              <div className="w-full bg-background/50 backdrop-blur-md rounded-[32px] md:rounded-[40px] p-6 md:p-8 flex flex-col items-center justify-center group-hover:scale-105 transition-transform shadow-inner border border-text/5">
-                <LayoutIcon size={80} className="md:size-[100px] text-highlight/20 rotate-12 mb-6" />
+              <div className="w-full backdrop-blur-md rounded-[32px] md:rounded-[40px] p-6 md:p-8 flex flex-col items-center justify-center group-hover:scale-105 transition-transform" style={{ background: 'rgba(20,19,17,0.6)', border: '1px solid rgba(207,160,98,0.1)' }}>
+                <LayoutIcon size={80} className="md:size-[100px] rotate-12 mb-6 animate-rotate-slow" style={{ color: 'rgba(207,160,98,0.15)' }} />
                 <div className="flex flex-wrap gap-2 justify-center">
-                  <span className="bg-highlight text-background px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-lg">Length</span>
-                  <span className="bg-secondary text-text px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-sm">Width</span>
-                  <span className="bg-secondary text-text px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-sm">Elevation</span>
+                  <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-lg" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Length</span>
+                  <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-sm" style={{ background: 'rgba(30,28,26,0.8)', color: 'var(--text)' }}>Width</span>
+                  <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-sm" style={{ background: 'rgba(30,28,26,0.8)', color: 'var(--text)' }}>Elevation</span>
                 </div>
               </div>
             </div>
@@ -692,27 +692,222 @@ const App: React.FC = () => {
     </section>
   );
 
-  const Footer = () => (
-    <footer className="bg-background border-t border-primary/10 pt-16 md:pt-20 pb-8 px-4 md:px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 md:gap-12 mb-16">
-          <div className="col-span-1 md:col-span-1 space-y-6">
-            <div className="flex items-center gap-2" onClick={() => {
-              window.history.pushState({}, '', window.location.pathname);
-              setActiveTab('home');
-            }}>
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-background rotate-[-12deg]">
-                <LayoutIcon size={18} />
-              </div>
-              <h1 className="text-xl font-bold tracking-tighter uppercase text-primary">PlanPro</h1>
+  const FeaturesSection = () => (
+    <section className="py-16 md:py-24 px-4 md:px-6 max-w-7xl mx-auto relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(207,160,98,0.06) 0%, transparent 70%)' }}></div>
+      <div className="text-center space-y-4 mb-16 md:mb-20 animate-fade-up">
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: 'rgba(207,160,98,0.6)' }}>Powerful Tools</p>
+        <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight text-primary">
+          <span className="gradient-text">Revolutionary</span> Features
+        </h3>
+        <p className="text-text/40 text-base md:text-lg max-w-md mx-auto">Experience the future of interior design with our cutting-edge technology.</p>
+        <div className="flex justify-center gap-2">
+          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--primary)' }}></div>
+          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent)', animationDelay: '0.3s' }}></div>
+          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--primary)', animationDelay: '0.6s' }}></div>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="feature-card p-8 md:p-10 rounded-[40px] md:rounded-[48px] space-y-6 animate-fade-right group hover-lift shadow-2xl" style={{ background: 'linear-gradient(135deg, var(--secondary), rgba(30,28,26,0.9))', border: '1px solid rgba(207,160,98,0.2)' }}>
+          <div className="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg animate-gold-glow" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}>
+            <Box size={32} style={{ color: 'var(--background)' }} />
+          </div>
+          <div className="space-y-3">
+            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">3D Room Builder</h4>
+            <p className="text-text/60 text-sm leading-relaxed">Design and visualize your perfect space in real-time with our powerful 3D modeling tools.</p>
+          </div>
+          <div className="flex items-center gap-2 pt-2">
+            <div className="flex -space-x-2">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold" style={{ borderColor: 'var(--secondary)', background: 'var(--primary)', color: 'var(--background)' }}>{i}</div>
+              ))}
             </div>
-            <p className="text-[10px] md:text-xs text-body/40 leading-relaxed font-bold uppercase tracking-tighter">
-              Design, build, and visualize in one single app.
-            </p>
+            <span className="text-[10px] font-bold text-text/40 uppercase tracking-widest">2,500+ users</span>
+          </div>
+          <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('blueprint'); }} className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Try Now</button>
+        </div>
+
+        <div className="feature-card p-8 md:p-10 rounded-[40px] md:rounded-[48px] space-y-6 animate-fade-up stagger-1 group hover-lift shadow-2xl" style={{ background: 'linear-gradient(135deg, var(--accent), var(--primary))', border: '1px solid rgba(207,160,98,0.3)' }}>
+          <div className="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)' }}>
+            <Camera size={32} style={{ color: 'var(--text)' }} />
+          </div>
+          <div className="space-y-3">
+            <h4 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: 'var(--text)' }}>AR Technology</h4>
+            <p className="text-sm leading-relaxed" style={{ color: 'rgba(240,235,225,0.75)' }}>Visualize furniture in your actual space using augmented reality. See it before you buy it.</p>
+          </div>
+          <div className="flex items-center gap-2 pt-2">
+            <span className="px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest" style={{ background: 'rgba(255,255,255,0.2)', color: 'var(--text)' }}>Live View</span>
+            <span className="px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest" style={{ background: 'rgba(255,255,255,0.2)', color: 'var(--text)' }}>QR Scan</span>
+          </div>
+          <button onClick={() => setActiveTab('ar')} className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'rgba(20,19,17,0.85)', color: 'var(--primary)' }}>Experience AR</button>
+        </div>
+
+        <div className="feature-card p-8 md:p-10 rounded-[40px] md:rounded-[48px] space-y-6 animate-fade-left group hover-lift shadow-2xl" style={{ background: 'linear-gradient(135deg, #3D5247, var(--secondary))', border: '1px solid rgba(207,160,98,0.2)' }}>
+          <div className="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'var(--background)' }}>
+            <Scale size={32} style={{ color: 'var(--primary)' }} />
+          </div>
+          <div className="space-y-3">
+            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Price Comparison</h4>
+            <p className="text-text/60 text-sm leading-relaxed">Compare prices across multiple retailers instantly. Get the best deals without leaving the app.</p>
+          </div>
+          <div className="flex items-center gap-2 pt-2">
+            <p className="text-xl md:text-2xl font-bold tracking-tight text-text/60">Save up to</p>
+            <p className="text-3xl md:text-4xl font-bold tracking-tight gradient-text">40%</p>
+          </div>
+          <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Compare Prices</button>
+        </div>
+      </div>
+    </section>
+  );
+
+  const ProductOfMonth = () => {
+    const topProduct = PRODUCTS[0];
+    return (
+      <section className="py-16 md:py-24 px-4 md:px-6 max-w-7xl mx-auto">
+        <div className="rounded-[40px] md:rounded-[60px] p-8 md:p-12 lg:p-16 overflow-hidden relative animate-fade-up" style={{ background: 'linear-gradient(135deg, var(--secondary) 0%, #3D5247 40%, #5A3F2B 100%)', border: '1px solid rgba(207,160,98,0.25)' }}>
+          <div className="absolute top-0 right-0 w-96 h-96 rounded-full animate-pulse" style={{ background: 'radial-gradient(circle, rgba(207,160,98,0.2) 0%, transparent 70%)', filter: 'blur(40px)' }}></div>
+          <div className="absolute bottom-0 left-1/4 w-64 h-64 rounded-full animate-pulse" style={{ animationDelay: '1s', background: 'radial-gradient(circle, rgba(138,112,76,0.25) 0%, transparent 70%)', filter: 'blur(40px)' }}></div>
+          <div className="absolute inset-0 rounded-[40px] md:rounded-[60px] gold-shimmer opacity-30 pointer-events-none"></div>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
+            <div className="space-y-6 md:space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full product-badge" style={{ background: 'rgba(207,160,98,0.2)', border: '1px solid rgba(207,160,98,0.4)' }}>
+                <Star size={14} fill="currentColor" style={{ color: 'var(--primary)' }} />
+                <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text)' }}>Best Seller - This Month</span>
+              </div>
+              <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight" style={{ color: 'var(--text)' }}>{topProduct?.name || 'Cloud Comfort Sofa'}</h3>
+              <div className="flex flex-wrap gap-3">
+                {['Premium Quality', 'Free Shipping', 'AR Ready'].map(tag => (
+                  <div key={tag} className="px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest" style={{ background: 'rgba(207,160,98,0.15)', border: '1px solid rgba(207,160,98,0.3)', color: 'var(--text)' }}>{tag}</div>
+                ))}
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <Star key={i} size={18} fill="currentColor" className="star-rating" style={{ color: 'var(--primary)' }} />
+                  ))}
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.5)' }}>(128 reviews)</span>
+              </div>
+              <div className="space-y-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.4)' }}>Key Specifications</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 rounded-2xl" style={{ background: 'rgba(207,160,98,0.1)', border: '1px solid rgba(207,160,98,0.2)' }}>
+                    <p className="text-[8px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.4)' }}>Dimensions</p>
+                    <p className="text-lg font-bold" style={{ color: 'var(--text)' }}>220 x 95 x 85 cm</p>
+                  </div>
+                  <div className="p-4 rounded-2xl" style={{ background: 'rgba(207,160,98,0.1)', border: '1px solid rgba(207,160,98,0.2)' }}>
+                    <p className="text-[8px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.4)' }}>Material</p>
+                    <p className="text-lg font-bold" style={{ color: 'var(--text)' }}>Premium Bouclé</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-6 pt-2">
+                <div>
+                  <p className="text-3xl md:text-4xl font-bold text-primary">{topProduct?.price ? `₹${(topProduct.price * 0.8).toLocaleString()}` : '₹45,999'}</p>
+                  <p className="text-[10px] line-through" style={{ color: 'rgba(240,235,225,0.35)' }}>₹{topProduct?.price?.toLocaleString() || '57,499'}</p>
+                </div>
+                <button onClick={() => { if (topProduct) addToCart(topProduct.id); }} className="px-8 py-4 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl animate-gold-glow" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Add to Cart</button>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="aspect-square backdrop-blur-md rounded-[40px] md:rounded-[60px] p-8 md:p-12 flex items-center justify-center animate-float-slow" style={{ background: 'rgba(207,160,98,0.08)', border: '1px solid rgba(207,160,98,0.15)' }}>
+                <div className="ripple-ring w-48 h-48" style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)', position: 'absolute' }}></div>
+                <div className="ripple-ring w-48 h-48" style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)', animationDelay: '0.8s', position: 'absolute' }}></div>
+                <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800" alt="Product of the Month" className="w-full max-w-md object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500 relative z-10" />
+              </div>
+              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full flex items-center justify-center shadow-lg animate-badge-pop" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}>
+                <span className="text-xs font-black" style={{ color: 'var(--background)' }}>-20%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const ReviewsSection = () => {
+    const reviews = [
+      { id: 1, name: 'Sarah Mitchell', avatar: 20, rating: 5, text: 'The AR feature is absolutely game-changing! I could see exactly how the sofa would look in my living room. Best furniture shopping experience ever.', location: 'New York, USA' },
+      { id: 2, name: 'James Chen', avatar: 25, rating: 5, text: 'The 3D room builder helped me visualize my entire apartment renovation. The precision is incredible and the results matched perfectly.', location: 'San Francisco, USA' },
+      { id: 3, name: 'Emma Rodriguez', avatar: 30, rating: 5, text: 'Found amazing deals through the price comparison tool. Saved over ₹15,000 on my order! The quality exceeded my expectations.', location: 'London, UK' },
+      { id: 4, name: 'Michael Park', avatar: 35, rating: 4, text: 'Outstanding customer service and the AR visualization is so realistic. Finally bought furniture without any doubt. Highly recommended!', location: 'Toronto, Canada' },
+    ];
+    return (
+      <section className="py-16 md:py-24 px-4 md:px-6 max-w-7xl mx-auto relative">
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 w-48 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(207,160,98,0.5), transparent)' }}></div>
+        <div className="text-center space-y-4 mb-16 md:mb-20 animate-fade-up">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: 'rgba(207,160,98,0.6)' }}>Testimonials</p>
+          <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight text-primary">What Our <span className="gradient-text">Customers</span> Say</h3>
+          <p className="text-text/40 text-base md:text-lg max-w-md mx-auto">Join thousands of satisfied customers who transformed their homes with PlanPro.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {reviews.map((review, idx) => (
+            <div key={review.id} className={`testimonial-card glass-card p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-${idx + 1}`}>
+              <div className="flex gap-1 mb-4">
+                {[...Array(review.rating)].map((_, i) => (
+                  <Star key={i} size={14} fill="currentColor" className="star-rating" style={{ color: 'var(--primary)' }} />
+                ))}
+              </div>
+              <p className="text-text/70 text-sm leading-relaxed mb-6">"{review.text}"</p>
+              <div className="flex items-center gap-3">
+                <img src={`https://i.pravatar.cc/100?img=${review.avatar}`} alt={review.name} className="w-10 h-10 rounded-full object-cover" style={{ border: '2px solid rgba(207,160,98,0.4)' }} />
+                <div>
+                  <p className="text-sm font-bold text-primary">{review.name}</p>
+                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.35)' }}>{review.location}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-12 md:mt-16 text-center animate-fade-up stagger-5">
+          <div className="inline-flex items-center gap-8 px-8 py-5 rounded-full" style={{ background: 'rgba(30,28,26,0.6)', border: '1px solid rgba(207,160,98,0.2)', backdropFilter: 'blur(20px)' }}>
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-2xl md:text-3xl font-bold text-primary">50k+</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.35)' }}>Happy Customers</p>
+            </div>
+            <div className="w-px h-10" style={{ background: 'rgba(207,160,98,0.25)' }}></div>
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-2xl md:text-3xl font-bold text-primary">4.9</p>
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map(i => (<Star key={i} size={12} fill="currentColor" style={{ color: 'var(--primary)' }} />))}
+              </div>
+            </div>
+            <div className="w-px h-10" style={{ background: 'rgba(207,160,98,0.25)' }}></div>
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-2xl md:text-3xl font-bold text-primary">98%</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.35)' }}>Recommendation Rate</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const Footer = () => (
+    <footer className="pt-16 md:pt-20 pb-8 px-4 md:px-6 relative overflow-hidden" style={{ background: 'var(--background)' }}>
+      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full animate-pulse" style={{ background: 'radial-gradient(circle, rgba(207,160,98,0.08) 0%, transparent 70%)', filter: 'blur(60px)' }}></div>
+      <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full animate-pulse" style={{ animationDelay: '1.5s', background: 'radial-gradient(circle, rgba(138,112,76,0.1) 0%, transparent 70%)', filter: 'blur(50px)' }}></div>
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(207,160,98,0.5), transparent)' }}></div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 md:gap-12 mb-16">
+          <div className="col-span-1 md:col-span-1 space-y-6 animate-fade-up">
+            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('home'); }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center rotate-[-12deg] group-hover:rotate-0 transition-transform shadow-lg" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}>
+                <LayoutIcon size={20} style={{ color: 'var(--background)' }} />
+              </div>
+              <h1 className="text-2xl font-bold tracking-tighter uppercase text-primary">PlanPro</h1>
+            </div>
+            <p className="text-[10px] md:text-xs leading-relaxed font-bold uppercase tracking-tighter" style={{ color: 'rgba(240,235,225,0.35)' }}>Design, build, and visualize in one single app.</p>
             <div className="flex gap-4">
-              <Instagram size={18} className="text-primary/20 hover:text-primary cursor-pointer transition-all" />
-              <Twitter size={18} className="text-primary/20 hover:text-primary cursor-pointer transition-all" />
-              <Facebook size={18} className="text-primary/20 hover:text-primary cursor-pointer transition-all" />
+              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'rgba(207,160,98,0.08)', border: '1px solid rgba(207,160,98,0.15)' }}>
+                <Instagram size={18} style={{ color: 'var(--primary)' }} />
+              </a>
+              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'rgba(207,160,98,0.08)', border: '1px solid rgba(207,160,98,0.15)' }}>
+                <Twitter size={18} style={{ color: 'var(--primary)' }} />
+              </a>
+              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'rgba(207,160,98,0.08)', border: '1px solid rgba(207,160,98,0.15)' }}>
+                <Facebook size={18} style={{ color: 'var(--primary)' }} />
+              </a>
             </div>
           </div>
           {[
@@ -720,36 +915,32 @@ const App: React.FC = () => {
             { title: 'Company', links: ['About Us', 'Careers', 'Press'] },
             { title: 'Support', links: ['Help Center', 'Safety', 'Privacy'] }
           ].map((section, idx) => (
-            <div key={idx}>
-              <h5 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 md:mb-6 text-primary/60">{section.title}</h5>
-              <ul className="space-y-3 md:space-y-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-body/40">
+            <div key={idx} className={`animate-fade-up stagger-${idx + 1}`}>
+              <h5 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 md:mb-6 text-primary">{section.title}</h5>
+              <ul className="space-y-3 md:space-y-4 text-[10px] md:text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.35)' }}>
                 {section.links.map(link => (
-                  <li key={link} onClick={() => {
-                    window.history.pushState({}, '', window.location.pathname);
-                    if (link === 'Home') setActiveTab('home');
-                    if (link === 'Collection') setActiveTab('products');
-                    if (link === 'Architect Tool') setActiveTab('blueprint');
-                   
-                  }} className="hover:text-primary cursor-pointer transition-colors">{link}</li>
+                  <li key={link} onClick={() => { window.history.pushState({}, '', window.location.pathname); if (link === 'Home') setActiveTab('home'); if (link === 'Collection') setActiveTab('products'); if (link === 'Architect Tool') setActiveTab('blueprint'); }} className="cursor-pointer transition-all hover:translate-x-2 inline-block" onMouseEnter={e => (e.currentTarget.style.color = 'var(--primary)')} onMouseLeave={e => (e.currentTarget.style.color = 'rgba(240,235,225,0.35)')}>
+                    {link}
+                  </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div className="pt-8 border-t border-primary/10 text-center">
-          <p className="text-[8px] md:text-[9px] text-body/30 font-bold uppercase tracking-[0.3em]">© 2024 PlanPro Design. All Rights Reserved.</p>
+        <div className="pt-8 text-center" style={{ borderTop: '1px solid rgba(207,160,98,0.12)' }}>
+          <p className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em]" style={{ color: 'rgba(240,235,225,0.25)' }}>© 2024 PlanPro Design. All Rights Reserved.</p>
         </div>
       </div>
+      <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="fixed bottom-8 right-8 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all z-50 animate-gold-glow" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}>
+        <ArrowUpRight size={20} style={{ color: 'var(--background)' }} />
+      </button>
     </footer>
   );
 
   if (activeTab === 'ar') {
     return (
       <div className="min-h-screen bg-black overflow-hidden relative">
-        <ARPage onBack={() => {
-          window.history.pushState({}, '', window.location.pathname);
-          setActiveTab('products');
-        }} />
+        <ARPage onBack={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} />
         <Toaster position="top-center" />
       </div>
     );
@@ -758,52 +949,53 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-text">
       <Toaster position="top-center" />
-      <Navbar />
+      {activeTab !== 'blueprint' && <Navbar />}
 
       <main className="transition-all duration-700 ease-in-out">
         {activeTab === 'home' && (
           <div className="animate-in fade-in duration-1000">
             <Hero />
             <ServicesSection />
+            <FeaturesSection />
             <HowItWorks />
+            <ProductOfMonth />
+            <ReviewsSection />
 
             {/* Promo Section */}
             <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto">
-              <div className="bg-secondary/20 rounded-[40px] md:rounded-[60px] overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center shadow-xl border border-primary/10">
-                <div className="p-8 md:p-10 space-y-10 flex flex-col items-center">
+              <div className="overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center shadow-2xl relative rounded-[40px] md:rounded-[60px]" style={{ background: 'linear-gradient(135deg, var(--secondary) 0%, #3D5247 50%, #5A3F2B 100%)', border: '1px solid rgba(207,160,98,0.2)' }}>
+                <div className="absolute top-0 right-0 w-64 h-64 rounded-full animate-pulse" style={{ background: 'radial-gradient(circle, rgba(207,160,98,0.2) 0%, transparent 70%)', filter: 'blur(40px)' }}></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full animate-pulse" style={{ animationDelay: '1s', background: 'radial-gradient(circle, rgba(138,112,76,0.2) 0%, transparent 70%)', filter: 'blur(40px)' }}></div>
+                <div className="absolute inset-0 gold-shimmer opacity-20 pointer-events-none"></div>
+                <div className="p-8 md:p-10 space-y-10 flex flex-col items-center relative z-10">
                   <div className="relative">
-                    <Smartphone className="w-56 md:w-64 h-[400px] md:h-[450px] text-primary/10" />
+                    <Smartphone className="w-56 md:w-64 h-[400px] md:h-[450px]" style={{ color: 'rgba(207,160,98,0.08)' }} />
                     <div className="absolute inset-0 flex items-center justify-center pt-8">
-                      <div className="w-40 md:w-48 h-[340px] md:h-[380px] bg-background rounded-[28px] md:rounded-[32px] shadow-2xl overflow-hidden p-5 md:p-6 space-y-6">
-                        <h5 className="font-bold text-[9px] md:text-[10px] uppercase tracking-widest opacity-30">Your Space</h5>
-                        <div className="bg-accent/40 p-3 md:p-4 rounded-xl shadow-sm">
-                          <p className="text-[9px] md:text-[10px] font-bold uppercase text-body">Cloud Sofa</p>
-                          <p className="text-[7px] md:text-[8px] opacity-40 font-bold uppercase mt-1">Perfect corner fit.</p>
+                      <div className="w-40 md:w-48 h-[340px] md:h-[380px] rounded-[28px] md:rounded-[32px] shadow-2xl overflow-hidden p-5 md:p-6 space-y-6 animate-float" style={{ background: 'var(--background)', border: '1px solid rgba(207,160,98,0.2)' }}>
+                        <h5 className="font-bold text-[9px] md:text-[10px] uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.3)' }}>Your Space</h5>
+                        <div className="p-3 md:p-4 rounded-xl shadow-sm" style={{ background: 'rgba(207,160,98,0.15)', border: '1px solid rgba(207,160,98,0.25)' }}>
+                          <p className="text-[9px] md:text-[10px] font-bold uppercase text-primary">Cloud Sofa</p>
+                          <p className="text-[7px] md:text-[8px] font-bold uppercase mt-1" style={{ color: 'rgba(240,235,225,0.35)' }}>Perfect corner fit.</p>
                         </div>
-                          <div className="flex flex-wrap gap-1.5 md:gap-2">
-                          {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="w-7 md:w-8 h-7 md:h-8 rounded-lg bg-secondary/20"></div>)}
+                        <div className="flex flex-wrap gap-1.5 md:gap-2">
+                          {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="w-7 md:w-8 h-7 md:h-8 rounded-lg" style={{ background: 'rgba(207,160,98,0.12)' }}></div>)}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="p-10 md:p-16 space-y-6 md:space-y-8">
-                  <div className="w-10 md:w-12 h-10 md:h-12 bg-highlight rounded-full flex items-center justify-center shadow-lg animate-float">
-                    <LayoutIcon size={20} className="md:size-[24px] text-background" />
+                <div className="p-10 md:p-16 space-y-6 md:space-y-8 relative z-10">
+                  <div className="w-10 md:w-12 h-10 md:h-12 rounded-full flex items-center justify-center shadow-lg animate-float animate-gold-glow" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}>
+                    <LayoutIcon size={20} style={{ color: 'var(--background)' }} />
                   </div>
-                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight leading-tight text-text uppercase">Design is easy <br />with PlanPro app</h3>
-                  <p className="text-text/50 text-base md:text-lg leading-relaxed">We're constantly expanding our library of master artisans and growing our team of highly qualified interior planners.</p>
-                  <button onClick={() => {
-                     window.history.pushState({}, '', window.location.pathname);
-                     setActiveTab('products');
-                  }} className="bg-highlight text-background px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-highlight/10">Get Started</button>
+                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight leading-tight uppercase" style={{ color: 'var(--text)' }}>Design is easy <br />with PlanPro app</h3>
+                  <p className="text-base md:text-lg leading-relaxed" style={{ color: 'rgba(240,235,225,0.6)' }}>We're constantly expanding our library of master artisans and growing our team of highly qualified interior planners.</p>
+                  <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className="px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl animate-gold-glow" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Get Started</button>
                 </div>
               </div>
             </section>
           </div>
         )}
-
-
 
         {activeTab === 'products' && (
           <div className="pt-24 min-h-screen animate-in slide-in-from-bottom-8 duration-700">
@@ -846,7 +1038,7 @@ const App: React.FC = () => {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`whitespace-nowrap px-6 md:px-8 py-3 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] transition-all border ${selectedCategory === cat ? 'bg-primary border-primary text-background shadow-xl scale-105' : 'bg-background border-primary/5 text-primary/30 hover:text-primary hover:border-primary/20'}`}
+                      className={`whitespace-nowrap px-6 md:px-8 py-3 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] transition-all border ${selectedCategory === cat ? 'bg-primary border-primary text-background shadow-[0_5px_15px_rgba(193,200,228,0.4)] scale-105' : 'bg-background border-primary/10 text-primary/40 hover:text-primary hover:border-primary/30'}`}
                     >
                       {cat}
                     </button>
@@ -865,7 +1057,7 @@ const App: React.FC = () => {
                         <button
                           key={sub}
                           onClick={() => setSelectedSubcategory(sub)}
-                          className={`whitespace-nowrap px-6 py-3 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${selectedSubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-primary text-background shadow-lg scale-105' : 'bg-secondary/50 border-primary/5 text-primary/40 hover:text-primary hover:border-primary/20'}`}
+                          className={`whitespace-nowrap px-6 py-3 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${selectedSubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-primary border-primary text-background shadow-[0_5px_15px_rgba(193,200,228,0.3)] scale-105' : 'bg-secondary/20 border-primary/5 text-primary/40 hover:text-primary hover:border-primary/20'}`}
                         >
                           {sub}
                         </button>
@@ -984,6 +1176,7 @@ const App: React.FC = () => {
               wishlist={wishlist} 
               toggleWishlist={toggleWishlist} 
               user={user}
+              onBack={() => setActiveTab('products')}
             />
           </div>
         )}

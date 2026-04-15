@@ -58,9 +58,9 @@ export function DimensionSetup({ data, onUpdate, onNext, onBack }: DimensionSetu
 
                 <div className="setup-layout">
                     <div className="inputs-section">
-                        <div className="unit-toggle">
-                            <button className={useMetric ? 'active' : ''} onClick={() => setUseMetric(true)}>Metric (m)</button>
-                            <button className={!useMetric ? 'active' : ''} onClick={() => setUseMetric(false)}>Imperial (ft/in)</button>
+                        <div className="unit-toggle p-1 bg-background/50 backdrop-blur-md rounded-2xl border border-text/10">
+                            <button className={useMetric ? 'active bg-primary text-background shadow-lg' : 'text-text/30'} onClick={() => setUseMetric(true)}>Metric (m)</button>
+                            <button className={!useMetric ? 'active bg-primary text-background shadow-lg' : 'text-text/30'} onClick={() => setUseMetric(false)}>Imperial (ft/in)</button>
                         </div>
 
                         <div className="inputs-grid">
