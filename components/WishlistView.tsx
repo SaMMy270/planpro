@@ -25,16 +25,16 @@ const WishlistView: React.FC<WishlistViewProps> = ({
     if (wishlist.length === 0) {
         return (
             <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center space-y-8">
-                <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center animate-pulse">
+                <div className="w-24 h-24 bg-[#1A2E42] border border-[#2A3E54] rounded-full flex items-center justify-center animate-pulse">
                     <Heart size={40} className="text-primary/20" />
                 </div>
-                <div className="space-y-2">
-                    <h2 className="text-3xl md:text-4xl font-serif tracking-tight text-text lowercase first-letter:uppercase">Your wishlist is empty</h2>
-                    <p className="text-text/40 text-sm max-w-xs mx-auto">Save items you love to your wishlist to keep track of them.</p>
+                <div className="space-y-4">
+                    <h2 className="text-3xl md:text-5xl font-serif tracking-tight text-white uppercase">Your wishlist is empty</h2>
+                    <p className="text-white/40 text-sm max-w-xs mx-auto">Save the pieces you love to build your dream collection later.</p>
                 </div>
                 <button
                     onClick={onContinueShopping}
-                    className="px-8 py-4 bg-highlight text-background rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
+                    className="px-10 py-5 bg-primary text-[#0F1B2E] rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-xl shadow-primary/20 flex items-center gap-2"
                 >
                     Explore Collection <ArrowRight size={16} />
                 </button>
@@ -44,19 +44,19 @@ const WishlistView: React.FC<WishlistViewProps> = ({
 
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 space-y-12">
-            <div className="flex items-center justify-between border-b border-text/10 pb-6">
+            <div className="flex items-center justify-between border-b border-[#2A3E54] pb-6">
                 <div className="space-y-1">
-                    <h2 className="text-3xl font-serif tracking-tight text-text">Your Wishlist</h2>
-                    <p className="text-[10px] font-bold text-text/30 uppercase tracking-[0.3em]">Saved Items for later</p>
+                    <h2 className="text-3xl font-serif tracking-tight text-white">Your Wishlist</h2>
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.3em]">Saved Items for later</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <button
                         onClick={onSmartCompare}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-[#1754cf] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#1754cf]/90 transition-all shadow-lg active:scale-95 group"
+                        className="flex items-center gap-2 px-6 py-2.5 bg-primary text-[#0F1B2E] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#00D9FF] transition-all shadow-lg shadow-primary/10 active:scale-95 group"
                     >
                         <Sparkles size={14} className="group-hover:rotate-12 transition-transform" /> AI Smart Compare
                     </button>
-                    <span className="text-[10px] font-bold text-text/30 uppercase tracking-[0.3em]">{wishlist.length} Items</span>
+                    <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.3em]">{wishlist.length} Items</span>
                 </div>
             </div>
 

@@ -226,6 +226,7 @@ export const PRODUCTS: Product[] = [
     category: 'Tables',
     subcategory: 'coffee',
     price: 450,
+    oldPrice: 550,
     image: c1,
     images: [c1],
     description: 'A floating marble top coffee table with architectural brass legs.',
@@ -236,6 +237,9 @@ export const PRODUCTS: Product[] = [
     model: c1_model,
     texture:'' ,
     productUrl: '',
+    arEnabled: true,
+    priceMatch: true,
+    savings: 15
   },
   {
     id: 't-coffee-2',
@@ -253,6 +257,8 @@ export const PRODUCTS: Product[] = [
     model: c2_model,
     texture:'' ,
     productUrl: '',
+    arEnabled: true,
+    savings: 10
   },
   {
     id: 't-coffee-3',
@@ -270,6 +276,7 @@ export const PRODUCTS: Product[] = [
     model: c3_model,
     texture:'' ,
     productUrl: '',
+    priceMatch: true
   },
   {
     id: 't-coffee-4',

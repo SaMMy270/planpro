@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import {
   ShoppingCart, Heart, Search, Menu, X, Box, Layout as LayoutIcon, Sparkles, Scale,
   QrCode, ArrowRight, Instagram, Twitter, Facebook, ArrowUpRight,
@@ -41,6 +41,11 @@ const App: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [initialARViewMode, setInitialARViewMode] = useState<'inspect' | 'live' | 'qr'>('inspect');
   const [isWishlistCompareOpen, setIsWishlistCompareOpen] = useState(false);
+
+  // Global search expand state
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -395,128 +400,142 @@ const App: React.FC = () => {
     setActiveTab('home');
   };
 
-  const Navbar = () => (
-    <nav className="fixed top-0 left-0 right-0 z-[60] bg-background/80 backdrop-blur-xl border-b border-primary/10 px-4 md:px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2 cursor-pointer group" onClick={() => {
-            window.history.pushState({}, '', window.location.pathname);
-            setActiveTab('home');
-          }}>
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-background rotate-[-12deg] group-hover:rotate-0 transition-all duration-500 shadow-lg">
-              <LayoutIcon size={18} />
-            </div>
-            <h1 className="text-lg md:text-xl font-bold tracking-tighter uppercase bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">PlanPro</h1>
-          </div>
-          <div className="hidden md:flex items-center gap-8 text-[12px] font-bold uppercase tracking-widest text-primary/40">
-            <button onClick={() => {
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('home');
-            }} className="nav-link hover:text-primary transition-colors relative">Home</button>
-            <button onClick={() => {
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('products');
-            }} className="nav-link hover:text-primary transition-colors relative">Collection</button>
-            <button onClick={() => {
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('blueprint');
-            }} className="nav-link hover:text-primary transition-colors relative">Architect Tool</button>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 md:gap-4">
-          <div className="hidden sm:flex items-center gap-4 pr-4 border-r border-primary/10">
-            <button onClick={() => {
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('wishlist');
-            }} className="p-2 hover:bg-primary/10 rounded-full transition-all relative group">
-              <Heart size={20} className="group-hover:scale-110 transition-transform" />
-              {wishlist.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />}
-            </button>
-            <button onClick={() => {
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('cart');
-            }} className="p-2 hover:bg-primary/10 rounded-full transition-all relative group">
-              <ShoppingCart size={20} className="group-hover:scale-110 transition-transform" />
-              {cart.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />}
-            </button>
-            {user && (
-              <button onClick={() => {
-                 window.history.pushState({}, '', window.location.pathname);
-                 setActiveTab('profile');
-              }} className={`p-2 hover:bg-primary/10 rounded-full transition-all relative group ${activeTab === 'profile' ? 'bg-primary text-background' : ''}`}>
-                <User size={20} className="group-hover:scale-110 transition-transform" />
-              </button>
-            )}
-          </div>
-          <button
-            onClick={() => user ? handleLogout() : setActiveTab('login')}
-            className="px-4 md:px-6 py-2 bg-gradient-to-r from-primary to-accent text-background rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-lg shadow-primary/20"
-          >
-            {user ? 'Log Out' : 'Log In'}
-          </button>
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 hover:bg-primary/10 rounded-full transition-all">
-            <Menu size={20} />
-          </button>
-        </div>
-      </div>
+  const handleGlobalSearch = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (globalSearchQuery.trim()) {
+      setSearchQuery(globalSearchQuery);
+      setActiveTab('products');
+      setIsSearchExpanded(false);
+      setGlobalSearchQuery('');
+    }
+  }, [globalSearchQuery]);
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-primary/10 p-6 space-y-6 shadow-2xl animate-in slide-in-from-top-4 duration-300">
-          <button onClick={() => { 
-             window.history.pushState({}, '', window.location.pathname);
-             setActiveTab('home'); 
-             setIsMobileMenuOpen(false); 
-          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Home</button>
-          <button onClick={() => { 
-             window.history.pushState({}, '', window.location.pathname);
-             setActiveTab('products'); 
-             setIsMobileMenuOpen(false); 
-          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Collection</button>
-          <button onClick={() => { 
-             window.history.pushState({}, '', window.location.pathname);
-             setActiveTab('blueprint'); 
-             setIsMobileMenuOpen(false); 
-          }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Architect Tool</button>
-          <div className="pt-4 border-t border-primary/10 flex gap-6">
-            <button onClick={() => { 
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('wishlist'); 
-               setIsMobileMenuOpen(false); 
-            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40 hover:text-primary transition-colors"><Heart size={16} /> Wishlist</button>
-            <button onClick={() => { 
-               window.history.pushState({}, '', window.location.pathname);
-               setActiveTab('cart'); 
-               setIsMobileMenuOpen(false); 
-            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40 hover:text-primary transition-colors"><ShoppingCart size={16} /> Cart</button>
-            {user && <button onClick={() => { 
+  const expandSearch = useCallback(() => {
+    setIsSearchExpanded(true);
+    setTimeout(() => searchInputRef.current?.focus(), 50);
+  }, []);
+
+  const collapseSearch = useCallback(() => {
+    setIsSearchExpanded(false);
+    setGlobalSearchQuery('');
+  }, []);
+
+  const Navbar = () => (
+    <>
+      {/* Frosted-glass blur overlay when search is expanded */}
+      
+        
+      <nav
+        className="sticky-header px-4 md:px-6 py-3"
+        style={{ zIndex: 60 }}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* Logo + Nav links */}
+          <div className="flex items-center gap-8 flex-shrink-0">
+            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => {
               window.history.pushState({}, '', window.location.pathname);
-              setActiveTab('profile'); 
-              setIsMobileMenuOpen(false); 
-            }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text/40 hover:text-primary transition-colors"><User size={16} /> Profile</button>}
+              setActiveTab('home');
+              collapseSearch();
+            }}>
+              <div className="w-9 h-9 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-background rotate-[-12deg] group-hover:rotate-0 transition-all duration-500 shadow-lg">
+                <LayoutIcon size={16} />
+              </div>
+              <h1 className="text-base md:text-lg font-bold tracking-tighter uppercase bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">PlanPro</h1>
+            </div>
+            <div className="hidden md:flex items-center gap-6 text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--secondary-text)' }}>
+              <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('home'); }} className={`nav-link hover:text-primary transition-colors py-1 ${activeTab === 'home' ? 'active text-primary' : ''}`}>Home</button>
+              <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className={`nav-link hover:text-primary transition-colors py-1 ${activeTab === 'products' ? 'active text-primary' : ''}`}>Collection</button>
+              <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('blueprint'); }} className={`nav-link nav-link-architect hover:text-primary transition-colors py-1 ${activeTab === 'blueprint' ? 'active text-primary' : ''}`}>Room Generation</button>
+            </div>
+          </div>
+
+          {/* Global Search Bar — expands with cubic-bezier(0.4,0,0.2,1) */}
+         
+           
+
+          {/* Right actions */}
+          <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+            <div className="hidden sm:flex items-center gap-3 pr-3 border-r border-primary/10">
+              <button
+                onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('wishlist'); }}
+                className="touch-target p-2 hover:bg-primary/10 rounded-full transition-all relative group"
+              >
+                <Heart size={18} className="group-hover:scale-110 transition-transform" />
+                {wishlist.length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse" />}
+              </button>
+              <button
+                onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('cart'); }}
+                className="touch-target p-2 hover:bg-primary/10 rounded-full transition-all relative group"
+              >
+                <ShoppingCart size={18} className="group-hover:scale-110 transition-transform" />
+                {cart.length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse" />}
+              </button>
+              {user && (
+                <button
+                  onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('profile'); }}
+                  className={`touch-target p-2 hover:bg-primary/10 rounded-full transition-all group ${activeTab === 'profile' ? 'bg-primary text-background' : ''}`}
+                >
+                  <User size={18} className="group-hover:scale-110 transition-transform" />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => user ? handleLogout() : setActiveTab('login')}
+              className="btn-gold px-4 md:px-5 py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-lg"
+            >
+              {user ? 'Log Out' : 'Log In'}
+            </button>
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden touch-target p-2 hover:bg-primary/10 rounded-full transition-all">
+              <Menu size={18} />
+            </button>
           </div>
         </div>
-      )}
-    </nav>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 border-b border-primary/10 p-6 space-y-5 shadow-2xl" style={{ background: 'rgba(10,12,16,0.96)', backdropFilter: 'blur(20px)', animation: 'enter-from-top 0.3s var(--ease-fluid) forwards' }}>
+            {/* Mobile Search */}
+            <form onSubmit={handleGlobalSearch} className="flex items-center gap-3 px-4 py-3 rounded-2xl" style={{ background: 'var(--secondary)', border: '1px solid rgba(193,200,228,0.1)' }}>
+              <Search size={16} style={{ color: 'var(--secondary-text)' }} />
+              <input
+                type="text"
+                value={globalSearchQuery}
+                onChange={(e) => setGlobalSearchQuery(e.target.value)}
+                placeholder="Search furniture..."
+                className="bg-transparent text-sm font-medium text-text placeholder:text-text/30 outline-none flex-1"
+              />
+            </form>
+            <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('home'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors" style={{ color: 'var(--secondary-text)' }}>Home</button>
+            <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors" style={{ color: 'var(--secondary-text)' }}>Collection</button>
+            <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('blueprint'); setIsMobileMenuOpen(false); }} className="block w-full text-left text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors" style={{ color: 'var(--secondary-text)' }}>Architect Tool</button>
+            <div className="pt-4 border-t border-primary/10 flex gap-5">
+              <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('wishlist'); setIsMobileMenuOpen(false); }} className="touch-target flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors" style={{ color: 'var(--secondary-text)' }}><Heart size={15} /> Wishlist</button>
+              <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('cart'); setIsMobileMenuOpen(false); }} className="touch-target flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors" style={{ color: 'var(--secondary-text)' }}><ShoppingCart size={15} /> Cart</button>
+              {user && <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('profile'); setIsMobileMenuOpen(false); }} className="touch-target flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors" style={{ color: 'var(--secondary-text)' }}><User size={15} /> Profile</button>}
+            </div>
+          </div>
+        )}
+      </nav>
+    </>
   );
 
   const Hero = () => (
-    <section className="pt-28 md:pt-32 pb-8 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden relative">
+    <section className="pt-24 md:pt-28 pb-8 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden relative">
       <div className="absolute top-10 right-0 w-[500px] h-[500px] rounded-full animate-pulse" style={{ background: 'radial-gradient(circle, rgba(207,160,98,0.12) 0%, transparent 70%)', filter: 'blur(60px)' }}></div>
       <div className="absolute bottom-10 left-0 w-72 h-72 rounded-full animate-pulse" style={{ animationDelay: '2s', background: 'radial-gradient(circle, rgba(138,112,76,0.15) 0%, transparent 70%)', filter: 'blur(50px)' }}></div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 items-start relative z-10">
         <div className="lg:col-span-5 space-y-6 md:space-y-8">
           <div className="space-y-4">
-            <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-serif tracking-tight leading-[1.1] animate-fade-up text-primary">
+            <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-[104px] font-serif tracking-tight leading-[1.1] animate-fade-up text-white">
               MODERN HOME <br />
-              FURNITURE <span className="italic gradient-text">&</span> DECOR
+              FURNITURE <span className="italic text-primary">&</span> DECOR
             </h2>
             <div className="flex items-center gap-4 animate-fade-up stagger-1">
-              <div className="px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg animate-gold-glow" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', color: 'var(--background)' }}>
+              <div className="px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg" style={{ background: 'linear-gradient(135deg, #FFB800, #FFA000)', color: '#0A0C10', boxShadow: '0 4px 16px rgba(255,184,0,0.3)' }}>
                 Elegance Redefined
               </div>
-              <p className="text-text/60 text-base md:text-lg max-w-sm leading-relaxed">
+              <p className="text-base md:text-lg max-w-sm leading-relaxed" style={{ color: 'var(--secondary-text)' }}>
                 Discover elegant pieces for contemporary living. Instantly visualize in your space.
               </p>
             </div>
@@ -531,7 +550,7 @@ const App: React.FC = () => {
             </div>
             <div>
               <p className="text-lg md:text-xl font-bold tracking-tight text-primary">+100k</p>
-              <p className="text-[9px] md:text-[10px] font-bold text-text/40 uppercase tracking-widest">Happy clients</p>
+              <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--secondary-text)' }}>Happy clients</p>
             </div>
           </div>
         </div>
@@ -594,11 +613,11 @@ const App: React.FC = () => {
         <div className="flex justify-center"><div className="h-px w-24" style={{ background: 'linear-gradient(to right, transparent, var(--primary), transparent)' }}></div></div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        <div className="p-8 md:p-10 space-y-8 animate-fade-right group hover-lift shadow-2xl rounded-[40px] md:rounded-[48px]" style={{ background: 'linear-gradient(135deg, var(--secondary), rgba(30,28,26,0.8))', border: '1px solid rgba(207,160,98,0.15)' }}>
+        <div className="p-8 md:p-10 space-y-8 animate-fade-right group hover-lift shadow-2xl rounded-[40px] md:rounded-[48px]" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
           <div className="space-y-4">
-            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Track your vision</h4>
-            <p className="text-text/60 text-sm leading-relaxed">We provide real-time spatial monitoring and reminders to update your design based on your needs.</p>
-            <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className="px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Learn more</button>
+            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-white border-l-4 border-primary pl-4">Track your vision</h4>
+            <p className="text-secondary-text text-sm leading-relaxed">We provide real-time spatial monitoring and reminders to update your design based on your needs.</p>
+            <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className="btn-gold px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all">Learn more</button>
           </div>
           <div className="pt-4 relative">
             <div className="w-full aspect-square rounded-[32px] md:rounded-[40px] flex items-center justify-center rotate-[-5deg] group-hover:rotate-0 transition-transform overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(207,160,98,0.1)' }}>
@@ -607,10 +626,10 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-up stagger-1 group hover-lift" style={{ background: 'linear-gradient(135deg, rgba(207,160,98,0.1), rgba(138,112,76,0.1))', border: '1px solid rgba(207,160,98,0.2)' }}>
+        <div className="rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-up stagger-1 group hover-lift transition-all border-hover" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
           <div className="space-y-4">
-            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Control spatial data</h4>
-            <p className="text-text/40 text-sm leading-relaxed">A full cycle of diagnostics and layout recommendations from top-tier interior experts.</p>
+            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-white border-l-4 border-primary pl-4">Control spatial data</h4>
+            <p className="text-secondary-text text-sm leading-relaxed">A full cycle of diagnostics and layout recommendations from top-tier interior experts.</p>
           </div>
           <div className="relative h-56 md:h-64 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center justify-center">
@@ -628,10 +647,10 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-left group hover-lift" style={{ background: 'linear-gradient(135deg, rgba(138,112,76,0.18), rgba(207,160,98,0.12))', border: '1px solid rgba(207,160,98,0.15)' }}>
+        <div className="rounded-[40px] md:rounded-[48px] p-8 md:p-10 space-y-8 animate-fade-left group hover-lift transition-all border-hover" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
           <div className="space-y-4">
-            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Design faster</h4>
-            <p className="text-text/40 text-sm leading-relaxed">Get advice, curated moodboards and AR previews instantly from your smartphone.</p>
+            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-white border-l-4 border-primary pl-4">Design faster</h4>
+            <p className="text-secondary-text text-sm leading-relaxed">Get advice, curated moodboards and AR previews instantly from your smartphone.</p>
           </div>
           <div className="rounded-[32px] md:rounded-[40px] p-6 md:p-8 aspect-square relative overflow-hidden" style={{ background: 'rgba(30,28,26,0.4)' }}>
             <Smartphone className="absolute bottom-[-20%] right-[-10%] w-3/4 h-3/4 rotate-[-15deg]" style={{ color: 'rgba(207,160,98,0.08)' }} />
@@ -692,79 +711,196 @@ const App: React.FC = () => {
     </section>
   );
 
-  const FeaturesSection = () => (
+  const FEATURES = [
+    {
+      id: 0,
+      icon: <Box size={30} style={{ color: 'var(--background)' }} />,
+      iconBg: 'linear-gradient(135deg, var(--primary), var(--accent))',
+      cardBg: 'linear-gradient(135deg, var(--secondary), rgba(20,24,32,0.95))',
+      cardBorder: 'rgba(193,200,228,0.12)',
+      headingColor: 'var(--primary)',
+      bodyColor: 'var(--secondary-text)',
+      badgeBg: 'rgba(193,200,228,0.1)',
+      badgeColor: 'var(--secondary-text)',
+      title: '3D Room Builder',
+      body: 'Design and visualize your perfect space in real-time with our powerful 3D modeling tools.',
+      badge: '2,500+ users',
+      cta: 'Try Now',
+      ctaBg: 'var(--primary)',
+      ctaColor: 'var(--background)',
+      tab: 'blueprint' as const,
+    },
+    {
+      id: 1,
+      // Light lavender bg — use DARK text for contrast
+      icon: <Camera size={30} style={{ color: '#1E2535' }} />,
+      iconBg: 'rgba(10,12,16,0.15)',
+      cardBg: 'linear-gradient(135deg, var(--accent), var(--primary))',
+      cardBorder: 'rgba(10,12,16,0.12)',
+      headingColor: '#0F1520',
+      bodyColor: '#2A3347',
+      badgeBg: 'rgba(10,12,16,0.12)',
+      badgeColor: '#2A3347',
+      title: 'AR Technology',
+      body: 'Visualize furniture in your actual space using augmented reality. See it before you buy it.',
+      badge: 'Live & QR Scan',
+      cta: 'Experience AR',
+      ctaBg: 'rgba(10,12,16,0.85)',
+      ctaColor: 'var(--primary)',
+      tab: 'ar' as const,
+    },
+    {
+      id: 2,
+      icon: <Scale size={30} style={{ color: 'var(--primary)' }} />,
+      iconBg: 'rgba(10,12,16,0.4)',
+      cardBg: 'linear-gradient(135deg, #2A3E35, var(--secondary))',
+      cardBorder: 'rgba(193,200,228,0.1)',
+      headingColor: 'var(--primary)',
+      bodyColor: 'var(--secondary-text)',
+      badgeBg: 'rgba(193,200,228,0.1)',
+      badgeColor: 'var(--secondary-text)',
+      title: 'Price Comparison',
+      body: 'Compare prices across multiple retailers instantly. Get the best deals without leaving the app.',
+      badge: 'Save up to 40%',
+      cta: 'Compare Prices',
+      ctaBg: 'var(--primary)',
+      ctaColor: 'var(--background)',
+      tab: 'products' as const,
+    },
+  ];
+
+  const FeaturesSection = () => {
+    const [activeFeature, setActiveFeature] = React.useState(0);
+    const [direction, setDirection] = React.useState<'left' | 'right'>('right');
+    const [isAnimating, setIsAnimating] = React.useState(false);
+
+    const goTo = (idx: number) => {
+      if (idx === activeFeature || isAnimating) return;
+      setDirection(idx > activeFeature ? 'right' : 'left');
+      setIsAnimating(true);
+      setTimeout(() => {
+        setActiveFeature(idx);
+        setIsAnimating(false);
+      }, 260);
+    };
+
+    const feat = FEATURES[activeFeature];
+
+    return (
     <section className="py-16 md:py-24 px-4 md:px-6 max-w-7xl mx-auto relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(207,160,98,0.06) 0%, transparent 70%)' }}></div>
-      <div className="text-center space-y-4 mb-16 md:mb-20 animate-fade-up">
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: 'rgba(207,160,98,0.6)' }}>Powerful Tools</p>
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(193,200,228,0.04) 0%, transparent 70%)' }} />
+
+      {/* Heading */}
+      <div className="text-center space-y-4 mb-14 animate-fade-up">
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: 'var(--gold)' }}>Powerful Tools</p>
         <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif tracking-tight text-primary">
           <span className="gradient-text">Revolutionary</span> Features
         </h3>
-        <p className="text-text/40 text-base md:text-lg max-w-md mx-auto">Experience the future of interior design with our cutting-edge technology.</p>
-        <div className="flex justify-center gap-2">
-          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--primary)' }}></div>
-          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent)', animationDelay: '0.3s' }}></div>
-          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--primary)', animationDelay: '0.6s' }}></div>
-        </div>
+        <p className="text-base md:text-lg max-w-md mx-auto" style={{ color: 'var(--secondary-text)' }}>
+          Experience the future of interior design with our cutting-edge technology.
+        </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-        <div className="feature-card p-8 md:p-10 rounded-[40px] md:rounded-[48px] space-y-6 animate-fade-right group hover-lift shadow-2xl" style={{ background: 'linear-gradient(135deg, var(--secondary), rgba(30,28,26,0.9))', border: '1px solid rgba(207,160,98,0.2)' }}>
-          <div className="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg animate-gold-glow" style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}>
-            <Box size={32} style={{ color: 'var(--background)' }} />
-          </div>
-          <div className="space-y-3">
-            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">3D Room Builder</h4>
-            <p className="text-text/60 text-sm leading-relaxed">Design and visualize your perfect space in real-time with our powerful 3D modeling tools.</p>
-          </div>
-          <div className="flex items-center gap-2 pt-2">
-            <div className="flex -space-x-2">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold" style={{ borderColor: 'var(--secondary)', background: 'var(--primary)', color: 'var(--background)' }}>{i}</div>
-              ))}
+
+      {/* Desktop: 3-column grid */}
+      <div className="hidden md:grid md:grid-cols-3 gap-6 md:gap-8">
+        {FEATURES.map((f, idx) => (
+          <div
+            key={f.id}
+            className="feature-card p-8 md:p-10 rounded-[40px] md:rounded-[48px] space-y-6 group hover-lift shadow-2xl gpu-accelerated"
+            style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)', animationDelay: `${idx * 0.1}s` }}
+          >
+            <div
+              className="feature-icon w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
+              style={{ background: 'rgba(30, 187, 215, 0.1)', border: '1px solid var(--border-accent)', backdropFilter: 'blur(10px)' }}
+            >
+              {f.icon}
             </div>
-            <span className="text-[10px] font-bold text-text/40 uppercase tracking-widest">2,500+ users</span>
+            <div className="space-y-3">
+              <h4 className="text-2xl font-bold tracking-tight text-white border-l-4 border-primary pl-4">{f.title}</h4>
+              <p className="text-sm leading-relaxed text-secondary-text">{f.body}</p>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <span className="px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest bg-primary/10 text-primary">{f.badge}</span>
+            </div>
+            <button
+              onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab(f.tab); }}
+              className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 btn-gold"
+            >
+              {f.cta}
+            </button>
           </div>
-          <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('blueprint'); }} className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Try Now</button>
-        </div>
+        ))}
+      </div>
 
-        <div className="feature-card p-8 md:p-10 rounded-[40px] md:rounded-[48px] space-y-6 animate-fade-up stagger-1 group hover-lift shadow-2xl" style={{ background: 'linear-gradient(135deg, var(--accent), var(--primary))', border: '1px solid rgba(207,160,98,0.3)' }}>
-          <div className="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)' }}>
-            <Camera size={32} style={{ color: 'var(--text)' }} />
+      {/* Mobile: Single-card slider with liquid-tab dots */}
+      <div className="md:hidden">
+        {/* Card */}
+        <div
+          className="p-8 rounded-[40px] space-y-6 shadow-2xl gpu-accelerated"
+          style={{
+            background: feat.cardBg,
+            border: `1px solid ${feat.cardBorder}`,
+            // Horizontal slide-and-fade via inline style transition
+            opacity: isAnimating ? 0 : 1,
+            transform: isAnimating
+              ? `translate3d(${direction === 'right' ? '-40px' : '40px'},0,0)`
+              : 'translate3d(0,0,0)',
+            transition: 'opacity 0.25s cubic-bezier(0.25,1,0.5,1), transform 0.25s cubic-bezier(0.25,1,0.5,1)',
+          }}
+        >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
+            style={{ background: feat.iconBg, backdropFilter: 'blur(10px)' }}
+          >
+            {feat.icon}
           </div>
           <div className="space-y-3">
-            <h4 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: 'var(--text)' }}>AR Technology</h4>
-            <p className="text-sm leading-relaxed" style={{ color: 'rgba(240,235,225,0.75)' }}>Visualize furniture in your actual space using augmented reality. See it before you buy it.</p>
+            <h4 className="text-2xl font-bold tracking-tight" style={{ color: feat.headingColor }}>
+              {feat.title}
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: feat.bodyColor }}>{feat.body}</p>
           </div>
-          <div className="flex items-center gap-2 pt-2">
-            <span className="px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest" style={{ background: 'rgba(255,255,255,0.2)', color: 'var(--text)' }}>Live View</span>
-            <span className="px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest" style={{ background: 'rgba(255,255,255,0.2)', color: 'var(--text)' }}>QR Scan</span>
-          </div>
-          <button onClick={() => setActiveTab('ar')} className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'rgba(20,19,17,0.85)', color: 'var(--primary)' }}>Experience AR</button>
+          <span className="inline-block px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest" style={{ background: feat.badgeBg, color: feat.badgeColor }}>
+            {feat.badge}
+          </span>
+          <button
+            onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab(feat.tab); }}
+            className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95"
+            style={{ background: feat.ctaBg, color: feat.ctaColor, minHeight: '44px' }}
+          >
+            {feat.cta}
+          </button>
         </div>
 
-        <div className="feature-card p-8 md:p-10 rounded-[40px] md:rounded-[48px] space-y-6 animate-fade-left group hover-lift shadow-2xl" style={{ background: 'linear-gradient(135deg, #3D5247, var(--secondary))', border: '1px solid rgba(207,160,98,0.2)' }}>
-          <div className="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'var(--background)' }}>
-            <Scale size={32} style={{ color: 'var(--primary)' }} />
-          </div>
-          <div className="space-y-3">
-            <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-primary">Price Comparison</h4>
-            <p className="text-text/60 text-sm leading-relaxed">Compare prices across multiple retailers instantly. Get the best deals without leaving the app.</p>
-          </div>
-          <div className="flex items-center gap-2 pt-2">
-            <p className="text-xl md:text-2xl font-bold tracking-tight text-text/60">Save up to</p>
-            <p className="text-3xl md:text-4xl font-bold tracking-tight gradient-text">40%</p>
-          </div>
-          <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Compare Prices</button>
+        {/* Liquid-tab pagination dots ── stretches to capsule on active */}
+        <div className="flex justify-center items-center gap-2 mt-6">
+          {FEATURES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className="liquid-dot transition-all duration-400"
+              style={{
+                width: activeFeature === i ? '22px' : '8px',
+                height: '8px',
+                borderRadius: '4px',
+                background: activeFeature === i ? 'var(--primary)' : 'rgba(193,200,228,0.25)',
+                boxShadow: activeFeature === i ? '0 0 8px rgba(193,200,228,0.3)' : 'none',
+                transition: 'width 0.45s cubic-bezier(0.175,0.885,0.32,1.275), background 0.3s ease, box-shadow 0.3s ease',
+              }}
+              aria-label={`Feature ${i + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>
-  );
+    );
+  };
 
   const ProductOfMonth = () => {
     const topProduct = PRODUCTS[0];
     return (
       <section className="py-16 md:py-24 px-4 md:px-6 max-w-7xl mx-auto">
-        <div className="rounded-[40px] md:rounded-[60px] p-8 md:p-12 lg:p-16 overflow-hidden relative animate-fade-up" style={{ background: 'linear-gradient(135deg, var(--secondary) 0%, #3D5247 40%, #5A3F2B 100%)', border: '1px solid rgba(207,160,98,0.25)' }}>
+        <div className="rounded-[40px] md:rounded-[60px] p-8 md:p-12 lg:p-16 overflow-hidden relative animate-fade-up" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
           <div className="absolute top-0 right-0 w-96 h-96 rounded-full animate-pulse" style={{ background: 'radial-gradient(circle, rgba(207,160,98,0.2) 0%, transparent 70%)', filter: 'blur(40px)' }}></div>
           <div className="absolute bottom-0 left-1/4 w-64 h-64 rounded-full animate-pulse" style={{ animationDelay: '1s', background: 'radial-gradient(circle, rgba(138,112,76,0.25) 0%, transparent 70%)', filter: 'blur(40px)' }}></div>
           <div className="absolute inset-0 rounded-[40px] md:rounded-[60px] gold-shimmer opacity-30 pointer-events-none"></div>
@@ -804,9 +940,9 @@ const App: React.FC = () => {
               <div className="flex items-center gap-6 pt-2">
                 <div>
                   <p className="text-3xl md:text-4xl font-bold text-primary">{topProduct?.price ? `₹${(topProduct.price * 0.8).toLocaleString()}` : '₹45,999'}</p>
-                  <p className="text-[10px] line-through" style={{ color: 'rgba(240,235,225,0.35)' }}>₹{topProduct?.price?.toLocaleString() || '57,499'}</p>
+                  <p className="text-[10px] line-through text-white/30">₹{topProduct?.price?.toLocaleString() || '57,499'}</p>
                 </div>
-                <button onClick={() => { if (topProduct) addToCart(topProduct.id); }} className="px-8 py-4 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl animate-gold-glow" style={{ background: 'var(--primary)', color: 'var(--background)' }}>Add to Cart</button>
+                <button onClick={() => { if (topProduct) addToCart(topProduct.id); }} className="btn-gold px-8 py-4 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-xl">Add to Cart</button>
               </div>
             </div>
             <div className="relative">
@@ -842,18 +978,18 @@ const App: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {reviews.map((review, idx) => (
-            <div key={review.id} className={`testimonial-card glass-card p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-${idx + 1}`}>
+            <div key={review.id} className={`testimonial-card glass-card p-6 md:p-8 rounded-[32px] md:rounded-[40px] animate-fade-up stagger-${idx + 1}`} style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
               <div className="flex gap-1 mb-4">
                 {[...Array(review.rating)].map((_, i) => (
                   <Star key={i} size={14} fill="currentColor" className="star-rating" style={{ color: 'var(--primary)' }} />
                 ))}
               </div>
-              <p className="text-text/70 text-sm leading-relaxed mb-6">"{review.text}"</p>
+              <p className="text-white/70 text-sm leading-relaxed mb-6">"{review.text}"</p>
               <div className="flex items-center gap-3">
-                <img src={`https://i.pravatar.cc/100?img=${review.avatar}`} alt={review.name} className="w-10 h-10 rounded-full object-cover" style={{ border: '2px solid rgba(207,160,98,0.4)' }} />
+                <img src={`https://i.pravatar.cc/100?img=${review.avatar}`} alt={review.name} className="w-10 h-10 rounded-full object-cover" style={{ border: '2px solid var(--border-accent)' }} />
                 <div>
                   <p className="text-sm font-bold text-primary">{review.name}</p>
-                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.35)' }}>{review.location}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-white/30">{review.location}</p>
                 </div>
               </div>
             </div>
@@ -899,14 +1035,14 @@ const App: React.FC = () => {
             </div>
             <p className="text-[10px] md:text-xs leading-relaxed font-bold uppercase tracking-tighter" style={{ color: 'rgba(240,235,225,0.35)' }}>Design, build, and visualize in one single app.</p>
             <div className="flex gap-4">
-              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'rgba(207,160,98,0.08)', border: '1px solid rgba(207,160,98,0.15)' }}>
-                <Instagram size={18} style={{ color: 'var(--primary)' }} />
+              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
+                <Instagram size={18} className="text-primary" />
               </a>
-              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'rgba(207,160,98,0.08)', border: '1px solid rgba(207,160,98,0.15)' }}>
-                <Twitter size={18} style={{ color: 'var(--primary)' }} />
+              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
+                <Twitter size={18} className="text-primary" />
               </a>
-              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'rgba(207,160,98,0.08)', border: '1px solid rgba(207,160,98,0.15)' }}>
-                <Facebook size={18} style={{ color: 'var(--primary)' }} />
+              <a href="#" className="social-link p-3 rounded-full transition-all" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-light)' }}>
+                <Facebook size={18} className="text-primary" />
               </a>
             </div>
           </div>
@@ -917,9 +1053,9 @@ const App: React.FC = () => {
           ].map((section, idx) => (
             <div key={idx} className={`animate-fade-up stagger-${idx + 1}`}>
               <h5 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 md:mb-6 text-primary">{section.title}</h5>
-              <ul className="space-y-3 md:space-y-4 text-[10px] md:text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.35)' }}>
+              <ul className="space-y-3 md:space-y-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/30">
                 {section.links.map(link => (
-                  <li key={link} onClick={() => { window.history.pushState({}, '', window.location.pathname); if (link === 'Home') setActiveTab('home'); if (link === 'Collection') setActiveTab('products'); if (link === 'Architect Tool') setActiveTab('blueprint'); }} className="cursor-pointer transition-all hover:translate-x-2 inline-block" onMouseEnter={e => (e.currentTarget.style.color = 'var(--primary)')} onMouseLeave={e => (e.currentTarget.style.color = 'rgba(240,235,225,0.35)')}>
+                  <li key={link} onClick={() => { window.history.pushState({}, '', window.location.pathname); if (link === 'Home') setActiveTab('home'); if (link === 'Collection') setActiveTab('products'); if (link === 'Architect Tool') setActiveTab('blueprint'); }} className="cursor-pointer transition-all hover:translate-x-2 inline-block hover:text-primary">
                     {link}
                   </li>
                 ))}
@@ -1008,25 +1144,7 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3 w-full md:w-auto">
-                  <div className="relative flex-1 md:w-72">
-                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20" size={18} />
-                    <input
-                      type="text"
-                      placeholder="Search the collection..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-14 pr-6 py-4 bg-secondary border border-primary/10 rounded-[24px] text-sm font-medium focus:outline-none focus:border-primary/20 focus:shadow-xl transition-all shadow-sm text-body placeholder:text-body/20"
-                    />
-                  </div>
-                  <button
-                    onClick={() => setShowFilterDrawer(true)}
-                    className="p-4 rounded-[20px] bg-secondary border border-primary/10 hover:border-primary shadow-sm transition-all relative group"
-                  >
-                    <SlidersHorizontal size={22} className="text-primary" />
-                    {(maxPrice < 50000 || searchQuery !== '') && (
-                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-background" />
-                    )}
-                  </button>
+
                 </div>
               </div>
 
@@ -1038,7 +1156,7 @@ const App: React.FC = () => {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`whitespace-nowrap px-6 md:px-8 py-3 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] transition-all border ${selectedCategory === cat ? 'bg-primary border-primary text-background shadow-[0_5px_15px_rgba(193,200,228,0.4)] scale-105' : 'bg-background border-primary/10 text-primary/40 hover:text-primary hover:border-primary/30'}`}
+                      className={`whitespace-nowrap px-6 md:px-8 py-3 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] transition-all border ${selectedCategory === cat ? 'bg-primary border-primary text-[#0F1B2E] shadow-[0_5px_15px_rgba(30,187,215,0.4)] scale-105' : 'bg-[#0F1B2E] border-[#2A3E54] text-white hover:text-primary hover:border-primary'}`}
                     >
                       {cat}
                     </button>
@@ -1057,7 +1175,7 @@ const App: React.FC = () => {
                         <button
                           key={sub}
                           onClick={() => setSelectedSubcategory(sub)}
-                          className={`whitespace-nowrap px-6 py-3 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${selectedSubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-primary border-primary text-background shadow-[0_5px_15px_rgba(193,200,228,0.3)] scale-105' : 'bg-secondary/20 border-primary/5 text-primary/40 hover:text-primary hover:border-primary/20'}`}
+                          className={`whitespace-nowrap px-6 py-3 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${selectedSubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-primary border-primary text-[#0F1B2E] shadow-[0_5px_15px_rgba(30,187,215,0.3)] scale-105' : 'bg-[#1A2E42] border-[#2A3E54] text-white hover:text-primary hover:border-primary'}`}
                         >
                           {sub}
                         </button>
@@ -1258,7 +1376,6 @@ const App: React.FC = () => {
             onAddToCart={addToCart}
             onToggleWishlist={toggleWishlist}
             onAR={triggerAR}
-            onAI={triggerAI}
             onCompare={triggerCompare}
           />
         )}

@@ -963,22 +963,19 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         )}
       </AnimatePresence>
 
-      <header className="fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-md border-b border-text/5 flex items-center justify-between px-4 sm:px-8 z-[100]">
+      <header className="fixed top-0 left-0 right-0 h-20 bg-[#0F1B2E]/90 backdrop-blur-xl border-b border-[#2A3E54] flex items-center justify-between px-4 sm:px-8 z-[100]">
         <div className="flex items-center gap-3 sm:gap-6">
           <button
             onClick={() => setStep('selection')}
-            className="p-1.5 sm:p-2 hover:bg-text/5 rounded-full transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-white/5 rounded-full transition-colors"
             title="Back to step selection"
           >
-            <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-text" />
+            <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-white" />
           </button>
-
           
-
-          {/* Sidebar toggle — always visible on all screen sizes */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-1.5 hover:bg-text/5 rounded-full transition-colors flex items-center gap-1.5 text-text"
+            className="p-1.5 hover:bg-white/5 rounded-full transition-colors flex items-center gap-1.5 text-white"
             title={isSidebarOpen ? 'Hide Panel' : 'Show Panel'}
           >
             {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
@@ -988,7 +985,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
             {isEditingTitle ? (
               <input
                 autoFocus
-                className="text-sm sm:text-lg md:text-xl font-serif border-b border-text/20 focus:outline-none bg-transparent truncate"
+                className="text-sm sm:text-lg md:text-xl font-serif border-b border-primary focus:outline-none bg-transparent text-white truncate"
                 value={roomData.projectTitle}
                 onBlur={() => setIsEditingTitle(false)}
                 onChange={(e) => updateRoom({ projectTitle: e.target.value })}
@@ -996,18 +993,18 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               />
             ) : (
               <h2
-                className="text-sm sm:text-lg md:text-xl font-bold tracking-tight text-text flex items-center gap-1 sm:gap-2 cursor-pointer truncate"
+                className="text-sm sm:text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-1 sm:gap-2 cursor-pointer truncate"
                 onClick={() => setIsEditingTitle(true)}
               >
                 <span className="truncate">{roomData.projectTitle}</span>
-                <span className="text-[10px] opacity-20 flex-shrink-0">✏️</span>
+                <span className="text-[10px] text-primary">✏️</span>
               </h2>
             )}
             <div className="flex items-center gap-1.5 sm:gap-3">
-              <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-widest text-text/30 whitespace-nowrap">
+              <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap">
                 CARPET AREA:
               </span>
-              <span className="text-[8px] sm:text-[10px] font-bold text-highlight whitespace-nowrap">
+              <span className="text-[8px] sm:text-[10px] font-bold text-primary whitespace-nowrap">
                 {formatArea(carpetArea, roomData.units === 'METERS' ? 'METRIC' : 'IMPERIAL')}
               </span>
             </div>
@@ -1017,8 +1014,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           <button
             className={`px-3 sm:px-6 py-2 sm:py-2.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
               isPreviewActive
-                ? 'bg-text text-highlight shadow-xl shadow-text/10'
-                : 'bg-text/5 text-text hover:bg-text/10'
+                ? 'bg-primary text-[#0F1B2E] shadow-xl shadow-primary/20'
+                : 'bg-white/5 text-white hover:bg-white/10'
             }`}
             onClick={togglePreview}
             title={isPreviewActive ? 'Exit Studio' : 'Cinema View'}
@@ -1027,14 +1024,12 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
             <span className="hidden sm:inline italic">{isPreviewActive ? ' Exit Studio' : ' Cinema View'}</span>
           </button>
 
-
-
           <button
             onClick={handleSaveProject}
-            className="w-10 h-10 sm:w-12 sm:h-12 bg-secondary border border-text/10 rounded-full flex items-center justify-center text-highlight shadow-[0_0_30px_rgba(193,200,228,0.2)] hover:scale-110 active:scale-95 transition-all group relative overflow-hidden"
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-primary border border-primary/20 rounded-full flex items-center justify-center text-[#0F1B2E] shadow-[0_0_30px_rgba(30,187,215,0.2)] hover:scale-110 active:scale-95 transition-all group relative overflow-hidden"
             title="Save Project"
           >
-            <div className="absolute inset-0 bg-highlight/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             <Save size={18} className="relative z-10 sm:w-[20px] sm:h-[20px]" />
           </button>
         </div>
@@ -1045,7 +1040,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           <aside
             key="designer-sidebar"
             style={isMobile ? { width: '100%', height: 'auto', maxHeight: '420px' } : { width: '450px' }}
-            className={`fixed z-[150] bg-background border-text/5 flex flex-col overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-all duration-500 rounded-t-[2.5rem] lg:rounded-none lg:shadow-2xl ${
+            className={`fixed z-[150] bg-[#1A2E42] border-[#2A3E54] flex flex-col overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.3)] transition-all duration-500 rounded-t-[2.5rem] lg:rounded-none lg:shadow-2xl ${
               isMobile 
                 ? `bottom-0 left-0 border-t ${isSidebarOpen ? 'translate-y-0' : 'translate-y-full opacity-0'}` 
                 : `top-20 bottom-0 left-0 border-r ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full opacity-0'}`
@@ -1112,15 +1107,15 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 )}
               </AnimatePresence>
               {/* ── Menu-style tab navigation ── */}
-              <div className="px-5 pt-4 pb-2 border-b border-text/10 flex items-center justify-between lg:justify-start gap-4 sticky top-0 bg-background z-[60]">
+              <div className="px-5 pt-4 pb-2 border-b border-[#2A3E54] flex items-center justify-between lg:justify-start gap-4 sticky top-0 bg-[#1A2E42] z-[60]">
                 <div className="flex items-center gap-2">
-                  <div className="flex bg-secondary/50 p-1 rounded-2xl border border-text/10">
+                  <div className="flex bg-[#0F1B2E] p-1 rounded-2xl border border-[#2A3E54]">
                     <button
                       onClick={() => setActiveSidebarTab('appearance')}
                       className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                         activeSidebarTab === 'appearance'
-                          ? 'bg-text text-background shadow-[0_5px_15px_rgba(248,232,193,0.3)] scale-100'
-                          : 'text-text/30 hover:text-text/50 scale-95'
+                          ? 'bg-primary text-[#0F1B2E] shadow-[0_5px_15px_rgba(30,187,215,0.3)] scale-100'
+                          : 'text-white/40 hover:text-white scale-95'
                       }`}
                     >
                       <Layout size={12} />
@@ -1130,8 +1125,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                       onClick={() => setActiveSidebarTab('library')}
                       className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                         activeSidebarTab === 'library'
-                          ? 'bg-text text-background shadow-[0_5px_15px_rgba(248,232,193,0.3)] scale-100'
-                          : 'text-text/30 hover:text-text/50 scale-95'
+                          ? 'bg-primary text-[#0F1B2E] shadow-[0_5px_15px_rgba(30,187,215,0.3)] scale-100'
+                          : 'text-white/40 hover:text-white scale-95'
                       }`}
                     >
                       <Box size={12} />
@@ -1143,7 +1138,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 {isMobile && (
                   <button 
                     onClick={() => setIsSidebarOpen(false)}
-                    className="p-3 bg-text/5 rounded-full text-text/20 hover:text-text transition-colors"
+                    className="p-3 bg-white/5 rounded-full text-white/20 hover:text-white transition-colors"
                   >
                     <X size={18} />
                   </button>
@@ -1280,13 +1275,13 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                         <select
                           value={libraryCategory}
                           onChange={(e) => setLibraryCategory(e.target.value)}
-                          className="w-full bg-secondary border border-text/10 rounded-2xl px-5 py-3 text-[10px] font-black uppercase tracking-widest focus:ring-1 focus:ring-primary/50 appearance-none cursor-pointer transition-all hover:bg-background text-text"
+                          className="w-full bg-[#0F1B2E] border border-[#2A3E54] rounded-2xl px-5 py-3 text-[10px] font-black uppercase tracking-widest focus:ring-1 focus:ring-primary appearance-none cursor-pointer transition-all hover:bg-[#1A2E42] text-white"
                         >
                           {categories.map(cat => (
                             <option key={cat} value={cat}>{cat}</option>
                           ))}
                         </select>
-                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-text/30">
+                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-white/30">
                           <ChevronRight size={14} className="rotate-90" />
                         </div>
                       </div>
@@ -1331,34 +1326,34 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
               </div>
 
               {!isMobile && (
-                <div className="p-8 border-t border-text/5 bg-background">
+                <div className="p-8 border-t border-[#2A3E54] bg-[#1A2E42]">
                   <button 
                     onClick={() => setIsBillOpen(true)}
-                    className="w-full relative group mb-6 overflow-hidden bg-secondary/30 hover:bg-text transition-all duration-500 rounded-[32px] p-6 text-left"
+                    className="w-full relative group mb-6 overflow-hidden bg-[#0F1B2E] hover:bg-primary transition-all duration-500 rounded-[32px] p-6 text-left border border-[#2A3E54]"
                   >
-                    <div className="flex justify-between items-start mb-1 relative z-10 transition-colors duration-500 group-hover:text-highlight">
+                    <div className="flex justify-between items-start mb-1 relative z-10 transition-colors duration-500 group-hover:text-[#0F1B2E]">
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-60 transition-opacity text-text">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-60 transition-opacity text-white">
                           Statement Total
                         </span>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-text/5 group-hover:bg-background/10 rounded-full transition-colors text-text group-hover:text-highlight">
+                          <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-white/5 group-hover:bg-black/10 rounded-full transition-colors text-white group-hover:text-[#0F1B2E]">
                             {items.length} Items
                           </span>
                         </div>
                       </div>
-                      <span className="text-3xl font-bold tracking-tighter text-text group-hover:text-highlight">
+                      <span className="text-3xl font-bold tracking-tighter text-primary group-hover:text-[#0F1B2E]">
                         ₹{items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-4 text-[9px] font-black uppercase tracking-widest text-text/20 group-hover:text-highlight/40 relative z-10 transition-colors duration-500">
+                    <div className="flex items-center gap-2 mt-4 text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-[#0F1B2E]/40 relative z-10 transition-colors duration-500">
                       <Layout size={12} />
                       <span>Click to view detailed receipt</span>
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-tr from-text/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </button>
-                  <div className="pt-4 flex justify-center border-t border-text/5 mt-4">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-text/20">
+                  <div className="pt-4 flex justify-center border-t border-[#2A3E54] mt-4">
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/20">
                       Scroll to see inventory status
                     </p>
                   </div>
