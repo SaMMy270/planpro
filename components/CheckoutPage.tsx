@@ -36,23 +36,23 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
     };
 
     const cards = [
-        { id: 0, type: 'Mastercard', last4: '4323', color: 'bg-[#E4E4F4]', textColor: 'text-[#4A4A8F]' },
-        { id: 1, type: 'Visa', last4: '5442', color: 'bg-[#FDE7D1]', textColor: 'text-[#A67C52]' },
+        { id: 0, type: 'Mastercard', last4: '4323', color: 'bg-secondary', textColor: 'text-text' },
+        { id: 1, type: 'Visa', last4: '5442', color: 'bg-[var(--color-warm-primary)]/10', textColor: 'text-[var(--color-warm-secondary)]' },
     ];
 
     return (
-        <div className="min-h-screen bg-background pt-24 pb-20">
+        <div className="min-h-screen bg-background pt-12 sm:pt-16 md:pt-24 pb-12 sm:pb-20">
             <div className="max-w-7xl mx-auto px-4 md:px-6">
-                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 items-start">
+                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
                     {/* Left Column: Payment Details */}
-                    <div className="lg:col-span-7 bg-secondary rounded-[40px] p-8 md:p-12 border border-text/5 shadow-sm space-y-10">
+                    <div className="lg:col-span-7 bg-secondary rounded-[24px] sm:rounded-[32px] md:rounded-[40px] p-5 sm:p-8 md:p-12 border border-text/5 shadow-sm space-y-6 sm:space-y-10">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-highlight rounded-xl flex items-center justify-center text-background">
-                                    <CreditCard size={20} />
+                                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-highlight rounded-xl flex items-center justify-center text-background">
+                                    <CreditCard size={18} />
                                 </div>
-                                <h2 className="text-3xl font-bold tracking-tighter uppercase text-text">Payment details</h2>
+                                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tighter uppercase text-text">Payment details</h2>
                             </div>
                             <div className="hidden sm:flex items-center gap-2 text-primary/40">
                                 <Lock size={14} />
@@ -64,7 +64,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
                         </div>
 
                         {/* Tabs */}
-                        <div className="flex gap-8 border-b border-primary/10 pb-4">
+                        <div className="flex gap-4 sm:gap-8 border-b border-primary/10 pb-4 overflow-x-auto no-scrollbar">
                             {['Credit Card', 'Paypal', 'Other'].map((tab) => {
                                 const id = tab.toLowerCase().split(' ')[0] as any;
                                 const isActive = paymentMethod === id;
@@ -86,9 +86,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
                             })}
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 sm:gap-10">
                             {/* Card Selection */}
-                            <div className="md:col-span-5 space-y-4">
+                            <div className="sm:col-span-5 space-y-4">
                                 {cards.map((card, idx) => (
                                     <button
                                         key={card.id}
@@ -125,7 +125,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
                             </div>
 
                             {/* Form */}
-                             <div className="md:col-span-7 space-y-6">
+                             <div className="sm:col-span-7 space-y-6">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-bold uppercase tracking-widest text-primary/30">Credit card</label>
                                     <div className="relative">
@@ -197,19 +197,19 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
 
                     {/* Right Column: Order Summary */}
                     <div className="lg:col-span-5 space-y-8 w-full">
-                        <div className="bg-background rounded-[40px] p-8 md:p-10 border border-text/5 space-y-8">
-                            <h3 className="text-3xl font-bold tracking-tighter uppercase text-text">Order summary</h3>
+                        <div className="bg-background rounded-[24px] sm:rounded-[32px] md:rounded-[40px] p-5 sm:p-8 md:p-10 border border-text/5 space-y-6 sm:space-y-8">
+                            <h3 className="text-2xl sm:text-3xl font-bold tracking-tighter uppercase text-text">Order summary</h3>
 
                             {/* Stepper */}
                             <div className="flex items-center justify-between px-2">
                                 {[
-                                    { icon: Truck, label: 'Shipping', step: 1, color: 'bg-[#E4E4F4]' },
+                                    { icon: Truck, label: 'Shipping', step: 1, color: 'bg-secondary' },
                                     { icon: CreditCard, label: 'Payment', step: 2, color: 'bg-primary' },
-                                    { icon: ClipboardCheck, label: 'Review', step: 3, color: 'bg-[#C1EED0]' },
+                                    { icon: ClipboardCheck, label: 'Review', step: 3, color: 'bg-[var(--color-warm-tertiary)]/20' },
                                 ].map((s) => (
                                     <div key={s.step} className="flex flex-col items-center gap-2">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.step === 2 ? s.color : 'bg-background'} shadow-sm`}>
-                                            <s.icon size={18} className={s.step === 2 ? 'text-background' : 'text-primary/20'} />
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.step === 2 ? 'bg-primary' : 'bg-background'} shadow-sm`}>
+                                            <s.icon size={18} className={s.step === 2 ? 'text-white' : 'text-primary/20'} />
                                         </div>
                                         <div className="text-center">
                                             <p className="text-[8px] font-bold text-primary/20 uppercase tracking-tighter">Step {s.step}</p>
@@ -272,7 +272,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, onBack, onConfirm }) 
                             <div className="pt-8 border-t border-text/20 flex items-end justify-between">
                                 <div>
                                     <p className="text-[10px] font-bold text-text/30 uppercase tracking-widest">Total Amount:</p>
-                                    <h4 className="text-4xl font-bold tracking-tighter text-highlight">₹{total}</h4>
+                                    <h4 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tighter text-highlight">₹{total}</h4>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-[8px] font-bold text-primary/20 uppercase tracking-widest">Including taxes</p>

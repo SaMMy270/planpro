@@ -73,7 +73,7 @@ const ARPreviewModal: React.FC<ARPreviewModalProps> = ({
   const arUrl = `${window.location.protocol}//${window.location.host}/ar?id=${product.id}`;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 md:p-12">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-8 md:p-14 lg:p-20">
       {/* Backdrop */}
       <div
         className="absolute inset-0 backdrop-blur-md"
@@ -83,7 +83,7 @@ const ARPreviewModal: React.FC<ARPreviewModalProps> = ({
 
       {/* Modal */}
       <div
-        className="relative w-full h-full max-w-6xl max-h-[850px] rounded-[40px] md:rounded-[56px] overflow-hidden shadow-2xl flex flex-col md:flex-row gpu-accelerated"
+        className="relative w-[92%] max-w-5xl h-auto max-h-[85vh] rounded-[40px] md:rounded-[56px] overflow-hidden shadow-2xl flex flex-col md:flex-row gpu-accelerated"
         style={{
           background: 'var(--background)',
           border: '1px solid rgba(193,200,228,0.08)',

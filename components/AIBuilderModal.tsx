@@ -83,9 +83,9 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-      <div className="relative bg-background w-full max-w-5xl h-[85vh] rounded-[40px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-8 duration-500 flex flex-col md:flex-row border border-text/5">
+      <div className="relative bg-background w-[95%] max-w-5xl h-auto max-h-[85vh] rounded-[40px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-8 duration-500 flex flex-col md:flex-row border border-text/5">
 
         {/* Left Panel: Preview / Viewport */}
         <div className="flex-1 bg-background/50 flex items-center justify-center relative overflow-hidden group">

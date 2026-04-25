@@ -3,6 +3,7 @@ import { toFeetInches, toMeters, formatArea } from '../../services/UnitUtils';
 import { calculateRoomArea } from './RoomMath';
 import { RoomData, RoomOpening } from '../../types';
 import DesignerRoom from './DesignerRoom';
+import { DoorOpen, Square, X as CloseIcon, LayoutIcon, Plus } from 'lucide-react';
 import './customized.css';
 
 interface DimensionSetupProps {
@@ -59,8 +60,8 @@ export function DimensionSetup({ data, onUpdate, onNext, onBack }: DimensionSetu
                 <div className="setup-layout">
                     <div className="inputs-section">
                         <div className="unit-toggle p-1 bg-background/50 backdrop-blur-md rounded-2xl border border-text/10">
-                            <button className={useMetric ? 'active bg-primary text-background shadow-lg' : 'text-text/30'} onClick={() => setUseMetric(true)}>Metric (m)</button>
-                            <button className={!useMetric ? 'active bg-primary text-background shadow-lg' : 'text-text/30'} onClick={() => setUseMetric(false)}>Imperial (ft/in)</button>
+                            <button className={useMetric ? 'active' : 'inactive'} onClick={() => setUseMetric(true)}>Metric (m)</button>
+                            <button className={!useMetric ? 'active' : 'inactive'} onClick={() => setUseMetric(false)}>Imperial (ft/in)</button>
                         </div>
 
                         <div className="inputs-grid">
@@ -274,10 +275,10 @@ function ShapePreview({ shape, dims, activeWall }: { shape: string, dims: any, a
         <svg viewBox="0 0 100 100" className="shape-svg">
             <polygon
                 points={pts.map(p => `${p.x},${p.y}`).join(' ')}
-                fill="#213a56"
-                stroke="#cdaa80"
+                fill="var(--primary)"
+                stroke="var(--primary)"
                 strokeWidth="1"
-                fillOpacity="0.5"
+                fillOpacity="0.1"
             />
             {pts.map((p, i) => {
                 const nextP = pts[(i + 1) % pts.length];
@@ -286,7 +287,7 @@ function ShapePreview({ shape, dims, activeWall }: { shape: string, dims: any, a
                     <line
                         key={i}
                         x1={p.x} y1={p.y} x2={nextP.x} y2={nextP.y}
-                        stroke={isHighlit ? "#cdaa80" : "rgba(255,255,255,0.15)"}
+                        stroke={isHighlit ? "var(--primary)" : "var(--border-light)"}
                         strokeWidth={isHighlit ? "3" : "1.5"}
                     />
                 );
@@ -335,24 +336,53 @@ export function OpeningsSetup({ data, onUpdate, onNext, onBack }: OpeningsSetupP
     };
 
     const renderOpeningsList = () => (
-        <>
-            <h3>Adjust Positions</h3>
-            {(!openings || openings.length === 0) && <p className="hint-text">No openings placed yet.</p>}
-            {(openings || []).map(o => (
-                <div key={o.id} className="offset-control">
-                    <div className="offset-label">
-                        <span>{o.type === 'WINDOW' ? '🪟 WIN' : '🚪 DOOR'} (W{o.wallIndex + 1})</span>
-                        <button className="offset-remove-btn" onClick={() => removeOpening(o.id || '')}>×</button>
-                    </div>
-                    <input
-                        type="range" min="0.1" max="0.9" step="0.01"
-                        value={o.offset}
-                        className="offset-slider"
-                        onChange={(e) => updateOffset(o.id || '', e.target.value)}
-                    />
+        <div className="placed-list-container">
+            <div className="flex items-center gap-2 mb-4">
+                <LayoutIcon size={14} className="text-primary/40" />
+                <h3 className="m-0">Adjust Positions</h3>
+            </div>
+            
+            {(!openings || openings.length === 0) && (
+                <div className="empty-state p-8 text-center bg-background/30 rounded-[32px] border border-dashed border-text/10">
+                    <Plus size={24} className="mx-auto mb-3 text-text/10" />
+                    <p className="hint-text m-0">No openings placed yet. Click on the room walls to add doors or windows.</p>
                 </div>
-            ))}
-        </>
+            )}
+            
+            <div className="space-y-3">
+                {(openings || []).map(o => (
+                    <div key={o.id} className="offset-control group">
+                        <div className="offset-label">
+                            <div className="flex items-center gap-2.5">
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${o.type === 'DOOR' ? 'bg-primary/10 text-primary' : 'bg-accent/10 text-accent'}`}>
+                                    {o.type === 'WINDOW' ? <Square size={14} /> : <DoorOpen size={14} />}
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-text/90">
+                                        {o.type}
+                                    </span>
+                                    <span className="text-[9px] font-bold text-text/30">Wall W{o.wallIndex + 1}</span>
+                                </div>
+                            </div>
+                            <button 
+                                className="offset-remove-btn opacity-0 group-hover:opacity-100 transition-opacity" 
+                                onClick={() => removeOpening(o.id || '')}
+                            >
+                                <CloseIcon size={14} />
+                            </button>
+                        </div>
+                        <div className="relative mt-2">
+                            <input
+                                type="range" min="0.1" max="0.9" step="0.01"
+                                value={o.offset}
+                                className="offset-slider"
+                                onChange={(e) => updateOffset(o.id || '', e.target.value)}
+                            />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 
     return (
@@ -370,13 +400,13 @@ export function OpeningsSetup({ data, onUpdate, onNext, onBack }: OpeningsSetupP
                                 className={`tool-btn ${selectedType === 'DOOR' ? 'active-door' : ''}`}
                                 onClick={() => setSelectedType('DOOR')}
                             >
-                                🚪 Add Door
+                                <DoorOpen size={16} /> <span>Add Door</span>
                             </button>
                             <button
                                 className={`tool-btn ${selectedType === 'WINDOW' ? 'active-win' : ''}`}
                                 onClick={() => setSelectedType('WINDOW')}
                             >
-                                🪟 Add Window
+                                <Square size={16} /> <span>Add Window</span>
                             </button>
                         </div>
                         <div className="placed-list openings-scroll-list desktop-only-list">

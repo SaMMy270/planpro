@@ -27,16 +27,16 @@ const CartView: React.FC<CartViewProps> = ({
     if (cart.length === 0) {
         return (
             <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center space-y-8">
-                <div className="w-24 h-24 bg-[#1A2E42] border border-[#2A3E54] rounded-full flex items-center justify-center animate-pulse">
+                <div className="w-24 h-24 bg-[var(--card-bg)] border border-[var(--border-light)] rounded-full flex items-center justify-center animate-pulse">
                     <ShoppingBag size={40} className="text-primary/20" />
                 </div>
                 <div className="space-y-4">
                     <h2 className="text-3xl md:text-5xl font-bold tracking-tighter uppercase text-primary">Your collection is empty</h2>
-                    <p className="text-white/40 text-sm max-w-xs mx-auto">Build your perfect space by adding pieces to your collection.</p>
+                    <p className="text-[var(--text-muted)] text-sm max-w-xs mx-auto">Build your perfect space by adding pieces to your collection.</p>
                 </div>
                 <button
                     onClick={onContinueShopping}
-                    className="px-10 py-5 bg-primary text-[#0F1B2E] rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-xl shadow-primary/20 flex items-center gap-2"
+                    className="px-10 py-5 bg-primary text-[var(--background)] rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-xl shadow-primary/20 flex items-center gap-2"
                 >
                     Start Exploring <ArrowRight size={16} />
                 </button>
@@ -49,8 +49,8 @@ const CartView: React.FC<CartViewProps> = ({
             <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12">
                 {/* Cart Items List */}
                 <div className="lg:col-span-8 space-y-8">
-                    <div className="flex items-center justify-between border-b border-primary/10 pb-6">
-                        <h2 className="text-3xl font-bold tracking-tighter uppercase text-primary">Your Collection</h2>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-primary/10 pb-4 sm:pb-6 gap-2">
+                        <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter uppercase text-primary">Your Collection</h2>
                         <span className="text-xs font-bold text-primary/40 uppercase tracking-widest">{cart.length} Items</span>
                     </div>
 
@@ -63,9 +63,9 @@ const CartView: React.FC<CartViewProps> = ({
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
-                                    className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-[#1A2E42] rounded-[32px] border border-[#2A3E54] hover:shadow-primary/5 hover:-translate-y-1 transition-all group"
+                                    className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-[var(--card-bg)] rounded-[32px] border border-[var(--border-light)] hover:shadow-primary/5 hover:-translate-y-1 transition-all group"
                                 >
-                                    <div className="w-full sm:w-32 aspect-square rounded-2xl overflow-hidden bg-[#0F1B2E]">
+                                    <div className="w-full sm:w-32 aspect-square rounded-2xl overflow-hidden bg-[var(--background)]">
                                         <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                     </div>
 
@@ -120,20 +120,20 @@ const CartView: React.FC<CartViewProps> = ({
 
                 {/* Summary Sidebar */}
                 <div className="lg:col-span-4">
-                    <div className="bg-[#1A2E42] rounded-[40px] p-8 md:p-10 border border-[#2A3E54] shadow-2xl sticky top-32 space-y-8">
-                        <h3 className="text-2xl font-bold tracking-tighter uppercase text-white">Summary</h3>
+                    <div className="bg-[var(--card-bg)] rounded-[24px] sm:rounded-[32px] lg:rounded-[40px] p-6 sm:p-8 md:p-10 border border-[var(--border-light)] shadow-2xl sticky top-24 lg:top-32 space-y-6 sm:space-y-8">
+                        <h3 className="text-xl sm:text-2xl font-bold tracking-tighter uppercase text-[var(--text)]">Summary</h3>
 
                         <div className="space-y-4">
                             <div className="flex justify-between text-sm">
-                                <span className="text-white/40 font-bold uppercase tracking-widest">Subtotal</span>
-                                <span className="font-bold text-white">₹{subtotal}</span>
+                                <span className="text-[var(--text-muted)] font-bold uppercase tracking-widest">Subtotal</span>
+                                <span className="font-bold text-[var(--text)]">₹{subtotal}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                                <span className="text-white/40 font-bold uppercase tracking-widest">Shipping</span>
-                                <span className="font-bold text-white">{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
+                                <span className="text-[var(--text-muted)] font-bold uppercase tracking-widest">Shipping</span>
+                                <span className="font-bold text-[var(--text)]">{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
                             </div>
-                            <div className="pt-4 border-t border-white/10 flex justify-between items-end">
-                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">Total</span>
+                            <div className="pt-4 border-t border-[var(--border-light)] flex justify-between items-end">
+                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)]">Total</span>
                                 <span className="text-4xl font-bold tracking-tighter text-primary">₹{total}</span>
                             </div>
                         </div>
@@ -141,7 +141,7 @@ const CartView: React.FC<CartViewProps> = ({
                         <div className="space-y-4">
                             <button
                                 onClick={onCheckout}
-                                className="w-full py-5 bg-primary text-[#0F1B2E] rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
+                                className="w-full py-5 bg-primary text-[var(--background)] rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
                             >
                                 Proceed to Checkout <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </button>
@@ -150,9 +150,9 @@ const CartView: React.FC<CartViewProps> = ({
                             </p>
                         </div>
 
-                        <div className="bg-[#0F1B2E] p-6 rounded-3xl space-y-3 border border-[#2A3E54]">
+                        <div className="bg-[var(--background)] p-6 rounded-3xl space-y-3 border border-[var(--border-light)]">
                             <h5 className="text-[10px] font-bold uppercase tracking-widest text-primary">PlanPro Membership</h5>
-                            <p className="text-[11px] text-white/40 leading-relaxed">Members get free shipping on all orders and early access to new collections.</p>
+                            <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">Members get free shipping on all orders and early access to new collections.</p>
                             <button className="text-[10px] font-bold uppercase tracking-widest underline underline-offset-4 text-primary">Learn More</button>
                         </div>
                     </div>

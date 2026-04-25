@@ -168,11 +168,11 @@ import cs3_model from '../models/casual chair models/cs3.glb';
 import cs4_model from '../models/casual chair models/cs4.glb';
 import cs5_model from '../models/casual chair models/cs5.glb';
 
-import ch1_model from '../models/office chair models/office chair models/ch1.glb';
-import ch2_model from '../models/office chair models/office chair models/ch2.glb';
-import ch3_model from '../models/office chair models/office chair models/ch3.glb';
-import ch4_model from '../models/office chair models/office chair models/ch4.glb';
-import ch5_model from '../models/office chair models/office chair models/ch5.glb';
+import ch1_model from '../models/office chair models/ch1.glb';
+import ch2_model from '../models/office chair models/ch2.glb';
+import ch3_model from '../models/office chair models/ch3.glb';
+import ch4_model from '../models/office chair models/ch4.glb';
+import ch5_model from '../models/office chair models/ch5.glb';
 
 import dc1_model from '../models/dinning chair models/dc1.glb';
 import dc2_model from '../models/dinning chair models/dc2.glb';
@@ -1162,7 +1162,7 @@ export const PRODUCTS: Product[] = [
     image: g1,
     images: [g1],
     description: 'High-performance gaming chair with premium leather and lumbar support.',
-    dimensions: '94.7 cm | 195.7 cm | 105.5 cm',
+    dimensions: '66 cm | 120 cm | 52 cm',
     material: 'PU Leather, Steel',
     rating: 4.8,
     reviews: [{ user: 'Kabir', rating: 4.1, comment: 'Good value for money and sturdy build.' }, { user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.' }],
@@ -1177,7 +1177,7 @@ export const PRODUCTS: Product[] = [
     image: g2,
     images: [g2],
     description: 'Racing-style gaming chair with vibrant color accents and 4D armrests.',
-    dimensions: '110.2 cm | 195.7 cm | 114.7 cm',
+    dimensions: '77 cm | 130 cm | 62 cm',
     material: 'Breathable Mesh, ABS',
     rating: 4.6,
     reviews: [{ user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }, { user: 'Vivaan', rating: 4.1, comment: 'Exactly what I was looking for.' }],

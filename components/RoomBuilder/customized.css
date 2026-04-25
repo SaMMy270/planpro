@@ -13,26 +13,28 @@
    ============================================ */
 
 .setup-container {
-    padding: 0.5rem 1rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    font-family: 'Outfit', serif;
-    height: calc(100vh - 72px);
+    padding: 0;
+    width: 100vw;
+    margin: 0;
+    font-family: var(--font-body);
+    height: calc(100vh - 70px);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .setup-card {
     background: var(--secondary);
-    border-radius: 28px;
-    padding: 1.5rem 2rem;
-    box-shadow: 0 4px 32px 0 rgba(0,0,0,0.4);
+    border-radius: 32px;
+    padding: 4rem 5rem;
+    box-shadow: 0 10px 50px 0 rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.05);
-    max-height: 85vh;
+    height: 85vh;
     display: flex;
     flex-direction: column;
-    width: 1000px;
+    width: 95vw;
+    max-width: 1800px;
 }
 
 .setup-header {
@@ -40,9 +42,9 @@
 }
 
 .setup-card h2 {
-    font-family: 'Outfit', serif;
-    font-size: 1.75rem;
-    margin-bottom: 0.75rem;
+    font-family: var(--font-heading-alt);
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
     color: var(--text);
 }
 
@@ -50,8 +52,8 @@
 
 .setup-layout {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
     flex: 1;
     overflow: hidden;
     min-height: 0;
@@ -60,16 +62,16 @@
 .inputs-section {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 2rem;
     overflow-y: auto;
-    padding-right: 1rem;
-    max-height: 100%;
+    padding-right: 2rem;
+    height: 100%;
 }
 
 .inputs-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem 1.25rem;
+    gap: 1.5rem 2.5rem;
 }
 
 /* --- Unit Toggle --- */
@@ -96,8 +98,9 @@
     cursor: pointer;
     border: none;
     background: transparent;
-    color: #666;
-    font-family: 'Outfit', serif;
+    color: var(--text-secondary);
+    font-family: var(--font-heading-alt);
+    opacity: 0.6;
 }
 
 .unit-toggle button:hover {
@@ -109,7 +112,12 @@
 .unit-toggle button.active {
     background: var(--primary);
     color: var(--background);
-    box-shadow: 0 4px 15px rgba(117, 135, 196, 0.4);
+    box-shadow: 0 4px 15px rgba(139, 86, 51, 0.3);
+}
+
+.unit-toggle button.inactive {
+    color: var(--text);
+    opacity: 0.5;
 }
 
 .unit-toggle button.active:hover {
@@ -127,12 +135,14 @@
 }
 
 .input-group label {
-    font-size: 0.68rem;
+    font-size: 0.85rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: rgba(255,255,255,0.3);
-    font-family: 'Outfit', serif;
+    padding-bottom: 0.25rem;
+    color: var(--text);
+    opacity: 0.7;
+    font-family: var(--font-heading-alt);
 }
 
 .input-with-unit {
@@ -147,16 +157,16 @@
 
 .unit-wrapper input {
     width: 100%;
-    padding: 0.6rem 2rem 0.6rem 0.75rem;
-    font-size: 1rem;
+    padding: 1rem 3rem 1rem 1.25rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1rem;
     background: var(--background);
     color: var(--text);
     transition: all 0.25s;
     box-sizing: border-box;
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
 }
 
 .unit-wrapper input:focus {
@@ -168,14 +178,15 @@
 
 .unit-label {
     position: absolute;
-    right: 0.75rem;
+    right: 1.25rem;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.68rem;
+    font-size: 0.85rem;
     font-weight: 900;
-    color: rgba(255,255,255,0.2);
+    color: var(--primary);
+    opacity: 0.6;
     pointer-events: none;
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
 }
 
 .imperial-inputs {
@@ -196,7 +207,7 @@
 }
 
 .btn-primary {
-    background-color: var(--highlight);
+    background-color: var(--primary);
     color: var(--background);
     padding: 0.7rem 1.5rem;
     border-radius: 100px;
@@ -207,7 +218,7 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     cursor: pointer;
     border: none;
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
 }
 
 .btn-primary:hover {
@@ -228,10 +239,10 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     font-size: 0.875rem;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid var(--border-light);
     transition: all 0.2s;
     cursor: pointer;
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
 }
 
 .btn-secondary:hover {
@@ -251,12 +262,13 @@
     position: relative;
     background: var(--background);
     border-radius: 32px;
-    padding: 1rem;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     border: 1px solid rgba(255,255,255,0.03);
+    height: 100%;
 }
 
 .carpet-area-badge {
@@ -275,16 +287,17 @@
 }
 
 .carpet-area-badge .label {
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
     font-size: 0.6rem;
     font-weight: 950;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: rgba(255,255,255,0.3);
+    color: var(--text);
+    opacity: 0.5;
 }
 
 .carpet-area-badge .value {
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
     font-size: 1rem;
     font-weight: 700;
     color: var(--text);
@@ -302,8 +315,8 @@
 
 .openings-interface {
     display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 2rem;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 4rem;
     flex: 1;
     overflow: hidden;
     min-height: 0;
@@ -340,48 +353,56 @@
 }
 
 .tool-btn {
-    padding: 0.7rem 1rem;
-    border-radius: 12px;
-    background: var(--background);
-    border: 1px solid rgba(255,255,255,0.1);
-    font-weight: 700;
-    font-size: 0.85rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: 16px;
+    background: var(--secondary);
+    border: 1px solid rgba(193, 200, 228, 0.08);
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--text);
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-secondary);
     cursor: pointer;
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .tool-btn:hover {
-    background: var(--secondary);
-    border-color: rgba(255,255,255,0.2);
+    background: var(--background);
+    border-color: var(--primary);
+    color: var(--text);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-}
-
-.tool-btn:active {
-    transform: translateY(0) scale(0.97);
-    box-shadow: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
 .active-door,
 .active-win {
-    border-color: transparent;
-    background-color: var(--highlight);
-    color: var(--background);
-    box-shadow: 0 4px 15px rgba(248, 232, 193, 0.4);
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: var(--background) !important;
+    box-shadow: 0 4px 20px rgba(139, 86, 51, 0.4);
 }
 
 .active-door:hover,
 .active-win:hover {
-    background-color: var(--highlight);
-    opacity: 1;
-    box-shadow: 0 10px 25px rgba(248, 232, 193, 0.5);
+    background-color: var(--primary);
     transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(139, 86, 51, 0.5);
+    opacity: 1;
+}
+
+.tool-btn span {
+    opacity: 0.8;
+}
+
+.active-door span,
+.active-win span {
+    opacity: 1;
 }
 
 .placed-list h3 {
@@ -389,74 +410,98 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: rgba(255,255,255,0.35);
+    color: var(--text);
+    opacity: 0.4;
     margin: 0 0 0.5rem;
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
 }
 
 .offset-control {
-    background: var(--background);
-    padding: 0.75rem 1rem;
-    border-radius: 1rem;
-    margin-bottom: 0.5rem;
-    border: 1px solid rgba(255,255,255,0.05);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    background: var(--secondary);
+    padding: 1.25rem;
+    border-radius: 24px;
+    margin-bottom: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     color: var(--text);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .offset-control:hover {
-    border-color: rgba(0,0,0,0.12);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
 }
 
 .offset-label {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-family: 'Outfit', serif;
+    margin-bottom: 1rem;
 }
 
 .offset-remove-btn {
-    background: none;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
     border: none;
     cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #ef4444;
-    padding: 0.2rem 0.4rem;
-    line-height: 1;
-    border-radius: 6px;
-    transition: all 0.15s;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: all 0.2s;
 }
 
 .offset-remove-btn:hover {
-    background: #fef2f2;
-    transform: scale(1.15);
+    background: #ef4444;
+    color: white;
+    transform: scale(1.1) rotate(90deg);
 }
 
 .offset-slider {
+    -webkit-appearance: none;
     width: 100%;
-    accent-color: var(--highlight);
+    height: 6px;
+    background: var(--background);
+    border-radius: 10px;
+    outline: none;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.offset-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 4px solid var(--secondary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: all 0.2s;
+}
+
+.offset-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    background: var(--highlight);
 }
 
 .hint-text {
     font-size: 0.72rem;
-    color: rgba(255,255,255,0.3);
+    color: var(--text);
+    opacity: 0.5;
     font-style: italic;
     margin: 0.25rem 0;
-    font-family: 'Outfit', serif;
+    font-family: var(--font-heading-alt);
 }
 
 /* 3D Canvas container */
 .map-container {
     background: #111;
     border-radius: 20px;
-    height: 100%;
+    flex: 1;
     min-height: 300px;
     position: relative;
     width: 100%;

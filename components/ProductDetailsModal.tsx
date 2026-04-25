@@ -55,23 +55,23 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 lg:p-12 overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 md:p-6 lg:p-12 overflow-hidden">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose} />
 
-      <div className="relative bg-background w-full max-w-7xl h-full md:h-auto md:max-h-[90vh] md:rounded-[40px] shadow-2xl overflow-y-auto custom-scrollbar flex flex-col animate-in slide-in-from-bottom-12 duration-500">
+      <div className="relative bg-background w-[92%] max-w-5xl h-[90vh] sm:h-auto sm:max-h-[85vh] sm:rounded-[32px] md:rounded-[48px] shadow-2xl overflow-y-auto custom-scrollbar flex flex-col animate-in slide-in-from-bottom-12 duration-500">
 
         {/* Header/Close */}
         <div className="sticky top-0 right-0 p-6 flex justify-end z-50 pointer-events-none">
           <button
             onClick={onClose}
-            className="p-3 rounded-full bg-[#1A2E42] shadow-xl hover:bg-primary hover:text-[#0F1B2E] transition-all pointer-events-auto active:scale-90 border border-[#2A3E54]"
+            className="p-3 rounded-full bg-[var(--card-bg)] shadow-xl hover:bg-primary hover:text-[var(--background)] transition-all pointer-events-auto active:scale-90 border border-[var(--border-light)]"
           >
             <X size={24} />
           </button>
         </div>
 
-        <div className="px-6 md:px-16 pb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="px-4 sm:px-6 md:px-12 pb-8 sm:pb-10 md:pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-12">
 
             {/* Left: Gallery */}
             <div className="space-y-6 animate-image-reveal">
@@ -148,9 +148,9 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                     </span>
                   )}
                 </div>
-                <h2 className="text-2xl md:text-5xl font-serif leading-tight text-white">{product.name}</h2>
+                <h2 className="text-xl sm:text-2xl md:text-5xl font-serif leading-tight text-primary">{product.name}</h2>
                 <div className="flex items-center gap-6 mt-4">
-                  <div className="flex items-center gap-1 text-highlight">
+                  <div className="flex items-center gap-1 text-[var(--color-warm-secondary)]">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={16} fill={i < Math.round(product.rating || 0) ? "currentColor" : "none"} />
                     ))}
@@ -179,14 +179,14 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4">
-                  <button onClick={() => onAddToCart(product.id)} className="flex-1 min-w-[140px] py-4 bg-primary text-[#0F1B2E] rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-[#00D9FF] hover:translate-y-[-2px] transition-all active:scale-95 shadow-xl shadow-primary/20">
+                <div className="flex flex-wrap gap-3 sm:gap-4">
+                  <button onClick={() => onAddToCart(product.id)} className="flex-1 min-w-[120px] sm:min-w-[140px] py-3 sm:py-4 bg-primary text-[var(--background)] rounded-2xl font-bold uppercase tracking-widest text-[10px] sm:text-[11px] flex items-center justify-center gap-2 sm:gap-3 hover:brightness-110 hover:translate-y-[-2px] transition-all active:scale-95 shadow-xl shadow-primary/20">
                     Add To Cart
                   </button>
-                  <button onClick={() => onAR(product)} className={`flex-1 min-w-[140px] py-4 border-2 border-primary text-primary rounded-2xl font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-primary hover:text-[#0F1B2E] transition-all active:scale-95 shadow-lg group ${product.arEnabled ? 'btn-ar-special' : ''}`}>
+                  <button onClick={() => onAR(product)} className={`flex-1 min-w-[120px] sm:min-w-[140px] py-3 sm:py-4 border-2 border-primary text-primary rounded-2xl font-bold uppercase tracking-widest text-[10px] sm:text-[11px] flex items-center justify-center gap-2 sm:gap-3 hover:bg-primary hover:text-[var(--background)] transition-all active:scale-95 shadow-lg group ${product.arEnabled ? 'btn-ar-special' : ''}`}>
                     <Box size={18} className="group-hover:rotate-12 transition-transform" /> AR PREVIEW
                   </button>
-                  <button onClick={() => onToggleWishlist(product.id)} className={`p-4 rounded-2xl border transition-all active:scale-90 ${isWishlisted ? 'bg-red-500/10 border-red-500/50 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.2)]' : 'bg-[#1A2E42] border-[#2A3E54] hover:border-primary text-white/40'}`}>
+                  <button onClick={() => onToggleWishlist(product.id)} className={`p-4 rounded-2xl border transition-all active:scale-90 ${isWishlisted ? 'bg-red-500/10 border-red-500/50 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.2)]' : 'bg-[var(--card-bg)] border-[var(--border-light)] hover:border-primary text-[var(--text-muted)]'}`}>
                     <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} />
                   </button>
                 </div>
@@ -205,12 +205,12 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
 
           {/* Tabs */}
           <div className="mt-24 border-t border-primary/10">
-            <div className="flex justify-center border-b border-primary/10">
+            <div className="flex flex-wrap justify-center border-b border-primary/10">
               {(['description', 'additional', 'review'] as Tab[]).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-12 py-6 text-xs font-bold uppercase tracking-widest transition-all relative ${activeTab === tab ? 'text-primary' : 'text-primary/30 hover:text-primary/60'}`}
+                  className={`px-4 sm:px-8 md:px-12 py-4 sm:py-6 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all relative ${activeTab === tab ? 'text-primary' : 'text-primary/30 hover:text-primary/60'}`}
                 >
                   {tab === 'additional' ? 'Additional Information' : tab}
                   {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary animate-in fade-in" />}
@@ -299,13 +299,13 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
         </div>
 
         {/* Floating AI Price Comparison Button */}
-        <div className={`fixed bottom-12 right-12 z-[110] transition-all duration-1000 delay-500 ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+        <div className={`fixed bottom-6 right-4 sm:bottom-12 sm:right-12 z-[110] transition-all duration-1000 delay-500 ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
           <button
             onClick={() => onCompare(product)}
-            className="flex items-center gap-8 bg-[#1A2E42] pl-8 pr-2 py-2 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.3)] hover:shadow-primary/20 hover:-translate-y-1 transition-all group active:scale-95 border border-[#2A3E54]"
+            className="flex items-center gap-3 sm:gap-8 bg-primary pl-4 sm:pl-8 pr-2 py-2 rounded-full shadow-[0_15px_40px_rgba(139,86,51,0.3)] hover:shadow-primary/40 hover:-translate-y-1 transition-all group active:scale-95 border border-primary/20"
           >
-            <span className="text-sm font-bold tracking-tight text-white">AI Price Comparison</span>
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-[#0F1B2E] transition-transform group-hover:rotate-12">
+            <span className="text-xs sm:text-sm font-bold tracking-tight text-[var(--background)]">AI Price Comparison</span>
+            <div className="w-10 h-10 rounded-full bg-[var(--background)] flex items-center justify-center text-primary transition-transform group-hover:rotate-12 shadow-inner">
               <Scale size={18} />
             </div>
           </button>

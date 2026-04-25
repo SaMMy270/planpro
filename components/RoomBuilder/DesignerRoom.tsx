@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, Suspense, useState, useEffect } from "react";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Grid, useTexture, Environment, ContactShadows, useGLTF } from "@react-three/drei";
+import { OrbitControls, Grid, useTexture, Environment, ContactShadows, useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { RoomData, RoomOpening, BlueprintItem, Product } from "../../types";
 import { PRODUCTS } from "../../data/mockData";
@@ -30,7 +30,7 @@ const GhostModel: React.FC<{ product: Product, position: [number, number, number
         return (
             <mesh position={position}>
                 <boxGeometry args={[1, 1, 1]} />
-                <meshStandardMaterial color={isValid ? "#3b82f6" : "#ef4444"} transparent opacity={0.3} />
+                <meshStandardMaterial color={isValid ? "#9DB496" : "#af2d2d"} transparent opacity={0.3} />
             </mesh>
         );
     }
@@ -225,7 +225,8 @@ function SceneContent({
     onWallClick,
     isPlacementMode,
     isPreviewActive = false,
-    showWalls = true
+    showWalls = true,
+    isMobile = false
 }: {
     roomData: RoomData,
     items: BlueprintItem[],
@@ -240,6 +241,7 @@ function SceneContent({
     isPlacementMode?: boolean;
     isPreviewActive?: boolean;
     showWalls?: boolean;
+    isMobile?: boolean;
 }) {
     const { camera, scene, raycaster, mouse } = useThree();
     const controlsRef = useRef<any>(null);
@@ -491,6 +493,34 @@ function SceneContent({
             {placingProduct && (
                 <>
                     <GhostModel product={placingProduct} position={mousePos} isValid={isPlacementValid} />
+                    
+                    {/* Measurement Lines - Ghost Guides (Mobile Only) */}
+                    {isMobile && (
+                        <group>
+                            {/* Calculate distances to walls in real-time */}
+                            {wallData.map((wall, i) => {
+                                return (
+                                    <group key={i}>
+                                        <line>
+                                            <bufferGeometry attach="geometry" setFromPoints={[
+                                                new THREE.Vector3(mousePos[0], 0.05, mousePos[2]),
+                                                new THREE.Vector3(wall.staticCenter.x, 0.05, wall.staticCenter.y)
+                                            ]} />
+                                            <lineBasicMaterial attach="material" color={isPlacementValid ? "#9DB496" : "#af2d2d"} transparent opacity={0.3} />
+                                        </line>
+                                        <Html position={[(mousePos[0] + wall.staticCenter.x) / 2, 0.1, (mousePos[2] + wall.staticCenter.y) / 2]} center>
+                                            <div className="bg-background/80 backdrop-blur-md px-2 py-1 rounded-md border border-text/5">
+                                                <span className="text-[7px] font-black tracking-tighter text-text/60">
+                                                    {(new THREE.Vector2(mousePos[0], mousePos[2]).distanceTo(wall.staticCenter)).toFixed(2)}m
+                                                </span>
+                                            </div>
+                                        </Html>
+                                    </group>
+                                );
+                            })}
+                        </group>
+                    )}
+
                     <mesh
                         rotation={[-Math.PI / 2, 0, 0]}
                         position={[0, 0, 0]}

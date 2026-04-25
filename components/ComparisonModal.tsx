@@ -36,9 +36,9 @@ const NeuralPulseLoader: React.FC<{ productImage: string }> = ({ productImage })
             key={i}
             className="neural-line h-px w-full rounded-full"
             style={{
-              background: `linear-gradient(90deg, transparent, rgba(255,184,0,${0.5 + i * 0.08}), transparent)`,
+              background: `linear-gradient(90deg, transparent, rgba(163, 123, 71,${0.5 + i * 0.08}), transparent)`,
               animationDelay: `${i * 0.3}s`,
-              boxShadow: '0 0 6px rgba(255,184,0,0.4)',
+              boxShadow: '0 0 6px rgba(163, 123, 71,0.4)',
             }}
           />
         ))}
@@ -46,7 +46,7 @@ const NeuralPulseLoader: React.FC<{ productImage: string }> = ({ productImage })
       {/* Gold scanning frame */}
       <div
         className="absolute inset-0 rounded-[28px] pointer-events-none"
-        style={{ border: '1px solid rgba(255,184,0,0.3)', boxShadow: 'inset 0 0 24px rgba(255,184,0,0.08)' }}
+        style={{ border: '1px solid rgba(163, 123, 71,0.3)', boxShadow: 'inset 0 0 24px rgba(163, 123, 71,0.08)' }}
       />
     </div>
 
@@ -124,15 +124,15 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
   }, [product]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-10 lg:p-14">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16">
       <div
         className="absolute inset-0 backdrop-blur-md transition-all duration-500"
-        style={{ background: 'rgba(10,12,16,0.7)' }}
+        style={{ background: 'rgba(139, 86, 51, 0.15)' }}
         onClick={onClose}
       />
 
       <div
-        className="relative w-full max-w-6xl h-full max-h-[85vh] rounded-[40px] overflow-hidden shadow-[0_32px_128px_-16px_rgba(0,0,0,0.5)] flex flex-col gpu-accelerated"
+        className="relative w-[95%] max-w-5xl h-full sm:max-h-[85vh] md:max-h-[80vh] sm:rounded-[32px] md:rounded-[48px] overflow-hidden shadow-[0_32px_128px_-16px_rgba(0,0,0,0.5)] flex flex-col gpu-accelerated"
         style={{
           background: 'var(--background)',
           border: '1px solid rgba(193,200,228,0.08)',
@@ -151,41 +151,40 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
         <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
           {/* Header */}
           <div
-            className="p-10 lg:p-14 pb-8"
+            className="p-5 sm:p-8 md:p-10 lg:p-14 pb-6 sm:pb-8"
             style={{
-              background: 'rgba(10,12,16,0.6)',
-              backdropFilter: 'blur(24px)',
-              borderBottom: '1px solid rgba(193,200,228,0.06)',
+              background: 'var(--background)',
+              borderBottom: '1px solid var(--border-light)',
             }}
           >
             <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-5"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mb-3 sm:mb-5"
               style={{
-                background: 'rgba(255,184,0,0.12)',
-                border: '1px solid rgba(255,184,0,0.25)',
-                color: 'var(--gold)',
+                background: 'rgba(139, 86, 51, 0.08)',
+                border: '1px solid rgba(139, 86, 51, 0.2)',
+                color: 'var(--primary)',
               }}
             >
               <Scale size={13} /> Intelligence Comparison
             </div>
-            <h3 className="text-4xl lg:text-5xl font-serif" style={{ color: 'var(--primary)' }}>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif" style={{ color: 'var(--primary)' }}>
               Price &amp; Quality Benchmark
             </h3>
-            <p className="text-base mt-3 max-w-2xl leading-relaxed" style={{ color: 'var(--secondary-text)' }}>
+            <p className="text-sm sm:text-base mt-2 sm:mt-3 max-w-2xl leading-relaxed" style={{ color: 'var(--secondary-text)' }}>
               Sophisticated market analysis comparing your{' '}
               <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{product.name}</span> with
               premium global alternatives.
             </p>
           </div>
 
-          <div className="p-10 lg:p-14 pt-8">
+          <div className="p-5 sm:p-8 md:p-10 lg:p-14 pt-6 sm:pt-8">
             {loading ? (
               <NeuralPulseLoader productImage={product.image} />
             ) : (
-              <div className="space-y-14">
+              <div className="space-y-8 sm:space-y-14">
                 {/* ── Benchmark cards — staggered spring reveal ── */}
                 {localData?.results && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                     {Object.entries(localData.results)
                       .flatMap(([site, matches]: [string, any]) =>
                         (matches as any[]).slice(0, 1).map((m: any) => ({ ...m, site }))
@@ -207,7 +206,7 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                           {/* Image */}
                           <PricingCard.Header
                             className="p-0 border-0 h-[180px] relative overflow-hidden"
-                            style={{ background: 'rgba(10,12,16,0.5)' }}
+                            style={{ background: 'var(--background)' }}
                           >
                             <img
                               src={
@@ -221,9 +220,9 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                             <div
                               className="absolute top-3 left-3 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm"
                               style={{
-                                background: 'rgba(10,12,16,0.88)',
+                                background: 'var(--background)',
                                 backdropFilter: 'blur(12px)',
-                                border: '1px solid rgba(193,200,228,0.1)',
+                                border: '1px solid var(--border-light)',
                               }}
                             >
                               <div
@@ -309,7 +308,7 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                                       style={{
                                         width: `${(m.similarity * 100).toFixed(0)}%`,
                                         background: 'linear-gradient(90deg, var(--gold), #FFA000)',
-                                        boxShadow: '0 0 8px rgba(255,184,0,0.4)',
+                                        boxShadow: '0 0 8px rgba(163, 123, 71,0.4)',
                                       }}
                                     />
                                   </div>
@@ -324,12 +323,12 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                               onClick={() => window.open(m.productUrl, '_blank')}
                               className="w-full h-11 rounded-xl font-bold text-xs gap-2 transition-all duration-300 active:scale-95"
                               style={{
-                                background: 'linear-gradient(135deg, #FFB800, #FFA000)',
-                                color: '#0A0C10',
-                                boxShadow: '0 4px 16px rgba(255,184,0,0.2)',
+                                background: 'var(--primary)',
+                                color: 'var(--background)',
+                                boxShadow: '0 4px 16px rgba(163, 123, 71,0.2)',
                               }}
                             >
-                              View Deal <ExternalLink size={13} />
+                              View Deal
                             </Button>
                           </PricingCard.Body>
                         </PricingCard.Card>
@@ -373,7 +372,6 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                           }}
                         >
                           <span>{chunk.web.title}</span>
-                          <ExternalLink size={11} className="opacity-50 group-hover:opacity-100 transition-opacity" />
                         </a>
                       );
                     })}

@@ -95,9 +95,9 @@ const WishlistComparisonModal: React.FC<WishlistComparisonModalProps> = ({ wishl
 
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#FBFBF9] w-full max-w-4xl rounded-[40px] overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in duration-300">
+      <div className="relative bg-[#FBFBF9] w-[95%] max-w-4xl rounded-[40px] overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in duration-300">
         
         {/* Header */}
         <div className="p-8 pb-4 bg-white border-b border-black/5 flex flex-col md:flex-row md:items-center justify-between gap-6">

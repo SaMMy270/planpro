@@ -16,137 +16,71 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ 
   product, onAR, onAI, onCompare, onAddToCart, onToggleWishlist, onViewDetails, isWishlisted 
 }) => {
-  const [isDepressing, setIsDepressing] = useState(false);
-
-  const handleCartClick = () => {
-    setIsDepressing(true);
-    onAddToCart(product.id);
-    setTimeout(() => setIsDepressing(false), 200);
-  };
-
   return (
     <div
-      className="group relative rounded-[32px] overflow-hidden border border-[#2A3E54] border-l-[3px] border-l-[#1EBBD7] transition-all duration-500 gpu-accelerated product-card-glow"
-      style={{
-        background: '#1A2E42',
-      }}
+      className="product-card-new group"
       onClick={() => onViewDetails(product)}
     >
-      {/* Image area */}
-      <div
-        className="relative aspect-square overflow-hidden cursor-pointer"
-        style={{ background: 'rgba(30,37,53,0.5)' }}
-        onClick={() => onViewDetails(product)}
-      >
+      <div className="card-image-new">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
         />
-
-        {/* Badges Container */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10 pointer-events-none">
+        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10 transition-transform duration-500 group-hover:translate-x-1">
           {product.arEnabled && (
-            <div className="product-badge badge-ar">
-              AR AVAILABLE
-            </div>
+            <div className="badge-new badge-ar-new text-[8px] py-1 px-3">AR AVAILABLE</div>
           )}
           {product.priceMatch && (
-            <div className="product-badge badge-price-match">
-              PRICE MATCHED
-            </div>
+            <div className="badge-new badge-match-new text-[8px] py-1 px-3">PRICE MATCHED</div>
           )}
-        </div>
-
-        {/* Wishlist — 44×44 touch target */}
-        <button
-          onClick={(e) => { e.stopPropagation(); onToggleWishlist(product.id); }}
-          className="touch-target absolute top-3 right-3 p-2.5 rounded-full shadow-lg hover:scale-110 transition-all active:scale-90 z-10"
-          style={{
-            background: 'rgba(10,12,16,0.82)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(193,200,228,0.1)',
-            minWidth: '44px',
-            minHeight: '44px',
-          }}
-        >
-          <Heart
-            size={17}
-            className={`transition-colors ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`}
-            style={{ color: isWishlisted ? undefined : 'var(--secondary-text)' }}
-          />
-        </button>
-
-        {/* Quick Actions Overlay — slides up on hover */}
-        <div
-          className="absolute inset-0 flex items-center justify-center gap-4 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-        >
-          {/* AR Preview — 44px hit target */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onAR(product); }}
-            className="w-12 h-12 rounded-full bg-primary text-[#0F1B2E] flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all group/btn"
-            title="AR Preview"
-          >
-            <Box size={20} className="group-hover/btn:rotate-12 transition-transform" />
-          </button>
-
-          {/* AI Price Comparison — 44px hit target */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onCompare(product); }}
-            className="w-12 h-12 rounded-full bg-[#9D4EDD] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all group/btn"
-            title="AI Price Comparison"
-          >
-            <Scale size={20} className="group-hover/btn:-rotate-12 transition-transform" />
-          </button>
         </div>
       </div>
 
-      {/* Card body */}
-      <div
-        className="p-5 space-y-2"
-        style={{ background: '#1A2E42' }}
-      >
-        <div
-          className="flex justify-between items-start"
-        >
-          <div className="flex-1 min-w-0 pr-2">
-            <span
-              className="text-[10px] uppercase tracking-widest font-semibold block"
-              style={{ color: '#B8D4D0' }}
-            >
-              {product.category}
-            </span>
-            <h4 className="font-bold text-lg mt-0.5 text-white group-hover:text-primary transition-colors truncate">
-              {product.name}
-            </h4>
-          </div>
-          <div className="flex flex-col items-end">
-            <span className="text-base font-bold flex-shrink-0 text-primary">
-              ₹{product.price.toLocaleString()}
-            </span>
-            {product.savings && (
-              <span className="badge-savings px-2 py-0.5 rounded text-[10px] font-bold mt-1">
-                Save {product.savings}%
-              </span>
-            )}
-          </div>
+      <div className="p-3 sm:p-5 flex flex-col flex-1 gap-1.5 sm:gap-2">
+        <div className="flex justify-between items-center">
+          <span className="card-category text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--color-warm-secondary)] opacity-80">{product.category}</span>
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleWishlist(product.id); }}
+            className={`transition-all duration-300 hover:scale-125 p-1 ${isWishlisted ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-red-400'}`}
+          >
+            <Heart size={16} className="sm:w-[18px] sm:h-[18px]" fill={isWishlisted ? "currentColor" : "none"} />
+          </button>
         </div>
 
-        <p className="text-sm line-clamp-2 leading-relaxed text-[#B8D4D0]">
-          {product.description}
-        </p>
+        <h3 className="text-sm sm:text-base font-bold text-primary line-clamp-1 group-hover:text-[var(--color-warm-secondary)] transition-colors">
+          {product.name}
+        </h3>
 
-        {/* Add to Collection — New Gold (Teal) CTA */}
-        <button
-          onClick={(e) => { e.stopPropagation(); handleCartClick(); }}
-          className="btn-add-to-collection mt-4 rounded-2xl text-sm font-bold gap-2 shadow-lg transition-all group/atc btn-gold"
-          style={{
-            minHeight: '44px',
-          }}
-        >
-          <ShoppingCart size={16} className="group-hover/atc:scale-110 transition-transform" />
-          Add to Collection
-        </button>
+        <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
+          <span className="price-current text-lg sm:text-xl font-black text-[var(--color-warm-secondary)]">₹{product.price.toLocaleString()}</span>
+          {product.savings && (
+            <>
+              <span className="text-xs sm:text-sm text-[var(--text-muted)] line-through">₹{(product.price * (1 + product.savings/100)).toLocaleString()}</span>
+              <span className="ml-auto text-[10px] sm:text-[11px] font-black text-[var(--success)] animate-pulse">↓ {product.savings}%</span>
+            </>
+          )}
+        </div>
+
+        <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4">
+          <button
+            onClick={(e) => { e.stopPropagation(); onAR(product); }}
+            className="flex-1 btn-view-ar-new gap-1 sm:gap-1.5 flex items-center justify-center animate-pulse-subtle text-[8px] sm:text-[9px] font-black tracking-widest"
+          >
+            <Box size={14} className="sm:w-3.5 sm:h-3.5" /> <span>AR</span>
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onCompare(product); }}
+            className="flex-1 bg-primary/10 text-primary border border-primary/20 rounded-xl px-1 sm:px-2 py-2 flex items-center justify-center gap-1 sm:gap-1.5 hover:bg-primary hover:text-[var(--background)] transition-all text-[8px] sm:text-[9px] font-black tracking-widest"
+          >
+            <Scale size={14} className="sm:w-3.5 sm:h-3.5" /> <span>AI</span>
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onAddToCart(product.id); }}
+            className="flex-1 btn-add-cart-new gap-1 sm:gap-1.5 flex items-center justify-center text-[8px] sm:text-[9px] font-black tracking-widest"
+          >
+            <ShoppingCart size={14} className="sm:w-3.5 sm:h-3.5" /> <span>ADD</span>
+          </button>
+        </div>
       </div>
     </div>
   );
