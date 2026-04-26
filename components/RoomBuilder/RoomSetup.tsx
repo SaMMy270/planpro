@@ -4,6 +4,7 @@ import { calculateRoomArea } from './RoomMath';
 import { RoomData, RoomOpening } from '../../types';
 import DesignerRoom from './DesignerRoom';
 import { DoorOpen, Square, X as CloseIcon, LayoutIcon, Plus } from 'lucide-react';
+import { toast } from 'sonner';
 import './customized.css';
 
 interface DimensionSetupProps {
@@ -215,7 +216,7 @@ function ShapePreview({ shape, dims, activeWall }: { shape: string, dims: any, a
     const { length: L = 6, width: W = 6, notchL = 2, notchW = 2 } = dims || {};
     const centerX = 50;
     const centerY = 50;
-    const size = 35;
+    const size = 25;
 
     const getPoints = () => {
         if (shape === 'SQUARE') {
@@ -287,8 +288,10 @@ function ShapePreview({ shape, dims, activeWall }: { shape: string, dims: any, a
                     <line
                         key={i}
                         x1={p.x} y1={p.y} x2={nextP.x} y2={nextP.y}
-                        stroke={isHighlit ? "var(--primary)" : "var(--border-light)"}
-                        strokeWidth={isHighlit ? "3" : "1.5"}
+                        stroke={isHighlit ? "var(--primary)" : "var(--text)"}
+                        strokeWidth={isHighlit ? "3" : "2"}
+                        strokeOpacity={isHighlit ? "1" : "0.4"}
+                        strokeLinecap="round"
                     />
                 );
             })}
@@ -309,7 +312,7 @@ export function OpeningsSetup({ data, onUpdate, onNext, onBack }: OpeningsSetupP
 
     const handleWallClick = (index: number) => {
         if (selectedType === 'DOOR' && (openings || []).some(o => o.type === 'DOOR')) {
-            alert("Only one door is allowed per room.");
+            toast.error("Only one door is allowed per room.");
             return;
         }
 
@@ -343,9 +346,9 @@ export function OpeningsSetup({ data, onUpdate, onNext, onBack }: OpeningsSetupP
             </div>
             
             {(!openings || openings.length === 0) && (
-                <div className="empty-state p-8 text-center bg-background/30 rounded-[32px] border border-dashed border-text/10">
-                    <Plus size={24} className="mx-auto mb-3 text-text/10" />
-                    <p className="hint-text m-0">No openings placed yet. Click on the room walls to add doors or windows.</p>
+                <div className="empty-state">
+                    <Plus size={24} />
+                    <p className="hint-text">No openings placed yet. Click on the room walls to add doors or windows.</p>
                 </div>
             )}
             
@@ -419,12 +422,7 @@ export function OpeningsSetup({ data, onUpdate, onNext, onBack }: OpeningsSetupP
                             <span className="label">Carpet Area</span>
                             <span className="value">{formatArea(calculateRoomArea(data), (data as any).units === 'METERS' ? 'METRIC' : 'IMPERIAL')}</span>
                         </div>
-                        <div className="map-container" style={{
-                            background: '#111',
-                            overflow: 'hidden',
-                            width: '100%',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-                        }}>
+                        <div className="map-container">
                             <DesignerRoom
                                 roomData={data}
                                 items={[]}

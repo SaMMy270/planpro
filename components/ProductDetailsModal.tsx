@@ -58,7 +58,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 md:p-6 lg:p-12 overflow-hidden">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose} />
 
-      <div className="relative bg-background w-[92%] max-w-5xl h-[90vh] sm:h-auto sm:max-h-[85vh] sm:rounded-[32px] md:rounded-[48px] shadow-2xl overflow-y-auto custom-scrollbar flex flex-col animate-in slide-in-from-bottom-12 duration-500">
+      <div className="relative bg-background w-[80%] mx-w-5xl h-[90vh] sm:h-auto sm:max-h-[85vh] sm:rounded-[32px] md:rounded-[48px] shadow-2xl overflow-y-auto custom-scrollbar flex flex-col animate-in slide-in-from-bottom-12 duration-500">
 
         {/* Header/Close */}
         <div className="sticky top-0 right-0 p-6 flex justify-end z-50 pointer-events-none">
@@ -82,7 +82,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                       key={i}
                       className="absolute inset-0 w-full h-full transition-transform duration-700 cubic-bezier(0.22, 1, 0.36, 1)"
                       style={{
-                        transform: `translateX(${(i - selectedImg) * 100}%)`,
+                        transform: `translateX(${(i - selectedImg) * 90}%)`,
                         visibility: Math.abs(i - selectedImg) > 1 ? 'hidden' : 'visible'
                       }}
                     >

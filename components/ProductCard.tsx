@@ -61,24 +61,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
 
-        <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4">
-          <button
-            onClick={(e) => { e.stopPropagation(); onAR(product); }}
-            className="flex-1 btn-view-ar-new gap-1 sm:gap-1.5 flex items-center justify-center animate-pulse-subtle text-[8px] sm:text-[9px] font-black tracking-widest"
-          >
-            <Box size={14} className="sm:w-3.5 sm:h-3.5" /> <span>AR</span>
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onCompare(product); }}
-            className="flex-1 bg-primary/10 text-primary border border-primary/20 rounded-xl px-1 sm:px-2 py-2 flex items-center justify-center gap-1 sm:gap-1.5 hover:bg-primary hover:text-[var(--background)] transition-all text-[8px] sm:text-[9px] font-black tracking-widest"
-          >
-            <Scale size={14} className="sm:w-3.5 sm:h-3.5" /> <span>AI</span>
-          </button>
+        <div className="flex flex-col gap-2.5 mt-3 sm:mt-4">
+          <div className="flex gap-2 sm:gap-2.5">
+            <button
+              onClick={(e) => { e.stopPropagation(); onAR(product); }}
+              className="flex-1 h-11 bg-[var(--primary)] text-white rounded-xl flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm shadow-primary/10"
+            >
+              <Box size={14} /> <span>AR </span>
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onCompare(product); }}
+              className="flex-1 h-11 bg-primary/5 text-primary border border-primary/20 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/10 active:scale-95 transition-all text-[9px] sm:text-[10px] font-black uppercase tracking-widest"
+            >
+              <Scale size={14} /> <span>AI</span>
+            </button>
+          </div>
           <button
             onClick={(e) => { e.stopPropagation(); onAddToCart(product.id); }}
-            className="flex-1 btn-add-cart-new gap-1 sm:gap-1.5 flex items-center justify-center text-[8px] sm:text-[9px] font-black tracking-widest"
+            className="w-full h-12 bg-transparent border-2 border-primary text-primary rounded-xl flex items-center justify-center gap-2.5 hover:bg-primary/5 active:scale-95 transition-all text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] shadow-sm shadow-primary/5"
           >
-            <ShoppingCart size={14} className="sm:w-3.5 sm:h-3.5" /> <span>ADD</span>
+            <ShoppingCart size={16} /> <span>Add to Cart</span>
           </button>
         </div>
       </div>

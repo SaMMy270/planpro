@@ -6,7 +6,7 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: #d0cece;
+  background: var(--secondary);
 }
 
 .loading-ar {
@@ -15,9 +15,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
-  color: #333;
-  font-family: 'Outfit', sans-serif;
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-heading-secondary);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
@@ -33,18 +33,18 @@
   justify-content: center;
   padding: 40px;
   text-align: center;
-  background: #f8f9fa;
-  font-family: 'Outfit', sans-serif;
+  background: var(--background);
+  font-family: var(--font-body);
 }
 
 .ar-error-notice h3 {
   font-size: 24px;
   margin-bottom: 15px;
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 .ar-error-notice p {
-  color: #666;
+  color: var(--text-secondary);
   max-width: 400px;
   line-height: 1.6;
 }
@@ -81,8 +81,8 @@
 }
 
 .ar-btn-primary {
-  background: #1a1a1a;
-  color: white;
+  background: var(--color-warm-primary);
+  color: var(--background);
   padding: 14px 28px;
   border-radius: 40px;
   border: none;
@@ -90,7 +90,7 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-size: 14px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 25px var(--ar-glow);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -99,7 +99,7 @@
 
 .ar-btn-primary:active {
   transform: scale(0.95);
-  background: #000;
+  filter: brightness(0.9);
 }
 
 /* Catalogue Slider */
@@ -126,7 +126,7 @@
   min-width: 80px;
   height: 80px;
   border-radius: 20px;
-  background: rgba(255,255,255,0.9);
+  background: var(--card-bg);
   border: 3px solid transparent;
   overflow: hidden;
   flex-shrink: 0;
@@ -141,7 +141,7 @@
 }
 
 .ar-catalogue-item.active {
-  border-color: #1a1a1a;
+  border-color: var(--color-warm-primary);
   transform: scale(1.1);
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
@@ -152,7 +152,7 @@
   left: 0;
   width: 100%;
   height: 4px;
-  background: #000;
+  background: var(--color-warm-primary);
   opacity: 0;
   transition: opacity 0.3s;
 }

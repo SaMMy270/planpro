@@ -258,7 +258,7 @@ function SceneContent({
     }, [onCancelPlacement]);
 
     const [viewTarget, setViewTarget] = useState({
-        pos: new THREE.Vector3(8, 8, 8),
+        pos: new THREE.Vector3(12, 12, 12),
         look: new THREE.Vector3(0, 0, 0)
     });
     const [hasInteracted, setHasInteracted] = useState(false);
@@ -308,9 +308,9 @@ function SceneContent({
     }, [pointsData, openings]);
 
     useEffect(() => {
-        const offsetDist = 5;
+        const offsetDist = 8;
         if (viewMode === 'TOP') {
-            setViewTarget({ pos: new THREE.Vector3(0, 15, 0), look: new THREE.Vector3(0, 0, 0) });
+            setViewTarget({ pos: new THREE.Vector3(0, 22, 0), look: new THREE.Vector3(0, 0, 0) });
             if (controlsRef.current) controlsRef.current.enableRotate = false;
         } else if (viewMode.startsWith('WALL_')) {
             const wallIdx = parseInt(viewMode.split('_')[1]);
@@ -328,7 +328,7 @@ function SceneContent({
             }
             if (controlsRef.current) controlsRef.current.enableRotate = true;
         } else {
-            setViewTarget({ pos: new THREE.Vector3(8, 8, 8), look: new THREE.Vector3(0, 0, 0) });
+            setViewTarget({ pos: new THREE.Vector3(12, 12, 12), look: new THREE.Vector3(0, 0, 0) });
             if (controlsRef.current) controlsRef.current.enableRotate = true;
         }
         setHasInteracted(false);
@@ -550,7 +550,7 @@ export default React.forwardRef(function DesignerRoom(props: any, ref) {
 
     return (
         <div className="w-full h-full relative cursor-crosshair">
-            <Canvas shadows camera={{ position: [8, 8, 8], fov: 45 }} gl={{ preserveDrawingBuffer: true }}>
+            <Canvas shadows camera={{ position: [12, 12, 12], fov: 45 }} gl={{ preserveDrawingBuffer: true }}>
                 <Suspense fallback={null}>
                     <SceneContent
                         {...props}

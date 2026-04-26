@@ -129,13 +129,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
               <div className="space-y-1 md:space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                 <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary/50 ml-1">FULL NAME</label>
                 <div className="relative group">
-                  <User className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={16} />
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
-                    className={`w-full pl-12 pr-6 py-3.5 md:py-4 bg-secondary border ${errors.fullName ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
+                    className={`w-full pl-6 pr-6 py-3.5 md:py-4 bg-secondary border ${errors.fullName ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
                     required
                   />
                   {errors.fullName && <p className="text-[10px] text-red-400 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.fullName}</p>}
@@ -146,13 +145,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
             <div className="space-y-1 md:space-y-2">
               <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary/50 ml-1">EMAIL ADDRESS</label>
               <div className="relative group">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={16} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className={`w-full pl-12 pr-6 py-3.5 md:py-4 bg-background border ${errors.email ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
+                  className={`w-full pl-6 pr-6 py-3.5 md:py-4 bg-background border ${errors.email ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
                   required
                 />
                 {errors.email && <p className="text-[10px] text-red-500 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.email}</p>}
@@ -162,13 +160,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
             <div className="space-y-1 md:space-y-2">
               <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary/50 ml-1">PASSWORD</label>
               <div className="relative group">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={16} />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className={`w-full pl-12 pr-6 py-3.5 md:py-4 bg-background border ${errors.password ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
+                  className={`w-full pl-6 pr-6 py-3.5 md:py-4 bg-background border ${errors.password ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
                   required
                 />
                 {errors.password && <p className="text-[10px] text-red-500 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.password}</p>}
@@ -206,26 +203,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
                 {isLogin ? 'Sign Up' : 'Log In'}
               </button>
             </p>
-
-            {isLogin && (
-              <div className="space-y-4 md:space-y-8 animate-in fade-in duration-500">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-primary/10"></div></div>
-                  <div className="relative flex justify-center text-[9px] uppercase tracking-[0.3em] font-black text-text/50">
-                    <span className="bg-background px-6">OR CONTINUE WITH</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
-                  <button className="flex items-center justify-center gap-3 py-3 rounded-[16px] md:rounded-[20px] bg-secondary border border-text/5 hover:border-primary hover:shadow-lg transition-all text-[9px] md:text-[10px] font-bold uppercase tracking-widest group text-text">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-4 h-4 group-hover:scale-110 transition-transform" /> GOOGLE
-                  </button>
-                  <button className="flex items-center justify-center gap-3 py-3 rounded-[16px] md:rounded-[20px] bg-secondary border border-text/5 hover:border-primary hover:shadow-lg transition-all text-[9px] md:text-[10px] font-bold uppercase tracking-widest group text-text">
-                    <Facebook size={16} className="text-[#1877F2] group-hover:scale-110 transition-transform" /> FACEBOOK
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

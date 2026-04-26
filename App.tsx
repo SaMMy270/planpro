@@ -41,6 +41,7 @@ const App: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [initialARViewMode, setInitialARViewMode] = useState<'inspect' | 'live' | 'qr'>('inspect');
   const [isWishlistCompareOpen, setIsWishlistCompareOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState<any>(null);
 
   // Global search expand state
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -436,7 +437,7 @@ const App: React.FC = () => {
         <div className="hidden lg:flex items-center gap-8">
           <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('home'); }} className={`nav-link-new ${activeTab === 'home' ? 'active' : ''}`}>Home</button>
           <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('products'); }} className={`nav-link-new ${activeTab === 'products' ? 'active' : ''}`}>Collection</button>
-          <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('blueprint'); }} className={`nav-link-new font-bold ${activeTab === 'blueprint' ? 'active' : ''}`}>Architect Tool</button>
+          <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab('blueprint'); }} className={`nav-link-new  ${activeTab === 'blueprint' ? 'active' : ''}`}>Room Generator</button>
         </div>
       </div>
 
@@ -476,11 +477,11 @@ const App: React.FC = () => {
 
       {isMobileMenuOpen && (
         <div className="lg:hidden fixed top-[56px] sm:top-[60px] left-0 right-0 bottom-0 bg-background/95 backdrop-blur-lg p-6 sm:p-8 flex flex-col gap-2 animate-in slide-in-from-top duration-300 shadow-2xl z-[1001] overflow-y-auto">
-          <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className="w-full text-left text-lg font-bold uppercase tracking-widest text-white/70 hover:text-primary hover:bg-white/5 p-4 rounded-xl transition-all">Home</button>
-          <button onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }} className="w-full text-left text-lg font-bold uppercase tracking-widest text-white/70 hover:text-primary hover:bg-white/5 p-4 rounded-xl transition-all">Collection</button>
+          <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className="w-full text-left text-lg font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-primary hover:bg-primary/5 p-4 rounded-xl transition-all">Home</button>
+          <button onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }} className="w-full text-left text-lg font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-primary hover:bg-primary/5 p-4 rounded-xl transition-all">Collection</button>
           <button onClick={() => { setActiveTab('blueprint'); setIsMobileMenuOpen(false); }} className="w-full text-left text-lg font-bold uppercase tracking-widest text-primary hover:bg-primary/5 p-4 rounded-xl transition-all">Architect Tool</button>
           {user && (
-            <button onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }} className="w-full text-left text-lg font-bold uppercase tracking-widest text-white/70 hover:text-primary hover:bg-white/5 p-4 rounded-xl transition-all">Profile</button>
+            <button onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }} className="w-full text-left text-lg font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-primary hover:bg-primary/5 p-4 rounded-xl transition-all">Profile</button>
           )}
           <div className="pt-4 mt-auto border-t border-[var(--border-light)]">
             <button onClick={() => { user ? handleLogout() : setActiveTab('login'); setIsMobileMenuOpen(false); }} className="w-full py-4 bg-primary text-[var(--background)] rounded-xl font-bold uppercase tracking-widest text-xs">
@@ -521,7 +522,7 @@ const App: React.FC = () => {
             onClick={() => setActiveTab('blueprint')}
             className="w-full sm:w-auto px-8 sm:px-12 py-3.5 sm:py-4 border-2 border-primary text-primary rounded-full font-bold text-xs sm:text-sm uppercase tracking-widest hover:bg-primary/10 transition-all"
           >
-            Architect tool
+            Room Generator
           </button>
         </div>
 
@@ -648,56 +649,29 @@ const App: React.FC = () => {
   const FEATURES = [
     {
       id: 0,
-      icon: <Box size={30} style={{ color: 'var(--background)' }} />,
-      iconBg: 'linear-gradient(135deg, var(--primary), var(--accent))',
-      cardBg: 'linear-gradient(135deg, var(--secondary), #2A2018)',
-      cardBorder: 'rgba(163, 123, 71, 0.2)',
-      headingColor: 'var(--primary)',
-      bodyColor: 'var(--secondary-text)',
-      badgeBg: 'rgba(163, 123, 71, 0.1)',
-      badgeColor: 'var(--accent)',
+      icon: <Box size={30} style={{ color: 'var(--primary)' }} />,
       title: '3D Room Builder',
       body: 'Design and visualize your perfect space in real-time with our powerful 3D modeling tools.',
       badge: '2,500+ users',
       cta: 'Try Now',
-      ctaBg: 'var(--primary)',
-      ctaColor: 'var(--background)',
       tab: 'blueprint' as const,
     },
     {
       id: 1,
-      icon: <Camera size={30} style={{ color: '#FDFCF0' }} />,
-      iconBg: 'rgba(139, 86, 51, 0.3)',
-      cardBg: 'linear-gradient(135deg, var(--primary), var(--accent))',
-      cardBorder: 'rgba(255, 255, 255, 0.1)',
-      headingColor: '#FDFCF0',
-      bodyColor: '#E0DCAA',
-      badgeBg: 'rgba(255, 255, 255, 0.15)',
-      badgeColor: '#FDFCF0',
+      icon: <Camera size={30} style={{ color: 'var(--primary)' }} />,
       title: 'AR Technology',
       body: 'Visualize furniture in your actual space using augmented reality. See it before you buy it.',
       badge: 'Live & QR Scan',
       cta: 'Experience AR',
-      ctaBg: 'rgba(10, 12, 16, 0.4)',
-      ctaColor: 'var(--color-warm-very-light)',
       tab: 'ar' as const,
     },
     {
       id: 2,
       icon: <Scale size={30} style={{ color: 'var(--primary)' }} />,
-      iconBg: 'rgba(163, 123, 71, 0.2)',
-      cardBg: 'linear-gradient(135deg, #1A1510, var(--secondary))',
-      cardBorder: 'rgba(163, 123, 71, 0.15)',
-      headingColor: 'var(--primary)',
-      bodyColor: 'var(--secondary-text)',
-      badgeBg: 'rgba(163, 123, 71, 0.1)',
-      badgeColor: 'var(--accent)',
       title: 'Price Comparison',
       body: 'Compare prices across multiple retailers instantly. Get the best deals without leaving the app.',
       badge: 'Save up to 40%',
       cta: 'Compare Prices',
-      ctaBg: 'var(--primary)',
-      ctaColor: 'var(--background)',
       tab: 'products' as const,
     },
   ];
@@ -771,8 +745,8 @@ const App: React.FC = () => {
           <div
             className="p-8 rounded-[40px] space-y-6 shadow-2xl gpu-accelerated"
             style={{
-              background: feat.cardBg,
-              border: `1px solid ${feat.cardBorder}`,
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border-light)',
               // Horizontal slide-and-fade via inline style transition
               opacity: isAnimating ? 0 : 1,
               transform: isAnimating
@@ -783,23 +757,23 @@ const App: React.FC = () => {
           >
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
-              style={{ background: feat.iconBg, backdropFilter: 'blur(10px)' }}
+              style={{ background: 'rgba(139, 86, 51, 0.08)', border: '1px solid var(--border-accent)', backdropFilter: 'blur(10px)' }}
             >
               {feat.icon}
             </div>
             <div className="space-y-3">
-              <h4 className="text-2xl font-bold tracking-tight text-[var(--text)]" style={{ color: 'var(--text)' }}>
+              <h4 className="text-2xl font-bold tracking-tight text-[var(--text)] border-l-4 border-primary pl-4">
                 {feat.title}
               </h4>
-              <p className="text-sm leading-relaxed text-[var(--text-secondary)]" style={{ color: 'var(--text-secondary)' }}>{feat.body}</p>
+              <p className="text-sm leading-relaxed text-[var(--text-secondary)]">{feat.body}</p>
             </div>
-            <span className="inline-block px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest" style={{ background: feat.badgeBg, color: feat.badgeColor }}>
+            <span className="inline-block px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest bg-primary/10 text-primary">
               {feat.badge}
             </span>
             <button
               onClick={() => { window.history.pushState({}, '', window.location.pathname); setActiveTab(feat.tab); }}
-              className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95"
-              style={{ background: feat.ctaBg, color: feat.ctaColor, minHeight: '44px' }}
+              className="w-full py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 btn-gold"
+              style={{ minHeight: '44px' }}
             >
               {feat.cta}
             </button>
@@ -865,7 +839,7 @@ const App: React.FC = () => {
                     <p className="text-sm sm:text-lg font-bold" style={{ color: 'var(--text)' }}>220 x 95 x 85 cm</p>
                   </div>
                   <div className="p-3 sm:p-4 rounded-2xl" style={{ background: 'rgba(207,160,98,0.1)', border: '1px solid rgba(207,160,98,0.2)' }}>
-                    <p className="text-[8px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.4)' }}>Material</p>
+                    <p className="text-[8px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Material</p>
                     <p className="text-sm sm:text-lg font-bold" style={{ color: 'var(--text)' }}>Premium Bouclé</p>
                   </div>
                 </div>
@@ -873,7 +847,7 @@ const App: React.FC = () => {
               <div className="flex items-center gap-4 sm:gap-6 pt-2">
                 <div>
                   <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">{topProduct?.price ? `₹${(topProduct.price * 0.8).toLocaleString()}` : '₹45,999'}</p>
-                  <p className="text-[10px] line-through text-white/30">₹{topProduct?.price?.toLocaleString() || '57,499'}</p>
+                  <p className="text-[10px] line-through text-[var(--text-muted)]">₹{topProduct?.price?.toLocaleString() || '57,499'}</p>
                 </div>
                 <button onClick={() => { if (topProduct) addToCart(topProduct.id); }} className="btn-gold px-5 sm:px-8 py-3 sm:py-4 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-xl">Add to Cart</button>
               </div>
@@ -946,7 +920,7 @@ const App: React.FC = () => {
             <div className="sm:hidden w-16 h-px" style={{ background: 'rgba(207,160,98,0.25)' }}></div>
             <div className="flex flex-col items-center gap-1">
               <p className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">98%</p>
-              <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(240,235,225,0.35)' }}>Recommendation Rate</p>
+              <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Recommendation Rate</p>
             </div>
           </div>
         </div>
@@ -966,7 +940,7 @@ const App: React.FC = () => {
               <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary text-[var(--background)] shadow-lg">
                 <Box size={22} />
               </div>
-              <span className="text-2xl font-black tracking-tighter uppercase text-white">PlanPro</span>
+              <span className="text-2xl font-black tracking-tighter uppercase text-[var(--text)]">PlanPro</span>
             </div>
             <p className="footer-tagline mt-6 max-w-sm">
               The world's most advanced design visualization platform.
@@ -1046,7 +1020,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-text">
       <Toaster position="top-center" />
-      {activeTab !== 'blueprint' && <Navbar />}
+      {activeTab !== 'blueprint' && !showDetails && <Navbar />}
 
       <main className="transition-all duration-700 ease-in-out">
         {activeTab === 'home' && (
@@ -1272,7 +1246,8 @@ const App: React.FC = () => {
               wishlist={wishlist}
               toggleWishlist={toggleWishlist}
               user={user}
-              onBack={() => setActiveTab('products')}
+              onBack={() => { setActiveTab('home'); setActiveProject(null); }}
+              initialProject={activeProject}
             />
           </div>
         )}
@@ -1327,11 +1302,16 @@ const App: React.FC = () => {
             <UserProfile
               wishlist={wishlist}
               onToggleWishlist={toggleWishlist}
-              onViewProduct={(product) => {
-                setSelectedProduct(product);
-                setShowDetails(true);
+              onViewProduct={openDetails}
+              onTabChange={(target: any) => {
+                if (typeof target === 'string') {
+                  setActiveTab(target as View);
+                  setActiveProject(null);
+                } else {
+                  setActiveTab(target.tab as View);
+                  setActiveProject(target.project);
+                }
               }}
-              onTabChange={setActiveTab}
             />
           </div>
         )}
@@ -1344,7 +1324,7 @@ const App: React.FC = () => {
         />
       )}
 
-      {activeTab !== 'blueprint' && activeTab !== 'login' && <Footer />}
+      {activeTab !== 'blueprint' && activeTab !== 'login' && !showDetails && <Footer />}
 
       {showDetails && selectedProduct && (
         <ProductDetailsModal

@@ -73,6 +73,10 @@ export interface RoomData {
     ceilingHeight?: number;
     notchL?: number;
     notchW?: number;
+    frontWall?: number;
+    backWall?: number;
+    leftWall?: number;
+    rightWall?: number;
   };
   openings: RoomOpening[];
   wallColor: string;

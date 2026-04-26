@@ -272,20 +272,20 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                               </div>
                             </div>
 
-                            <div className="space-y-2.5 mb-6 flex-1">
+                            <div className="space-y-3 mb-6 flex-1">
                               {[
                                 { label: 'Dimensions', value: m.dimension || 'Standard' },
                                 { label: 'Brand', value: m.brand || 'Premium' },
                               ].map(({ label, value }) => (
                                 <div
                                   key={label}
-                                  className="flex justify-between items-center py-2"
+                                  className={`flex ${label === 'Dimensions' ? 'flex-col gap-1' : 'justify-between items-center'} py-2`}
                                   style={{ borderBottom: '1px solid rgba(193,200,228,0.06)' }}
                                 >
-                                  <span className="text-[10px] font-serif" style={{ color: 'var(--secondary-text)' }}>
+                                  <span className="text-[10px] font-black uppercase tracking-wider text-primary/30">
                                     {label}
                                   </span>
-                                  <span className="text-[10px] font-semibold" style={{ color: 'var(--text)' }}>
+                                  <span className={`text-[11px] font-semibold ${label === 'Dimensions' ? 'leading-relaxed' : ''}`} style={{ color: 'var(--text)' }}>
                                     {value}
                                   </span>
                                 </div>

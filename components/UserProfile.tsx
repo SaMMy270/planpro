@@ -15,6 +15,7 @@ import { supabase } from '../services/supabase';
 import { gdriveService, GDriveFile } from '../services/gdriveService';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import CustomDialog from './ui/CustomDialog';
 
 interface UserProfileProps {
     wishlist: string[];
@@ -44,6 +45,19 @@ const UserProfile: React.FC<UserProfileProps> = ({
     const [editName, setEditName] = useState('');
     const [editAvatar, setEditAvatar] = useState('');
     const [savingProfile, setSavingProfile] = useState(false);
+    const [deleteDialog, setDeleteDialog] = useState<{ 
+        isOpen: boolean; 
+        id: string; 
+        type: 'manual' | 'ai' | 'account';
+        title: string;
+        description: string;
+    }>({ 
+        isOpen: false, 
+        id: '', 
+        type: 'manual',
+        title: '',
+        description: ''
+    });
 
     useEffect(() => {
         fetchInitialData();
@@ -156,6 +170,58 @@ const UserProfile: React.FC<UserProfileProps> = ({
         window.location.reload();
     };
 
+    const handleDeleteManual = (id: string) => {
+        setDeleteDialog({
+            isOpen: true,
+            id,
+            type: 'manual',
+            title: 'Delete Project',
+            description: 'Are you sure you want to permanently delete this project? This action cannot be undone.'
+        });
+    };
+
+    const confirmDeleteManual = async (id: string) => {
+        try {
+            const { error } = await supabase.from('RoomDesign').delete().eq('id', id);
+            if (error) throw error;
+            setManualDesigns(prev => prev.filter(d => d.id !== id));
+            toast.success("Project deleted successfully");
+        } catch (err: any) {
+            toast.error(err.message || "Failed to delete project");
+        }
+    };
+
+    const handleDeleteAi = (id: string) => {
+        setDeleteDialog({
+            isOpen: true,
+            id,
+            type: 'ai',
+            title: 'Delete Generation',
+            description: 'Are you sure you want to delete this AI generation? All associated neural maps will be removed.'
+        });
+    };
+
+    const confirmDeleteAi = async (id: string) => {
+        try {
+            const { error } = await supabase.from('AiDesign').delete().eq('id', id);
+            if (error) throw error;
+            setAiDesigns(prev => prev.filter(d => d.id !== id));
+            toast.success("Generation deleted successfully");
+        } catch (err: any) {
+            toast.error(err.message || "Failed to delete generation");
+        }
+    };
+
+    const handleDeactivateAccount = () => {
+        setDeleteDialog({
+            isOpen: true,
+            id: 'account',
+            type: 'account',
+            title: 'Deactivate Account',
+            description: 'This will permanently delete your account and all associated design data. This process is irreversible.'
+        });
+    };
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[600px] space-y-4">
@@ -192,7 +258,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                         </div>
                         <div className="flex items-center gap-4">
                             <span className="text-[10px] font-black uppercase tracking-widest text-text/40 bg-secondary/30 px-3 py-1 rounded-full">{user?.email}</span>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-text bg-highlight px-3 py-1 rounded-full">PRO DESIGNER</span>
+                            
                         </div>
                     </div>
                 </div>
@@ -200,7 +266,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                 <div className="flex items-center gap-3">
                     <button 
                         onClick={() => setActiveTab('settings')}
-                        className="px-8 py-4 bg-highlight text-background rounded-3xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-highlight/10 flex items-center gap-3"
+                        className="px-8 py-4 bg-highlight text-black rounded-3xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-highlight/10 flex items-center gap-3"
                     >
                         <Settings size={16} /> Edit Account
                     </button>
@@ -271,13 +337,21 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
                                                 <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
-                                                    <button className="px-8 py-3 bg-text text-highlight rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-transform">Open Studio</button>
+                                                    <button 
+                                                        onClick={() => onTabChange({ tab: 'blueprint', project: design })}
+                                                        className="px-8 py-3 bg-text text-highlight rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-transform"
+                                                    >
+                                                        Open Studio
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div className="p-8 space-y-4">
                                                 <div className="flex items-center justify-between">
                                                     <h3 className="text-xl font-bold tracking-tight text-text">{design.name}</h3>
-                                                    <button className="p-2 hover:bg-red-500/10 text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100">
+                                                    <button 
+                                                        onClick={() => handleDeleteManual(design.id)}
+                                                        className="p-2 hover:bg-red-500/10 text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                                                    >
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>
@@ -361,7 +435,15 @@ const UserProfile: React.FC<UserProfileProps> = ({
                                                     <span className="text-[9px] font-black uppercase tracking-widest text-body/40 bg-background px-4 py-1.5 rounded-full">
                                                         AI SYNC: {new Date(design.createdAt).toLocaleDateString()}
                                                     </span>
-                                                    <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">View Details <ArrowRight size={14} /></button>
+                                                    <div className="flex items-center gap-2">
+                                                        <button 
+                                                            onClick={() => handleDeleteAi(design.id)}
+                                                            className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-all"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">View Details <ArrowRight size={14} /></button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -482,7 +564,10 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
                             <div className="space-y-8">
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-500/40">Danger Zone</p>
-                                <button className="w-full p-8 border border-red-900/40 rounded-[48px] flex items-center justify-between hover:bg-red-900/10 transition-all group">
+                                <button 
+                                    onClick={handleDeactivateAccount}
+                                    className="w-full p-8 border border-red-900/40 rounded-[48px] flex items-center justify-between hover:bg-red-900/10 transition-all group"
+                                >
                                     <div className="flex items-center gap-6">
                                         <div className="p-4 bg-red-900/40 text-red-500 rounded-3xl group-hover:bg-red-500 group-hover:text-white transition-all">
                                             <Trash size={20} />
@@ -499,6 +584,22 @@ const UserProfile: React.FC<UserProfileProps> = ({
                     )}
                 </AnimatePresence>
             </div>
+
+            <CustomDialog 
+                isOpen={deleteDialog.isOpen}
+                onClose={() => setDeleteDialog(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={() => {
+                    if (deleteDialog.type === 'manual') confirmDeleteManual(deleteDialog.id);
+                    else if (deleteDialog.type === 'ai') confirmDeleteAi(deleteDialog.id);
+                    else if (deleteDialog.type === 'account') {
+                        toast.error("Account deactivation is currently disabled for safety.");
+                    }
+                }}
+                title={deleteDialog.title}
+                description={deleteDialog.description}
+                type="warning"
+                confirmLabel={deleteDialog.type === 'account' ? 'Deactivate' : 'Delete'}
+            />
         </div>
     );
 };
