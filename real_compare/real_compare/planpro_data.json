@@ -323,31 +323,6 @@
   },
 
   {
-    "ID": "x27",
-    "Name": "PLANPRO Walnut Bookshelf",
-    "Dimension": "1800 mm | 800 mm | 300 mm",
-    "Price": 8900,
-    "Rating": 0,
-    "ImageURL": "",
-    "Type": "Storage",
-    "SubType": "bookshelf",
-    "Brand": "PLANPRO",
-    "ProductURL": ""
-  },
-  {
-    "ID": "x28",
-    "Name": "PLANPRO White Bookshelf",
-    "Dimension": "1800 mm | 800 mm | 300 mm",
-    "Price": 8600,
-    "Rating": 0,
-    "ImageURL": "",
-    "Type": "Storage",
-    "SubType": "bookshelf",
-    "Brand": "PLANPRO",
-    "ProductURL": ""
-  },
-
-  {
     "ID": "x29",
     "Name": "PLANPRO Grey Wardrobe",
     "Dimension": "2000 mm | 1000 mm | 600 mm",
@@ -570,30 +545,6 @@
     "ProductURL": ""
   },
 
-  {
-    "ID": "x47",
-    "Name": "PLANPRO Oak Bookshelf",
-    "Dimension": "1800 mm | 800 mm | 300 mm",
-    "Price": 9200,
-    "Rating": 0,
-    "ImageURL": "",
-    "Type": "Storage",
-    "SubType": "bookshelf",
-    "Brand": "PLANPRO",
-    "ProductURL": ""
-  },
-  {
-    "ID": "x48",
-    "Name": "PLANPRO Black Bookshelf",
-    "Dimension": "1800 mm | 800 mm | 300 mm",
-    "Price": 9500,
-    "Rating": 0,
-    "ImageURL": "",
-    "Type": "Storage",
-    "SubType": "bookshelf",
-    "Brand": "PLANPRO",
-    "ProductURL": ""
-  },
 
   {
     "ID": "x49",

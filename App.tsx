@@ -267,6 +267,17 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // Enforce login for restricted features
+  useEffect(() => {
+    const restrictedTabs: View[] = ['ar', 'ar-preview', 'comparison'];
+    if (restrictedTabs.includes(activeTab) && !user) {
+      toast.error("Login Required", {
+        description: "Please log in to access this feature."
+      });
+      setActiveTab('login');
+    }
+  }, [activeTab, user]);
+
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter(p => {
       const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -370,6 +381,13 @@ const App: React.FC = () => {
   };
 
   const triggerAR = (product: Product) => {
+    if (!user) {
+      toast.error("Login Required", {
+        description: "Please log in to experience our AR features."
+      });
+      setActiveTab('login');
+      return;
+    }
     setSelectedProduct(product);
     setShowDetails(false);
 
@@ -386,12 +404,26 @@ const App: React.FC = () => {
   };
 
   const triggerAI = (product: Product) => {
+    if (!user) {
+      toast.error("Login Required", {
+        description: "Please log in to use the AI Builder."
+      });
+      setActiveTab('login');
+      return;
+    }
     setSelectedProduct(product);
     setShowDetails(false);
     setIsAIBuilderOpen(true);
   };
 
   const triggerCompare = (product: Product) => {
+    if (!user) {
+      toast.error("Login Required", {
+        description: "Please log in to use the Price Comparison tool."
+      });
+      setActiveTab('login');
+      return;
+    }
     setSelectedProduct(product);
     setActiveTab('comparison');
   };
@@ -1146,7 +1178,6 @@ const App: React.FC = () => {
                         key={p.id}
                         product={p}
                         onAR={triggerAR}
-                        onAI={triggerAI}
                         onCompare={triggerCompare}
                         onAddToCart={addToCart}
                         onToggleWishlist={toggleWishlist}

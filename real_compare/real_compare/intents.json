@@ -1,4 +1,18 @@
 {
+  "price_config": {
+    "mode": "dynamic_percentile",
+    "percentiles": {
+      "very_low_max": 0.33,
+      "mid_max": 0.66
+    },
+
+    "fallback_ranges": {
+      "very_low": [0, 15000],
+      "mid": [15000, 30000],
+      "premium": [30000, 9999999]
+    }
+  },
+  
   "action": {
     "recommend": [
       "recommend","suggest","show","options","choices","idea","ideas",
@@ -108,12 +122,7 @@
       "furniture storage","premium storage","budget storage","storage furniture","cabinet storage"
     ],
     "subtypes": {
-      "shelf": [
-        "shelf","shelves","wall shelf","wood shelf","metal shelf",
-        "book shelf","display shelf","storage shelf","decor shelf","floating shelf",
-        "corner shelf","open shelf","home shelf","room shelf","compact shelf",
-        "large shelf","modern shelf","classic shelf","utility shelf","organizing shelf"
-      ],
+
       "cupboard": [
         "cupboard","wardrobe cupboard","storage cupboard","wood cupboard","metal cupboard",
         "kitchen cupboard","bedroom cupboard","clothes cupboard","home cupboard","modern cupboard",
@@ -198,7 +207,7 @@
 
     "price": {
       "very_low": [
-        "cheapest","lowest","lowcost","minimal price",
+        "cheapest","lowest","lowcost","minimal price","low cost",
         "economy","economical","save money",
         "tight budget","low budget","under","below",
         "less than","affordable","budget friendly"

@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@google/model-viewer";
 import { motion, AnimatePresence } from "framer-motion";
+import { Smartphone, RotateCcw, ArrowLeft } from "lucide-react";
 
 // Use a constant to bypass strict JSX intrinsic checks for the Web Component
 const ModelViewer = "model-viewer" as any;
 
-export default function ARScene({ modelData, initialSelectedIndex = 0 }: any) {
+export default function ARScene({ modelData, initialSelectedIndex = 0, onBack }: any) {
   const mvRef = useRef<any>(null);
   const [status, setStatus] = useState<"finding" | "locked" | "placed">("finding");
   const [inAR, setInAR] = useState(false);
@@ -63,7 +64,7 @@ export default function ARScene({ modelData, initialSelectedIndex = 0 }: any) {
   }, [status]);
 
   return (
-    <div style={{ width: "100%", height: "100vh", position: "relative", background: "#f8f9fa", overflow: "hidden" }}>
+    <div className="ar-workspace" style={{ width: "100%", height: "100vh", position: "relative", background: "var(--background)", overflow: "hidden" }}>
       
       {/* 1. Model Viewer Engine */}
       <ModelViewer
@@ -77,18 +78,15 @@ export default function ARScene({ modelData, initialSelectedIndex = 0 }: any) {
         camera-controls
         touch-action="pan-y"
         environment-image="neutral"
-        exposure="1"
+        exposure="1.15"
+        shadow-intensity="1.5"
+        shadow-softness="1"
         style={{ width: "100%", height: "100%", backgroundColor: "transparent" }}
       >
         {/* Launch AR Button Slot */}
-        <button slot="ar-button" style={{
-          position: "absolute", bottom: "85px", left: "50%", transform: "translateX(-50%)",
-          background: "#1a1a1a", color: "white", padding: "16px 40px", borderRadius: "40px",
-          border: "none", fontWeight: 700, fontSize: "14px", textTransform: "uppercase",
-          letterSpacing: "0.1em", boxShadow: "0 10px 30px rgba(0,0,0,0.3)", zIndex: 1001,
-          cursor: "pointer"
-        }}>
-          START AR Session
+        <button slot="ar-button" className="btn-ar-session">
+          <Smartphone size={18} />
+          <span>Start AR Session</span>
         </button>
 
         {/* 2. Professional HUD Overlay */}
@@ -103,31 +101,21 @@ export default function ARScene({ modelData, initialSelectedIndex = 0 }: any) {
               {/* Rescan Button */}
               <button 
                 onClick={handleRescan}
-                style={{ 
-                    position: "fixed", top: "40px", left: "20px", 
-                    background: "rgba(255, 255, 255, 0.9)", border: "none",
-                    padding: "12px 18px", borderRadius: "12px", 
-                    fontWeight: "bold", fontSize: "13px", color: "#1a1a1a",
-                    boxShadow: "0 4px 15px rgba(0,0,0,0.15)", pointerEvents: "auto"
-                }}
+                className="btn-ar-rescan"
               >
-     RESCAN FLOOR
+                <RotateCcw size={16} />
+                RESCAN FLOOR
               </button>
 
               {/* Status Instructional Text */}
               {status !== "placed" && (
                 <div style={{ position: "fixed", top: "15%", width: "100%", textAlign: "center" }}>
                     <motion.p 
-                        initial={{ y: 20 }}
-                        animate={{ y: 0 }}
-                        style={{ 
-                            background: status === "locked" ? "rgba(0, 128, 0, 0.85)" : "rgba(0, 0, 0, 0.75)",
-                            color: "white", display: "inline-block", padding: "14px 28px", 
-                            borderRadius: "50px", fontSize: "15px", fontWeight: 500,
-                            backdropFilter: "blur(5px)", boxShadow: "0 8px 25px rgba(0,0,0,0.2)"
-                        }}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className={`ar-instruction-pill ${status === 'locked' ? 'locked' : ''}`}
                     >
-                    {status === "locked" ? "Floor locked. Tap to place." : "Scanning floor... move phone side-to-side."}
+                    {status === "locked" ? "✓ Floor Detected • Tap to place" : "Scanning surface... Move phone slowly"}
                     </motion.p>
                 </div>
               )}
@@ -136,32 +124,29 @@ export default function ARScene({ modelData, initialSelectedIndex = 0 }: any) {
         </AnimatePresence>
       </ModelViewer>
 
-      {/* Product Information Card (always visible on desktop/initial load) */}
+      {/* Product Information Card */}
       {!inAR && (
-          <div style={{
-            position: "absolute",
-            top: "50px",
-            left: "20px",
-            right: "20px",
-            background: "rgba(255, 255, 255, 0.9)",
-            padding: "20px",
-            borderRadius: "24px",
-            backdropFilter: "blur(20px)",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.05)",
-            display: "flex",
-            alignItems: "center",
-            gap: "20px",
-            border: "1px solid rgba(255,255,255,0.3)"
-          }}>
-            <img 
-                src={currentProduct.image} 
-                alt={currentProduct.name} 
-                style={{ width: "60px", height: "60px", borderRadius: "16px", objectFit: "cover" }} 
-            />
-            <div style={{ flex: 1 }}>
-              <h3 style={{ margin: 0, fontSize: "18px", color: "#1a1a1a", fontWeight: 700 }}>{currentProduct.name}</h3>
-              <p style={{ margin: "10px 0 0", fontSize: "12px", color: "#666", textTransform: "uppercase", letterSpacing: "1px" }}>Ready for Staging</p>
+          <div className="ar-product-card-overlay">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="ar-product-img-wrapper">
+                <img src={currentProduct.image} alt={currentProduct.name} />
+              </div>
+              <div>
+                <h3 className="ar-product-title">{currentProduct.name}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="ar-status-dot animate-pulse"></span>
+                  <span className="ar-product-subtitle">Ready for Staging</span>
+                </div>
+              </div>
             </div>
+            
+            <button 
+              onClick={onBack}
+              className="ar-card-back-btn"
+            >
+              <ArrowLeft size={16} />
+              <span>EXIT</span>
+            </button>
           </div>
       )}
     </div>

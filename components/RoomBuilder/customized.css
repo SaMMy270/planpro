@@ -901,7 +901,7 @@
     }
 }
 
-/* --- Smooth Shelf Utilities --- */
+/* --- Utilities --- */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }

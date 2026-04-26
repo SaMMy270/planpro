@@ -33,22 +33,13 @@ const ARPage: React.FC<ARPageProps> = ({ onBack }) => {
 
   return (
     <div className="ar-page-container relative">
-      {/* Back Button */}
-      <button 
-        onClick={onBack}
-        className="absolute top-6 right-6 z-[200] p-4 bg-[var(--color-warm-primary)] backdrop-blur-md text-[var(--background)] rounded-2xl shadow-2xl hover:brightness-110 shadow-[var(--ar-glow)] transition-all active:scale-90 flex items-center gap-2"
-      >
-        <ArrowLeft size={20} color="currentColor" />
-        <span className="text-xs font-bold uppercase tracking-widest pr-1">Back to Catalog</span>
-      </button>
-
       <ErrorBoundary>
-        <Suspense fallback={<div>Loading Workspace...</div>}>
+        <Suspense fallback={<div className="loading-ar">Initializing Workspace...</div>}>
           <ARScene 
             modelData={modelData} 
-            // Use a key to force ARScene to re-mount if the ID changes
             key={initialProductId} 
             initialSelectedIndex={initialIndex >= 0 ? initialIndex : 0} 
+            onBack={onBack}
           />
         </Suspense>
       </ErrorBoundary>

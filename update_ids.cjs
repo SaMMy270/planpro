@@ -27,7 +27,6 @@ const mapping = {
     },
     'storage': {
         'shoerack': 'st-shoerack',
-        'shelf': 'st-shelf',
         'cupboard': 'st-cupboard'
     },
     'bed': {

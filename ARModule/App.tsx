@@ -6,26 +6,26 @@ import {
   User, ChevronRight, Minus, Plus as PlusIcon, Trash2, ArrowLeft,
   Camera, Map, Compass, Star, Smartphone, Download, SlidersHorizontal, Filter, ChevronDown
 } from 'lucide-react';
-import { PRODUCTS } from './data/mockData';
-import { Product } from './types';
-import { geminiService } from './services/geminiService';
-import { supabase } from './services/supabase';
+import { PRODUCTS } from '../data/mockData';
+import { Product } from '../types';
+import { geminiService } from '../services/geminiService';
+import { supabase } from '../services/supabase';
 import { Toaster, toast } from 'sonner';
 
 // Sub-components
-import ProductCard from './components/ProductCard';
-import ProductDetailsModal from './components/ProductDetailsModal';
-import ARPreviewModal from './components/ARPreviewModal';
-import AIBuilderModal from './components/AIBuilderModal';
-import ComparisonModal from './components/ComparisonModal';
-import BlueprintDesigner from './components/BlueprintDesigner';
-import LoginPage from './components/LoginPage';
-import CartView from './components/CartView';
-import WishlistView from './components/WishlistView';
-import CheckoutPage from './components/CheckoutPage';
-import UserProfile from './components/UserProfile';
-import WishlistComparisonModal from './components/WishlistComparisonModal';
-import ARPage from './ARModule/ARPage';
+import ProductCard from '../components/ProductCard';
+import ProductDetailsModal from '../components/ProductDetailsModal';
+import ARPreviewModal from '../components/ARPreviewModal';
+import AIBuilderModal from '../components/AIBuilderModal';
+import ComparisonModal from '../components/ComparisonModal';
+import BlueprintDesigner from '../components/RoomBuilder/BlueprintDesigner';
+import LoginPage from '../components/LoginPage';
+import CartView from '../components/CartView';
+import WishlistView from '../components/WishlistView';
+import CheckoutPage from '../components/CheckoutPage';
+import UserProfile from '../components/UserProfile';
+import WishlistComparisonModal from '../components/WishlistComparisonModal';
+import ARPage from './ARPage';
 
 
 type View = 'home' | 'products' | 'blueprint' | 'login' | 'cart' | 'wishlist' | 'ar-preview' | 'comparison' | 'checkout' | 'profile' | 'ar';
@@ -39,8 +39,9 @@ const App: React.FC = () => {
 
   const [isAIBuilderOpen, setIsAIBuilderOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [initialARViewMode, setInitialARViewMode] = useState<'inspect' | 'live'>('inspect');
+  const [initialARViewMode, setInitialARViewMode] = useState<'inspect' | 'live' | 'qr'>('inspect');
   const [isWishlistCompareOpen, setIsWishlistCompareOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState<any>(null);
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -261,6 +262,17 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // Enforce login for restricted features
+  useEffect(() => {
+    const restrictedTabs: View[] = ['ar', 'ar-preview', 'comparison'];
+    if (restrictedTabs.includes(activeTab) && !user) {
+      toast.error("Login Required", {
+        description: "Please log in to access this feature."
+      });
+      setActiveTab('login');
+    }
+  }, [activeTab, user]);
+
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter(p => {
       const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -364,6 +376,13 @@ const App: React.FC = () => {
   };
 
   const triggerAR = (product: Product) => {
+    if (!user) {
+      toast.error("Login Required", {
+        description: "Please log in to experience our AR features."
+      });
+      setActiveTab('login');
+      return;
+    }
     setSelectedProduct(product);
     setShowDetails(false);
     setInitialARViewMode('inspect');
@@ -371,12 +390,26 @@ const App: React.FC = () => {
   };
 
   const triggerAI = (product: Product) => {
+    if (!user) {
+      toast.error("Login Required", {
+        description: "Please log in to use the AI Builder."
+      });
+      setActiveTab('login');
+      return;
+    }
     setSelectedProduct(product);
     setShowDetails(false);
     setIsAIBuilderOpen(true);
   };
 
   const triggerCompare = (product: Product) => {
+    if (!user) {
+      toast.error("Login Required", {
+        description: "Please log in to use the Price Comparison tool."
+      });
+      setActiveTab('login');
+      return;
+    }
     setSelectedProduct(product);
     setActiveTab('comparison');
   };
@@ -810,7 +843,6 @@ const App: React.FC = () => {
                         key={p.id}
                         product={p}
                         onAR={triggerAR}
-                        onAI={triggerAI}
                         onCompare={triggerCompare}
                         onAddToCart={addToCart}
                         onToggleWishlist={toggleWishlist}
@@ -906,7 +938,13 @@ const App: React.FC = () => {
 
         {activeTab === 'blueprint' && (
           <div className="animate-in fade-in duration-700">
-            <BlueprintDesigner wishlist={wishlist} toggleWishlist={toggleWishlist} />
+            <BlueprintDesigner
+              wishlist={wishlist}
+              toggleWishlist={toggleWishlist}
+              user={user}
+              onBack={() => { setActiveTab('home'); setActiveProject(null); }}
+              initialProject={activeProject}
+            />
           </div>
         )}
 
@@ -987,7 +1025,6 @@ const App: React.FC = () => {
             onAddToCart={addToCart}
             onToggleWishlist={toggleWishlist}
             onAR={triggerAR}
-            onAI={triggerAI}
             onCompare={triggerCompare}
           />
         )}

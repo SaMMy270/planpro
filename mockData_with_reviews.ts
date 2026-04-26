@@ -67,11 +67,7 @@ import cp3 from './assets/cp3.jpg';
 import cp4 from './assets/cp4.jpg';
 import cp5 from './assets/cp5.jpg';
 
-import s1 from './assets/s1.jpg';
-import s2 from './assets/s2.jpg';
-import s3 from './assets/s3.jpg';
-import s4 from './assets/s4.jpg';
-import s5 from './assets/s5.jpg';
+
 
 import sr1 from './assets/sr1.jpg';
 import sr2 from './assets/sr2.jpg';
@@ -766,7 +762,7 @@ export const PRODUCTS: Product[] = [
     price: 2200,
     image: cp2,
     images: [cp2],
-    description: 'Two-door walnut wardrobe with full-length mirror and adjustable shelves.',
+    description: 'Two-door walnut wardrobe with full-length mirror and adjustable storage.',
     dimensions: '42"W x 24"D x 78"H',
     material: 'Solid Walnut',
     rating: 4.8,
@@ -911,91 +907,7 @@ export const PRODUCTS: Product[] = [
     texture:'' ,
     productUrl: '',
   },
-  {
-    id: 'st-shelf-1',
-    name: 'Linear Floating Shelf',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 150,
-    image: s1,
-    images: [s1],
-    description: 'Invisible mounting floating shelf for display.',
-    dimensions: '48"W x 10"D x 2"H',
-    material: 'Walnut Veneer',
-    rating: 4.8,
-    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
-    model: st1_model,
-    texture:'' ,
-    productUrl: '',
-  },
-  {
-    id: 'st-shelf-2',
-    name: 'Industrial Pipe Shelving',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 420,
-    image: s2,
-    images: [s2],
-    description: 'Wall-mounted industrial shelf with iron pipe brackets.',
-    dimensions: '36"W x 12"D x 48"H',
-    material: 'Reclaimed Wood, Iron',
-    rating: 4.7,
-    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
-    model: st2_model,
-    texture:'' ,
-    productUrl: '',
-  },
-  {
-    id: 'st-shelf-3',
-    name: 'Modular Cube Shelf',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 320,
-    image: s3,
-    images: [s3],
-    description: 'Stackable cube shelving system for customizable storage.',
-    dimensions: '30"W x 12"D x 60"H',
-    material: 'Engineered Wood',
-    rating: 4.6,
-    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
-    model: st3_model,
-    texture:'' ,
-    productUrl: '',
-  },
-  {
-    id: 'st-shelf-4',
-    name: 'Corner Ladder Shelf',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 240,
-    image: s4,
-    images: [s4],
-    description: 'Space-saving ladder shelf designed for corners.',
-    dimensions: '20"W x 20"D x 68"H',
-    material: 'Bamboo',
-    rating: 4.5,
-    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
-    model: st4_model,
-    texture:'' ,
-    productUrl: '',
-  },
-  {
-    id: 'st-shelf-5',
-    name: 'Glass Display Shelf',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 380,
-    image: s5,
-    images: [s5],
-    description: 'Elegant tempered glass shelf unit with chrome supports.',
-    dimensions: '32"W x 14"D x 72"H',
-    material: 'Tempered Glass, Chrome',
-    rating: 4.9,
-    reviews: [{ user: 'Aarav', rating: 4.6, comment: 'Great quality and very comfortable.', date:'2026-04-11' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.', date:'2026-04-11' }, { user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.', date:'2026-04-11' }],
-    model: st5_model,
-    texture:'' ,
-    productUrl: '',
-  },
+
 
   // CHAIRS - CASUAL (MATCHING PROVIDED IMAGES)
   {

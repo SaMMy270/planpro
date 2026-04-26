@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
   X, Heart, ShoppingBag, Box, Scale, Star, Truck,
   ChevronRight, ChevronLeft, Minus, Plus, Share2, Facebook,
-  Twitter, Instagram, CheckCircle2
+  Twitter, Instagram, CheckCircle2, Sparkles
 } from 'lucide-react';
 import { Product } from '../types';
 import Scene3D from './Scene3D';

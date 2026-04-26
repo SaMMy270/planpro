@@ -5,7 +5,6 @@ import { Product } from '../types';
 interface ProductCardProps {
   product: Product;
   onAR: (p: Product) => void;
-  onAI: (p: Product) => void;
   onCompare: (p: Product) => void;
   onAddToCart: (id: string) => void;
   onToggleWishlist: (id: string) => void;
@@ -14,7 +13,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ 
-  product, onAR, onAI, onCompare, onAddToCart, onToggleWishlist, onViewDetails, isWishlisted 
+  product, onAR, onCompare, onAddToCart, onToggleWishlist, onViewDetails, isWishlisted 
 }) => {
   return (
     <div
@@ -67,13 +66,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
               onClick={(e) => { e.stopPropagation(); onAR(product); }}
               className="flex-1 h-11 bg-[var(--primary)] text-white rounded-xl flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm shadow-primary/10"
             >
-              <Box size={14} /> <span>AR </span>
+              <Box size={14} /> <span>AR</span>
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onCompare(product); }}
               className="flex-1 h-11 bg-primary/5 text-primary border border-primary/20 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/10 active:scale-95 transition-all text-[9px] sm:text-[10px] font-black uppercase tracking-widest"
             >
-              <Scale size={14} /> <span>AI</span>
+              <Scale size={14} /> <span>MATCH</span>
             </button>
           </div>
           <button

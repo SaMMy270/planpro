@@ -140,10 +140,7 @@ const SUBTYPE_INTENT_MAP = {
     "shoe rack", "shoe racks", "shoe stand", "footwear rack", "footwear stand", "shoerack"
   ],
 
-  "shelf": [
-    "bookshelf", "book shelf", "shelf", "shelves", "wall shelf", "display shelf", 
-    "storage shelf", "book rack", "bookrack", "book case", "bookcase", "book  cabinet"
-  ],
+
 
   "cupboard": [
     "cupboard", "cupboards", "cabinet", "storage cabinet", 
@@ -298,7 +295,6 @@ function adaptRealProduct(p) {
     null, // 5
     p.Type || p.type || null, // 6
     p.SubType || p.subtype || null, // 7
-    p.Brand || p.brand || null, // 8
     p.ImageURL || p.imageUrl || p.imageurl || p.Image || null, // 9
     p.ProductURL || p.productUrl || p.producturl || null // 10
   ];
@@ -314,7 +310,6 @@ function adaptPlanProProduct(p) {
     null,
     p.Type,
     p.SubType,
-    p.Brand || null,
     p.ImageURL || null,
     p.ProductURL || null
   ];
@@ -344,7 +339,6 @@ function compare(planProduct, datasets) {
         imageUrl: cand[9],
         productUrl: cand[10],
         dimension: cand[2],
-        brand: cand[8],
         site,
         price: cand[3],
         similarity: Number(sim.toFixed(3))

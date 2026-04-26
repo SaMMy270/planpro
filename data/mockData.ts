@@ -67,12 +67,6 @@ import cp3 from '../assets/cp3.jpg';
 import cp4 from '../assets/cp4.jpg';
 import cp5 from '../assets/cp5.jpg';
 
-import s1 from '../assets/s1.jpg';
-import s2 from '../assets/s2.jpg';
-import s3 from '../assets/s3.jpg';
-import s4 from '../assets/s4.jpg';
-import s5 from '../assets/s5.jpg';
-
 import sr1 from '../assets/sr1.jpg';
 import sr2 from '../assets/sr2.jpg';
 import sr3 from '../assets/sr3.jpg';
@@ -202,7 +196,7 @@ import q5_model from '../models/queen bed models/q5.glb';
 import sb1_model from '../models/single bed models/single bed modesl/sb1.glb';
 import sb2_model from '../models/single bed models/single bed modesl/sb2.glb';
 import sb3_model from '../models/single bed models/single bed modesl/sb3.glb';
-import sb4_model from '../models/single bed models/single bed modesl/sb4.glb';
+import sb4_model from '../models/single bed models/sb4.glb';
 import sb5_model from '../models/single bed models/single bed modesl/sb5.glb';
 
 import db1_model from '../models/double bed models/double bed models/db1.glb';
@@ -334,7 +328,8 @@ export const PRODUCTS: Product[] = [
     material: 'Glass, Chrome',
     rating: 4.8,
     reviews: [{ user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.3, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.0, comment: 'Exactly what I was looking for.' }],
-    model: d2_model
+    model: d2_model,
+    texture:darkwood
   },
   {
     id: 't-dining-3',
@@ -365,7 +360,8 @@ export const PRODUCTS: Product[] = [
     material: 'Marble, Iron',
     rating: 4.9,
     reviews: [{ user: 'Aarav', rating: 4.5, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.7, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }],
-    model: d4_model
+    model: d4_model,
+    texture:lightwood
   },
   {
     id: 't-dining-5',
@@ -412,7 +408,7 @@ export const PRODUCTS: Product[] = [
     rating: 4.9,
     reviews: [{ user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Ananya', rating: 4.1, comment: 'Modern design and easy to assemble.' }, { user: 'Kabir', rating: 4.2, comment: 'Good value for money and sturdy build.' }],
     model: st2_model,
-    texture: mahogany
+    texture: cp5tex
   },
   {
     id: 't-study-3',
@@ -427,7 +423,8 @@ export const PRODUCTS: Product[] = [
     material: 'Painted Wood',
     rating: 4.5,
     reviews: [{ user: 'Vivaan', rating: 4.5, comment: 'Exactly what I was looking for.' }, { user: 'Aarav', rating: 4.2, comment: 'Great quality and very comfortable.' }, { user: 'Ananya', rating: 4.3, comment: 'Modern design and easy to assemble.' }],
-    model: st3_model
+    model: st3_model,
+    texture:darkwood
   },
   {
     id: 't-study-4',
@@ -442,7 +439,9 @@ export const PRODUCTS: Product[] = [
     material: 'Bamboo',
     rating: 4.8,
     reviews: [{ user: 'Riya', rating: 4.6, comment: 'Looks amazing in my living room.' }, { user: 'Vivaan', rating: 4.2, comment: 'Exactly what I was looking for.' }, { user: 'Kabir', rating: 4.3, comment: 'Good value for money and sturdy build.' }],
-    model: st4_model
+    model: st4_model,
+    texture:lightwood
+   
   },
   {
     id: 't-study-5',
@@ -848,77 +847,7 @@ export const PRODUCTS: Product[] = [
     reviews: [{ user: 'Ananya', rating: 4.6, comment: 'Modern design and easy to assemble.' }, { user: 'Aarav', rating: 4.3, comment: 'Great quality and very comfortable.' }, { user: 'Riya', rating: 4.5, comment: 'Looks amazing in my living room.' }],
     model: sr5_model
   },
-  {
-    id: 'st-shelf-1',
-    name: 'PLANPRO shelf s1',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 14600,
-    image: s1,
-    images: [s1],
-    description: 'Invisible mounting floating shelf for display.',
-    dimensions: '99.9 cm | 88.8 cm | 30.6 cm',
-    material: 'Walnut Veneer',
-    rating: 4.8,
-    model:st1_model,
-   
-  },
-  {
-    id: 'st-shelf-2',
-    name: 'PLANPRO shelf s2',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 16200,
-    image: s2,
-    images: [s2],
-    description: 'Wall-mounted industrial shelf with iron pipe brackets.',
-    dimensions: '67.6 cm | 100.0 cm | 14.8 cm',
-    material: 'Reclaimed Wood, Iron',
-    rating: 4.7,
-    model:st2_model,
-  },
-  {
-    id: 'st-shelf-3',
-    name: 'PLANPRO shelf s3',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 14100,
-    image: s3,
-    images: [s3],
-    description: 'Stackable cube shelving system for customizable storage.',
-    dimensions: '100.1 cm | 94.4 cm | 33.4 cm',
-    material: 'Engineered Wood',
-    rating: 4.6,
-    model:st3_model
-  },
-  {
-    id: 'st-shelf-4',
-    name: 'PLANPRO shelf s4',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 16200,
-    image: s4,
-    images: [s4],
-    description: 'Space-saving ladder shelf designed for corners.',
-    dimensions: '70.6 cm | 100.1 cm | 21.4 cm',
-    material: 'Bamboo',
-    rating: 4.5,
-    model:st4_model
-  },
-  {
-    id: 'st-shelf-5',
-    name: 'PLANPRO shelf s5',
-    category: 'Storage',
-    subcategory: 'shelf',
-    price: 14500,
-    image: s5,
-    images: [s5],
-    description: 'Elegant tempered glass shelf unit with chrome supports.',
-    dimensions: '100.1 cm | 23.0 cm | 17.2 cm',
-    material: 'Tempered Glass, Chrome',
-    rating: 4.9,
-    model:st5_model
-  },
+
 
   // CHAIRS - CASUAL (MATCHING PROVIDED IMAGES)
   {

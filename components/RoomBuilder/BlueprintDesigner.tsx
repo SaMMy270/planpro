@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { DimensionSetup, OpeningsSetup } from './RoomSetup';
 import { calculateRoomArea, calculateFurnitureArea } from './RoomMath';
 import { HexColorPicker } from 'react-colorful';
+import SaveConfirmationModal from '../SaveConfirmationModal';
 import { formatArea, toFeetDecimal, toMetersFromDecimal } from "../../services/UnitUtils";
 import { supabase } from "../../services/supabase";
 
@@ -78,6 +79,8 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [recentColors, setRecentColors] = useState<string[]>([]);
   const [showWalls, setShowWalls] = useState(true);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [exitAction, setExitAction] = useState<() => void>(() => () => {});
 
   // --- RESPONSIVE: track viewport width reactively ---
   const [windowWidth, setWindowWidth] = useState(
@@ -366,6 +369,98 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
     return Math.max(0, totalArea - furnitureArea);
   }, [roomData, items]);
 
+  const handleSaveProject = async () => {
+    const saveToast = toast.loading("Initializing save process...");
+    try {
+      const APPSCRIPT_URL = import.meta.env.VITE_APPSCRIPT_URL;
+      if (!APPSCRIPT_URL) throw new Error("VITE_APPSCRIPT_URL is missing.");
+      const timestamp = Date.now();
+      const projectTitle = roomData.projectTitle || 'Project';
+
+      // 1. Capture Thumbnail
+      let thumbnailUrl = "";
+      if (canvasContainerRef.current) {
+        toast.loading("Capturing workspace preview...", { id: saveToast });
+        const canvas = await html2canvas(canvasContainerRef.current, {
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#FBFBF9',
+          ignoreElements: (element) => element.tagName === 'ASIDE' || element.classList.contains('z-[100]')
+        });
+        const pngData = canvas.toDataURL('image/png');
+        const blob = await (await fetch(pngData)).blob();
+        const filename = `Preview_${projectTitle}_${timestamp}.png`;
+
+        await uploadToAppScript(blob, filename, 'image/png');
+      }
+
+      // 2. Export 3D Model
+      if (designerRef.current && items.length > 0) {
+        toast.loading("Processing 3D Scene...", { id: saveToast });
+        const scene = designerRef.current.getScene();
+        if (scene) await exportSceneToGLB(scene, `${projectTitle}_${timestamp}.glb`);
+      }
+
+      // 3. Upload AI Source Images
+      const uploadedImageNames: string[] = [];
+      if (aiImages && aiImages.length > 0) {
+        toast.loading(`Uploading ${aiImages.length} source images...`, { id: saveToast });
+        for (const imgFile of aiImages) {
+          const fname = `Source_${timestamp}_${imgFile.name}`;
+          await uploadToAppScript(imgFile, fname, imgFile.type);
+          uploadedImageNames.push(fname);
+        }
+      }
+
+      // 4. Save Record to Supabase
+      toast.loading("Finalizing cloud record...", { id: saveToast });
+      if (aiImages.length > 0 || roomData.panoramaUrl) {
+        await saveToSupabase({
+          type: 'ai',
+          projectTitle,
+          imageUrls: uploadedImageNames,
+          panoramaUrl: roomData.panoramaUrl
+        });
+      } else {
+        await saveToSupabase({
+          type: 'manual',
+          projectTitle,
+          layoutData: { items, roomData },
+          thumbnailUrl: `Preview_${projectTitle}_${timestamp}.png`
+        });
+      }
+
+      toast.success("Project saved successfully!", { id: saveToast });
+    } catch (err) {
+      console.error("Save failure:", err);
+      toast.error(`Save failed: ${err instanceof Error ? err.message : 'Unknown error'}`, { id: saveToast });
+    }
+  };
+
+  const handleExitAttempt = (action: () => void) => {
+    const hasWork = items.length > 0 || aiImages.length > 0 || roomData.panoramaUrl || roomData.openings.length > 0;
+    if (hasWork) {
+      setExitAction(() => action);
+      setShowExitConfirm(true);
+    } else {
+      action();
+    }
+  };
+
+  const handleSaveAndExit = async () => {
+    await handleSaveProject();
+    setShowExitConfirm(false);
+    exitAction();
+  };
+
+  const handleDiscardAndExit = () => {
+    setAiImages([]);
+    updateRoom({ panoramaUrl: undefined });
+    setItems([]);
+    setShowExitConfirm(false);
+    exitAction();
+  };
+
   // --- VIEWS ---
 
   if (step === 'selection') {
@@ -384,6 +479,12 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
     };
 
     const initializeAiFlow = () => {
+      if (!user) {
+        toast.error("Login Required", {
+          description: "Please log in to use AI Room Synthesis."
+        });
+        return;
+      }
       setItems([]); // Clear any previous items
       setAiImages([]); // Clear previous photos
       setRoomData({
@@ -408,7 +509,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         {/* Floating back button */}
         {onBack && (
           <button
-            onClick={onBack}
+            onClick={() => handleExitAttempt(onBack)}
             className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-secondary/80 backdrop-blur-md border border-text/10 rounded-full text-[10px] font-black uppercase tracking-widest text-text hover:bg-primary hover:text-background hover:border-primary transition-all shadow-lg z-50"
           >
             <ArrowLeft size={14} /> Back
@@ -427,7 +528,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight text-primary">Manual <br /><span className="font-light text-[var(--text-muted)]">Designer</span></h2>
                 <p className="text-[var(--text-muted)] text-base md:text-lg leading-relaxed max-w-md">Precision-driven spatial planning. Build your environment from the ground up with custom dimensions and architectural modules.</p>
               </div>
-            </div>+
+            </div>
             <motion.button
               whileHover={{ x: 10 }}
               onClick={initializeManualFlow}
@@ -473,6 +574,14 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         >
           PlanPro Architectural Suite © 2026
         </motion.div>
+
+        <SaveConfirmationModal
+          isOpen={showExitConfirm}
+          onClose={() => setShowExitConfirm(false)}
+          onSave={handleSaveAndExit}
+          onDiscard={handleDiscardAndExit}
+          description="Leaving this view will reset your current progress or images. Would you like to save your project first?"
+        />
       </motion.div>
     );
   }
@@ -513,7 +622,7 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         <motion.button
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          onClick={() => setStep('selection')}
+          onClick={() => handleExitAttempt(() => setStep('selection'))}
           className="absolute top-10 sm:top-14 left-6 sm:left-10 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-text/40 hover:text-primary transition-colors"
         >
           <ArrowLeft size={14} /> Back
@@ -549,7 +658,57 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
             ))}
           </div>
         </div>
+        <SaveConfirmationModal
+          isOpen={showExitConfirm}
+          onClose={() => setShowExitConfirm(false)}
+          onSave={handleSaveAndExit}
+          onDiscard={handleDiscardAndExit}
+          description="Leaving this view will reset your current progress or images. Would you like to save your project first?"
+        />
       </motion.div>
+    );
+  }
+
+  if (step === 'dimension-setup') {
+    return (
+      <div className="w-full min-h-screen bg-background flex items-center justify-center relative">
+        <DimensionSetup
+          data={roomData}
+          onUpdate={updateRoom}
+          onNext={() => setStep('openings-setup')}
+          onBack={() => handleExitAttempt(() => setStep('shape-selection'))}
+        />
+        <SaveConfirmationModal
+          isOpen={showExitConfirm}
+          onClose={() => setShowExitConfirm(false)}
+          onSave={handleSaveAndExit}
+          onDiscard={handleDiscardAndExit}
+          description="Leaving this view will reset your current progress. Would you like to save your project first?"
+        />
+      </div>
+    );
+  }
+
+  if (step === 'openings-setup') {
+    return (
+      <div className="w-full min-h-screen bg-background flex items-center justify-center relative">
+        <OpeningsSetup
+          data={roomData}
+          onUpdate={updateRoom}
+          onNext={() => {
+            setStep('designing');
+            setActiveSidebarTab('library');
+          }}
+          onBack={() => handleExitAttempt(() => setStep('dimension-setup'))}
+        />
+        <SaveConfirmationModal
+          isOpen={showExitConfirm}
+          onClose={() => setShowExitConfirm(false)}
+          onSave={handleSaveAndExit}
+          onDiscard={handleDiscardAndExit}
+          description="Leaving this view will reset your current progress. Would you like to save your project first?"
+        />
+      </div>
     );
   }
 
@@ -559,13 +718,13 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-[#f4fff0] overflow-hidden"
+        className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-[#f4fff0] overflow-hidden relative"
       >
         {/* Left Sidebar - Studio Controls */}
         <div className="w-full lg:w-[500px] shrink-0 h-full  flex flex-col p-6 lg:p-8 border-r border-text/5 z-20">
           <div className="flex items-center gap-4 mb-4 lg:mb-6">
             <button
-              onClick={() => setStep('selection')}
+              onClick={() => handleExitAttempt(() => setStep('selection'))}
               className="flex items-center gap-2 text-text/40 hover:text-primary transition-all text-xs font-black uppercase tracking-[0.2em] group bg-secondary/30 px-4 py-2 rounded-full"
             >
               <ChevronLeft size={12} className="group-hover:-translate-x-1 transition-transform" /> Back
@@ -574,9 +733,6 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           </div>
 
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden pt-1">
-            <div className="space-y-1">
-              <h2 className="text-xl sm:text-2xl font-serif tracking-tight text-text">AI Room Generation V2</h2>
-            </div>
 
             {isMobile && roomData.panoramaUrl ? (
               <div className="flex-1 min-h-[300px] relative bg-text/5 rounded-3xl overflow-hidden border border-text/10 mb-6 group">
@@ -869,841 +1025,733 @@ const BlueprintDesigner: React.FC<BlueprintDesignerProps> = ({ wishlist, toggleW
           </div>
         </div>
       ) : null}
-
-      {/* Subtle Corner Accents */}
-      <div className="absolute top-12 right-12 w-32 h-32 border-t border-r border-text/10" />
-      <div className="absolute bottom-12 left-12 w-32 h-32 border-b border-l border-text/10" />
     </div>
   )
 }
-      </motion.div >
+      <SaveConfirmationModal
+          isOpen={showExitConfirm}
+          onClose={() => setShowExitConfirm(false)}
+          onSave={handleSaveAndExit}
+          onDiscard={handleDiscardAndExit}
+          description="Leaving this view will reset your current progress or images. Would you like to save your project first?"
+        />
+      </motion.div>
     );
   }
 
-
-
-if (step === 'dimension-setup') {
+  // --- DESIGNER VIEW (designing step) ---
   return (
-    <div className="w-full min-h-screen bg-background flex items-center justify-center">
-
-      <DimensionSetup
-        data={roomData}
-        onUpdate={updateRoom}
-        onNext={() => setStep('openings-setup')}
-        onBack={() => setStep('shape-selection')}
-      />
-    </div>
-  );
-}
-
-if (step === 'openings-setup') {
-  return (
-    <div className="w-full min-h-screen bg-background flex items-center justify-center">
-
-      <OpeningsSetup
-        data={roomData}
-        onUpdate={updateRoom}
-        onNext={() => {
-          setStep('designing');
-          setActiveSidebarTab('library');
-        }}
-        onBack={() => setStep('dimension-setup')}
-      />
-    </div>
-  );
-}
-
-const handleSaveProject = async () => {
-  const saveToast = toast.loading("Initializing save process...");
-  try {
-    const APPSCRIPT_URL = import.meta.env.VITE_APPSCRIPT_URL;
-    if (!APPSCRIPT_URL) throw new Error("VITE_APPSCRIPT_URL is missing.");
-    const timestamp = Date.now();
-    const projectTitle = roomData.projectTitle || 'Project';
-
-    // 1. Capture Thumbnail
-    let thumbnailUrl = "";
-    if (canvasContainerRef.current) {
-      toast.loading("Capturing workspace preview...", { id: saveToast });
-      const canvas = await html2canvas(canvasContainerRef.current, {
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#FBFBF9',
-        ignoreElements: (element) => element.tagName === 'ASIDE' || element.classList.contains('z-[100]')
-      });
-      const pngData = canvas.toDataURL('image/png');
-      const blob = await (await fetch(pngData)).blob();
-      const filename = `Preview_${projectTitle}_${timestamp}.png`;
-
-      // We'll need the URL back from AppScript. Since doGet is implemented, we can assume it works.
-      // For now, let's construct the presumptive URL
-      await uploadToAppScript(blob, filename, 'image/png');
-      // Note: Realistically we'd get the ID back, but for now we use name pattern or rely on list files.
-    }
-
-    // 2. Export 3D Model
-    if (designerRef.current && items.length > 0) {
-      toast.loading("Processing 3D Scene...", { id: saveToast });
-      const scene = designerRef.current.getScene();
-      if (scene) await exportSceneToGLB(scene, `${projectTitle}_${timestamp}.glb`);
-    }
-
-    // 3. Upload AI Source Images
-    const uploadedImageNames: string[] = [];
-    if (aiImages && aiImages.length > 0) {
-      toast.loading(`Uploading ${aiImages.length} source images...`, { id: saveToast });
-      for (const imgFile of aiImages) {
-        const fname = `Source_${timestamp}_${imgFile.name}`;
-        await uploadToAppScript(imgFile, fname, imgFile.type);
-        uploadedImageNames.push(fname);
-      }
-    }
-
-    // 4. Save Record to Supabase
-    toast.loading("Finalizing cloud record...", { id: saveToast });
-    if (aiImages.length > 0 || roomData.panoramaUrl) {
-      await saveToSupabase({
-        type: 'ai',
-        projectTitle,
-        imageUrls: uploadedImageNames,
-        panoramaUrl: roomData.panoramaUrl
-      });
-    } else {
-      await saveToSupabase({
-        type: 'manual',
-        projectTitle,
-        layoutData: { items, roomData },
-        thumbnailUrl: `Preview_${projectTitle}_${timestamp}.png` // Store filename for lookup
-      });
-    }
-
-    toast.success("Project saved successfully!", { id: saveToast });
-  } catch (err) {
-    console.error("Save failure:", err);
-    toast.error(`Save failed: ${err instanceof Error ? err.message : 'Unknown error'}`, { id: saveToast });
-  }
-};
-
-// --- DESIGNER VIEW ---
-return (
-  <div className="flex flex-col h-screen w-full bg-secondary/10 overflow-hidden relative">
-    <AnimatePresence>
-      {hoveredProduct && !isMobile && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="fixed z-[300] w-[320px] bg-background border border-text/5 rounded-[40px] shadow-[0_40px_80px_rgba(0,0,0,0.15)] pointer-events-none flex flex-col overflow-hidden max-h-[85vh]"
-          style={{ top: `${popupPos.top}px`, left: `${popupPos.left}px` }}
-        >
-          <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
-            <img
-              src={hoveredProduct.image}
-              className="w-full h-full object-cover"
-              alt={hoveredProduct.name}
-            />
-          </div>
-          <div className="p-8 space-y-5">
-            <div className="space-y-1">
-              <span className="text-[9px] uppercase tracking-[0.3em] text-text/30 font-black block">
-                {hoveredProduct.category}
-              </span>
-              <h5 className="font-serif text-2xl leading-tight text-text">
-                {hoveredProduct.name}
-              </h5>
+    <div className="flex flex-col h-screen w-full bg-secondary/10 overflow-hidden relative">
+      <AnimatePresence>
+        {hoveredProduct && !isMobile && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            className="fixed z-[300] w-[320px] bg-background border border-text/5 rounded-[40px] shadow-[0_40px_80px_rgba(0,0,0,0.15)] pointer-events-none flex flex-col overflow-hidden max-h-[85vh]"
+            style={{ top: `${popupPos.top}px`, left: `${popupPos.left}px` }}
+          >
+            <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
+              <img
+                src={hoveredProduct.image}
+                className="w-full h-full object-cover"
+                alt={hoveredProduct.name}
+              />
             </div>
-            <div className="flex justify-between items-center py-4 border-y border-text/5">
-              <span className="text-2xl font-bold tracking-tighter text-text">
-                ₹{hoveredProduct.price}
-              </span>
-              <div className="flex items-center gap-1.5 bg-text/5 px-3 py-1.5 rounded-full">
-                <Star size={10} className="fill-text text-text" />
-                <span className="text-[10px] font-black">{hoveredProduct.rating}</span>
-              </div>
-            </div>
-            <p className="text-[11px] text-text/40 leading-relaxed font-medium italic">
-              {hoveredProduct.description}
-            </p>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-
-    <header className="fixed top-0 left-0 right-0 h-20 bg-[var(--background)]/90 backdrop-blur-xl border-b border-[var(--border-light)] flex items-center justify-between px-4 sm:px-8 z-[100]">
-      <div className="flex items-center gap-3 sm:gap-6">
-        <button
-          onClick={() => setStep('selection')}
-          className="p-1.5 sm:p-2 hover:bg-white/5 rounded-full transition-colors"
-          title="Back to step selection"
-        >
-          <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-[var(--text)]" />
-        </button>
-
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-1.5 hover:bg-text/5 rounded-full transition-colors flex items-center gap-1.5 text-[var(--text)]"
-          title={isSidebarOpen ? 'Hide Panel' : 'Show Panel'}
-        >
-          {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
-        </button>
-
-        {/* Centered Project Title */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-0">
-          {isEditingTitle ? (
-            <input
-              autoFocus
-              className="bg-transparent border-b-2 border-primary text-[var(--text)] text-center outline-none text-lg sm:text-2xl font-black tracking-tighter w-48 sm:w-64 pointer-events-auto"
-              value={roomData.projectTitle}
-              onChange={(e) => setRoomData({ ...roomData, projectTitle: e.target.value })}
-              onBlur={() => setIsEditingTitle(false)}
-              onKeyDown={(e) => e.key === 'Enter' && setIsEditingTitle(false)}
-            />
-          ) : (
-            <div className="flex flex-col items-center pointer-events-auto cursor-pointer group" onClick={() => setIsEditingTitle(true)}>
-              <h2 className="text-lg sm:text-2xl font-black tracking-tighter text-[var(--text)] group-hover:text-primary transition-colors flex items-center gap-2">
-                {roomData.projectTitle}
-                <span className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">✏️</span>
-              </h2>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.2em] text-[var(--text)]/30 whitespace-nowrap">
-                  CARPET AREA:
+            <div className="p-8 space-y-5">
+              <div className="space-y-1">
+                <span className="text-[9px] uppercase tracking-[0.3em] text-text/30 font-black block">
+                  {hoveredProduct.category}
                 </span>
-                <span className="text-[8px] sm:text-[9px] font-bold text-primary whitespace-nowrap">
-                  {formatArea(carpetArea, roomData.units === 'METERS' ? 'METRIC' : 'IMPERIAL')}
-                </span>
+                <h5 className="font-serif text-2xl leading-tight text-text">
+                  {hoveredProduct.name}
+                </h5>
               </div>
+              <div className="flex justify-between items-center py-4 border-y border-text/5">
+                <span className="text-2xl font-bold tracking-tighter text-text">
+                  ₹{hoveredProduct.price}
+                </span>
+                <div className="flex items-center gap-1.5 bg-text/5 px-3 py-1.5 rounded-full">
+                  <Star size={10} className="fill-text text-text" />
+                  <span className="text-[10px] font-black">{hoveredProduct.rating}</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-text/40 leading-relaxed font-medium italic">
+                {hoveredProduct.description}
+              </p>
             </div>
-          )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <header className="fixed top-0 left-0 right-0 h-20 bg-[var(--background)]/90 backdrop-blur-xl border-b border-[var(--border-light)] flex items-center justify-between px-4 sm:px-8 z-[100]">
+        <div className="flex items-center gap-3 sm:gap-6">
+          <button
+            onClick={() => handleExitAttempt(() => setStep('selection'))}
+            className="p-1.5 sm:p-2 hover:bg-white/5 rounded-full transition-colors"
+            title="Back to step selection"
+          >
+            <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-[var(--text)]" />
+          </button>
+
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-1.5 hover:bg-text/5 rounded-full transition-colors flex items-center gap-1.5 text-[var(--text)]"
+            title={isSidebarOpen ? 'Hide Panel' : 'Show Panel'}
+          >
+            {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
+          </button>
+
+          {/* Centered Project Title */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-0">
+            {isEditingTitle ? (
+              <input
+                autoFocus
+                className="bg-transparent border-b-2 border-primary text-[var(--text)] text-center outline-none text-lg sm:text-2xl font-black tracking-tighter w-48 sm:w-64 pointer-events-auto"
+                value={roomData.projectTitle}
+                onChange={(e) => setRoomData({ ...roomData, projectTitle: e.target.value })}
+                onBlur={() => setIsEditingTitle(false)}
+                onKeyDown={(e) => e.key === 'Enter' && setIsEditingTitle(false)}
+              />
+            ) : (
+              <div className="flex flex-col items-center pointer-events-auto cursor-pointer group" onClick={() => setIsEditingTitle(true)}>
+                <h2 className="text-lg sm:text-2xl font-black tracking-tighter text-[var(--text)] group-hover:text-primary transition-colors flex items-center gap-2">
+                  {roomData.projectTitle}
+                  <span className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">✏️</span>
+                </h2>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.2em] text-[var(--text)]/30 whitespace-nowrap">
+                    CARPET AREA:
+                  </span>
+                  <span className="text-[8px] sm:text-[9px] font-bold text-primary whitespace-nowrap">
+                    {formatArea(carpetArea, roomData.units === 'METERS' ? 'METRIC' : 'IMPERIAL')}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-1.5 sm:gap-4">
-        <button
-          className={`px-3 sm:px-6 py-2 sm:py-2.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${isPreviewActive
-            ? 'bg-primary text-[var(--background)] shadow-xl shadow-primary/20'
-            : 'bg-text/5 text-[var(--text)] hover:bg-text/10'
-            }`}
-          onClick={togglePreview}
-          title={isPreviewActive ? 'Exit Studio' : 'Cinema View'}
-        >
-          {isPreviewActive ? <X size={14} className="sm:hidden" /> : <Maximize size={14} className="sm:hidden" />}
-          <span className="hidden sm:inline italic">{isPreviewActive ? ' Exit Studio' : ' Cinema View'}</span>
-        </button>
+        <div className="flex items-center gap-1.5 sm:gap-4">
+          <button
+            className={`px-3 sm:px-6 py-2 sm:py-2.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${isPreviewActive
+              ? 'bg-primary text-[var(--background)] shadow-xl shadow-primary/20'
+              : 'bg-text/5 text-[var(--text)] hover:bg-text/10'
+              }`}
+            onClick={togglePreview}
+            title={isPreviewActive ? 'Exit Studio' : 'Cinema View'}
+          >
+            {isPreviewActive ? <X size={14} className="sm:hidden" /> : <Maximize size={14} className="sm:hidden" />}
+            <span className="hidden sm:inline italic">{isPreviewActive ? ' Exit Studio' : ' Cinema View'}</span>
+          </button>
 
-        <button
-          onClick={handleSaveProject}
-          className="w-10 h-10 sm:w-12 sm:h-12 bg-primary border border-primary/20 rounded-full flex items-center justify-center text-[var(--background)] shadow-[0_0_30px_rgba(200,90,84,0.2)] hover:scale-110 active:scale-95 transition-all group relative overflow-hidden"
-          title="Save Project"
-        >
-          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Save size={18} className="relative z-10 sm:w-[20px] sm:h-[20px]" />
-        </button>
-      </div>
-    </header>
+          <button
+            onClick={handleSaveProject}
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-primary border border-primary/20 rounded-full flex items-center justify-center text-[var(--background)] shadow-[0_0_30px_rgba(200,90,84,0.2)] hover:scale-110 active:scale-95 transition-all group relative overflow-hidden"
+            title="Save Project"
+          >
+            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Save size={18} className="relative z-10 sm:w-[20px] sm:h-[20px]" />
+          </button>
+        </div>
+      </header>
 
-    <div className="flex-1 relative overflow-hidden">
-      {!isPreviewActive && isSidebarOpen && !(isMobile && placingProduct) && (
-        <aside
-          key="designer-sidebar"
-          style={isMobile ? { width: '100%', height: 'auto', maxHeight: '380px' } : { width: '550px' }}
-          className={`fixed z-[150] architect-sidebar flex flex-col overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.3)] transition-all duration-500 rounded-t-[2.5rem] lg:rounded-none lg:shadow-2xl ${isMobile
-            ? `bottom-0 left-0 border-t ${isSidebarOpen ? 'translate-y-0' : 'translate-y-full opacity-0'}`
-            : `top-20 bottom-0 left-0 border-r ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full opacity-0'}`
-            }`}
-        >
-          {/* Color Picker Overlay - Integrated into Sidebar */}
-          <AnimatePresence>
-            {isColorPickerOpen && (
-              <motion.div
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="absolute inset-0 z-[100] bg-background flex flex-col p-8"
-              >
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-text/30">Color Studio</span>
-                    <h3 className="text-xl font-serif mt-1 text-text">Wall Palette</h3>
+      <div className="flex-1 relative overflow-hidden">
+        {!isPreviewActive && isSidebarOpen && !(isMobile && placingProduct) && (
+          <aside
+            key="designer-sidebar"
+            style={isMobile ? { width: '100%', height: 'auto', maxHeight: '380px' } : { width: '550px' }}
+            className={`fixed z-[150] architect-sidebar flex flex-col overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.3)] transition-all duration-500 rounded-t-[2.5rem] lg:rounded-none lg:shadow-2xl ${isMobile
+              ? `bottom-0 left-0 border-t ${isSidebarOpen ? 'translate-y-0' : 'translate-y-full opacity-0'}`
+              : `top-20 bottom-0 left-0 border-r ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full opacity-0'}`
+              }`}
+          >
+            {/* Color Picker Overlay - Integrated into Sidebar */}
+            <AnimatePresence>
+              {isColorPickerOpen && (
+                <motion.div
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  exit={{ y: '100%' }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                  className="absolute inset-0 z-[100] bg-background flex flex-col p-8"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-text/30">Color Studio</span>
+                      <h3 className="text-xl font-serif mt-1 text-text">Wall Palette</h3>
+                    </div>
+                    <button
+                      onClick={() => {
+                        saveToRecentColors(roomData.wallColor);
+                        setIsColorPickerOpen(false);
+                      }}
+                      className="p-3 hover:bg-text/5 rounded-full transition-all group"
+                    >
+                      <X size={20} className="text-text/30 group-hover:text-text" />
+                    </button>
                   </div>
+                  <div className="flex-1 flex flex-col items-center justify-center space-y-10">
+                    <div className="relative group">
+                      <div className="absolute -inset-4 bg-text/5 rounded-[48px] blur-xl group-hover:bg-text/10 transition-all" />
+                      <HexColorPicker
+                        color={roomData.wallColor}
+                        onChange={handleColorChange}
+                        style={{ width: '280px', height: '280px' }}
+                        className="relative"
+                      />
+                    </div>
+
+                    <div className="w-full grid grid-cols-2 gap-4">
+                      <div className="bg-text/[0.02] border border-text/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
+                        <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-3">Live Result</span>
+                        <div className="w-14 h-14 rounded-full border-4 border-background shadow-2xl" style={{ backgroundColor: roomData.wallColor }} />
+                      </div>
+                      <div className="bg-text/[0.02] border border-text/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
+                        <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-3">Hex Pattern</span>
+                        <span className="text-xs font-bold tracking-tight text-text/80">{roomData.wallColor.toUpperCase()}</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <button
                     onClick={() => {
                       saveToRecentColors(roomData.wallColor);
                       setIsColorPickerOpen(false);
                     }}
-                    className="p-3 hover:bg-text/5 rounded-full transition-all group"
+                    className="w-full mt-10 py-6 rounded-[28px] bg-text text-[var(--background)] text-[10px] font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-text/20"
                   >
-                    <X size={20} className="text-text/30 group-hover:text-text" />
+                    Apply Selection
                   </button>
-                </div>
-                <div className="flex-1 flex flex-col items-center justify-center space-y-10">
-                  <div className="relative group">
-                    <div className="absolute -inset-4 bg-text/5 rounded-[48px] blur-xl group-hover:bg-text/10 transition-all" />
-                    <HexColorPicker
-                      color={roomData.wallColor}
-                      onChange={handleColorChange}
-                      style={{ width: '280px', height: '280px' }}
-                      className="relative"
-                    />
-                  </div>
-
-                  <div className="w-full grid grid-cols-2 gap-4">
-                    <div className="bg-text/[0.02] border border-text/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
-                      <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-3">Live Result</span>
-                      <div className="w-14 h-14 rounded-full border-4 border-background shadow-2xl" style={{ backgroundColor: roomData.wallColor }} />
-                    </div>
-                    <div className="bg-text/[0.02] border border-text/5 rounded-[32px] p-6 flex flex-col items-center justify-center">
-                      <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-3">Hex Pattern</span>
-                      <span className="text-xs font-bold tracking-tight text-text/80">{roomData.wallColor.toUpperCase()}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    saveToRecentColors(roomData.wallColor);
-                    setIsColorPickerOpen(false);
-                  }}
-                  className="w-full mt-10 py-6 rounded-[28px] bg-text text-[var(--background)] text-[10px] font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-text/20"
-                >
-                  Apply Selection
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {/* Sidebar Header & Tabs */}
-          <div className="p-8 pb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-
-              </div>
-              {isMobile && (
-                <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-[var(--text-muted)]">
-                  <X size={20} />
-                </button>
+                </motion.div>
               )}
-            </div>
-
-            {/* Tabs Overlay-style */}
-            <div className="flex bg-[var(--background)] p-1 rounded-2xl border border-[var(--border-light)] mb-4">
-              <button
-                onClick={() => setActiveSidebarTab('appearance')}
-                className={`flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeSidebarTab === 'appearance' ? 'bg-primary text-[var(--background)] shadow-lg' : 'text-[var(--text-secondary)] hover:text-primary'
-                  }`}
-              >
-                Appearance
-              </button>
-              <button
-                onClick={() => setActiveSidebarTab('library')}
-                className={`flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeSidebarTab === 'library' ? 'bg-primary text-[var(--background)] shadow-lg' : 'text-[var(--text-secondary)] hover:text-primary'
-                  }`}
-              >
-                Library
-              </button>
-            </div>
-          </div>
-
-          {/* Yellow Box - Flexible Content Scroll Area */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar px-5 py-4 space-y-6">
-            <AnimatePresence>
-              {/* Selection Panel Removed from here, moved to Header */}
             </AnimatePresence>
+            {/* Sidebar Header & Tabs */}
+            <div className="p-8 pb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
 
-            {activeSidebarTab === 'appearance' && (
-              <div className="flex flex-col space-y-8">
-                <section className="space-y-4 shrink-0">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text/20 flex items-center gap-2">
-                    <div className="w-1 h-1 rounded-full bg-text/20" />
-                    Wall Color
-                  </h4>
-                  <div className={`grid ${isMobile ? 'grid-flow-col grid-rows-2' : 'grid-cols-6'} gap-3`}>
-                    {(() => {
-                      const presets = [
-                        '#2a2a2a', '#1a1a1b', '#353b48', '#2d3436', '#ffffff', '#E4E4F4', '#FDE7D1', '#F5F5F3'
-                      ];
-                      const isCustom = !presets.includes(roomData.wallColor);
+                </div>
+                {isMobile && (
+                  <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-[var(--text-muted)]">
+                    <X size={20} />
+                  </button>
+                )}
+              </div>
 
-                      return (
-                        <>
-                          {presets.map((col) => (
-                            <button
-                              key={col}
-                              onClick={() => updateRoom({ wallColor: col })}
-                              className={`aspect-square rounded-full border-2 transition-all ${roomData.wallColor === col
-                                ? 'border-text scale-110 shadow-lg shadow-text/5'
-                                : 'border-text/5'
-                                }`}
-                              style={{ backgroundColor: col }}
-                            />
-                          ))}
+              {/* Tabs Overlay-style */}
+              <div className="flex bg-[var(--background)] p-1 rounded-2xl border border-[var(--border-light)] mb-4">
+                <button
+                  onClick={() => setActiveSidebarTab('appearance')}
+                  className={`flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeSidebarTab === 'appearance' ? 'bg-primary text-[var(--background)] shadow-lg' : 'text-[var(--text-secondary)] hover:text-primary'
+                    }`}
+                >
+                  Appearance
+                </button>
+                <button
+                  onClick={() => setActiveSidebarTab('library')}
+                  className={`flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeSidebarTab === 'library' ? 'bg-primary text-[var(--background)] shadow-lg' : 'text-[var(--text-secondary)] hover:text-primary'
+                    }`}
+                >
+                  Library
+                </button>
+              </div>
+            </div>
 
-                          {/* Recent Colors Slots */}
-                          {[0, 1, 2, 3].map((idx) => {
-                            const col = recentColors[idx];
-                            return (
+            {/* Content Scroll Area */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar px-5 py-4 space-y-6">
+              {activeSidebarTab === 'appearance' && (
+                <div className="flex flex-col space-y-8">
+                  <section className="space-y-4 shrink-0">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text/20 flex items-center gap-2">
+                      <div className="w-1 h-1 rounded-full bg-text/20" />
+                      Wall Color
+                    </h4>
+                    <div className={`grid ${isMobile ? 'grid-flow-col grid-rows-2' : 'grid-cols-6'} gap-3`}>
+                      {(() => {
+                        const presets = [
+                          '#2a2a2a', '#1a1a1b', '#353b48', '#2d3436', '#ffffff', '#E4E4F4', '#FDE7D1', '#F5F5F3'
+                        ];
+                        const isCustom = !presets.includes(roomData.wallColor);
+
+                        return (
+                          <>
+                            {presets.map((col) => (
                               <button
-                                key={`recent-${idx}`}
-                                onClick={() => col && updateRoom({ wallColor: col })}
-                                className={`aspect-square rounded-full border-2 transition-all ${col && roomData.wallColor === col
+                                key={col}
+                                onClick={() => updateRoom({ wallColor: col })}
+                                className={`aspect-square rounded-full border-2 transition-all ${roomData.wallColor === col
                                   ? 'border-text scale-110 shadow-lg shadow-text/5'
                                   : 'border-text/5'
-                                  } flex items-center justify-center ${!col ? 'border-dashed border-text/10 bg-text/[0.02]' : ''}`}
-                                style={{ backgroundColor: col || 'transparent' }}
-                              >
-                                {!col && <div className="w-1.5 h-1.5 rounded-full bg-text/10" />}
-                              </button>
-                            );
-                          })}
+                                  }`}
+                                style={{ backgroundColor: col }}
+                              />
+                            ))}
 
-                          {/* Custom Color Picker Button */}
-                          <button
-                            onClick={() => setIsColorPickerOpen(true)}
-                            className={`aspect-square rounded-full border-2 transition-all hover:scale-110 flex items-center justify-center overflow-hidden ${isCustom ? 'border-text shadow-lg shadow-text/10' : 'border-text/5 bg-text/5'
-                              }`}
-                            style={{ backgroundColor: isCustom ? roomData.wallColor : undefined }}
-                          >
-                            <Plus
-                              size={14}
-                              className={`transition-colors ${isCustom ? (['#ffffff', '#FBFBF9', '#F5F5F3'].includes(roomData.wallColor.toLowerCase()) ? 'text-text' : 'text-highlight') : 'text-text/30'}`}
-                            />
-                          </button>
-                        </>
-                      );
-                    })()}
-                  </div>
-                </section>
-                <section className="space-y-3">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-text/30">
-                    Wall Materials
-                  </h4>
-                  <div className="flex gap-2 p-1 bg-text/5 rounded-2xl">
-                    {['plain', 'brick', 'concrete', 'plaster'].map((mat) => (
-                      <button
-                        key={mat}
-                        onClick={() => updateRoom({ wallTexture: mat as any })}
-                        className={`flex-1 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${roomData.wallTexture === mat
-                          ? 'bg-text text-[var(--background)] shadow-lg'
-                          : 'text-text/40 hover:text-text'
-                          }`}
-                      >
-                        {mat}
-                      </button>
-                    ))}
-                  </div>
-                </section>
-                <section className="space-y-3">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-text/30">
-                    Floor Materials
-                  </h4>
-                  {['plain', 'wood', 'tiles'].map((mat) => (
-                    <button
-                      key={mat}
-                      onClick={() => updateRoom({ floorTexture: mat as any })}
-                      className={`w-full p-4 rounded-2xl flex items-center justify-between border transition-all ${roomData.floorTexture === mat
-                        ? 'bg-text text-[var(--background)] border-text'
-                        : 'bg-background border-text/5 text-text'
-                        }`}
-                    >
-                      <span className="text-[10px] font-black uppercase tracking-widest">
-                        {mat}
-                      </span>
-                      {roomData.floorTexture === mat && <Check size={16} />}
-                    </button>
-                  ))}
-                </section>
+                            {/* Recent Colors Slots */}
+                            {[0, 1, 2, 3].map((idx) => {
+                              const col = recentColors[idx];
+                              return (
+                                <button
+                                  key={`recent-${idx}`}
+                                  onClick={() => col && updateRoom({ wallColor: col })}
+                                  className={`aspect-square rounded-full border-2 transition-all ${col && roomData.wallColor === col
+                                    ? 'border-text scale-110 shadow-lg shadow-text/5'
+                                    : 'border-text/5'
+                                    } flex items-center justify-center ${!col ? 'border-dashed border-text/10 bg-text/[0.02]' : ''}`}
+                                  style={{ backgroundColor: col || 'transparent' }}
+                                >
+                                  {!col && <div className="w-1.5 h-1.5 rounded-full bg-text/10" />}
+                                </button>
+                              );
+                            })}
 
-                {/* Manipulation controls moved to top level */}
-              </div>
-            )}
-
-            {activeSidebarTab === 'library' && (
-              <div className="flex flex-col gap-6">
-                {/* Categories UI */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between px-1">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-text/30">Collections</h4>
-                    {!isMobile && <span className="text-[10px] font-bold text-text/20 uppercase tracking-widest">{filteredLibraryProducts.length} Items</span>}
-                  </div>
-
-                  <div className="relative group/select">
-                    <select
-                      value={libraryCategory}
-                      onChange={(e) => setLibraryCategory(e.target.value)}
-                      className="w-full bg-[var(--background)] border border-[var(--border-light)] rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest focus:ring-1 focus:ring-primary appearance-none cursor-pointer transition-all hover:bg-[var(--card-bg)] text-[var(--text)]"
-                    >
-                      {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text)]/30">
-                      <ChevronRight size={16} className="rotate-90" />
+                            {/* Custom Color Picker Button */}
+                            <button
+                              onClick={() => setIsColorPickerOpen(true)}
+                              className={`aspect-square rounded-full border-2 transition-all hover:scale-110 flex items-center justify-center overflow-hidden ${isCustom ? 'border-text shadow-lg shadow-text/10' : 'border-text/5 bg-text/5'
+                                }`}
+                              style={{ backgroundColor: isCustom ? roomData.wallColor : undefined }}
+                            >
+                              <Plus
+                                size={14}
+                                className={`transition-colors ${isCustom ? (['#ffffff', '#FBFBF9', '#F5F5F3'].includes(roomData.wallColor.toLowerCase()) ? 'text-text' : 'text-highlight') : 'text-text/30'}`}
+                              />
+                            </button>
+                          </>
+                        );
+                      })()}
                     </div>
-                  </div>
-
-                  {libraryCategory !== 'All' && subCategories.length > 1 && (
-                    <div className="flex flex-wrap sm:flex-nowrap sm:overflow-x-auto no-scrollbar gap-2 animate-in slide-in-from-top-2 duration-300">
-                      {subCategories.map(sub => (
+                  </section>
+                  <section className="space-y-3">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-text/30">
+                      Wall Materials
+                    </h4>
+                    <div className="flex gap-2 p-1 bg-text/5 rounded-2xl">
+                      {['plain', 'brick', 'concrete', 'plaster'].map((mat) => (
                         <button
-                          key={sub}
-                          onClick={() => setLibrarySubcategory(sub)}
-                          className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${librarySubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-primary border-primary text-background shadow-[0_4px_10px_rgba(193,200,228,0.3)]' : 'bg-text/5 border-text/10 text-text/30 hover:text-text hover:border-text/20'}`}
+                          key={mat}
+                          onClick={() => updateRoom({ wallTexture: mat as any })}
+                          className={`flex-1 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${roomData.wallTexture === mat
+                            ? 'bg-text text-[var(--background)] shadow-lg'
+                            : 'text-text/40 hover:text-text'
+                            }`}
                         >
-                          {sub}
+                          {mat}
                         </button>
                       ))}
                     </div>
-                  )}
+                  </section>
+                  <section className="space-y-3">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-text/30">
+                      Floor Materials
+                    </h4>
+                    {['plain', 'wood', 'tiles'].map((mat) => (
+                      <button
+                        key={mat}
+                        onClick={() => updateRoom({ floorTexture: mat as any })}
+                        className={`w-full p-4 rounded-2xl flex items-center justify-between border transition-all ${roomData.floorTexture === mat
+                          ? 'bg-text text-[var(--background)] border-text'
+                          : 'bg-background border-text/5 text-text'
+                          }`}
+                      >
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                          {mat}
+                        </span>
+                        {roomData.floorTexture === mat && <Check size={16} />}
+                      </button>
+                    ))}
+                  </section>
                 </div>
+              )}
 
-                <div className="grid grid-cols-2 xs:grid-cols-3 gap-3 sm:gap-4 pb-10">
-                  {filteredLibraryProducts.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => addItemToPlacement(p)}
-                      onMouseEnter={(e) => handleProductHover(e, p)}
-                      onMouseLeave={() => setHoveredProduct(null)}
-                      className="aspect-square group bg-secondary/30 rounded-2xl sm:rounded-3xl p-3 sm:p-5 hover:bg-background hover:shadow-2xl hover:shadow-text/5 transition-all relative border border-transparent hover:border-text/5 overflow-hidden"
-                    >
-                      <img
-                        src={p.image}
-                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
-                        alt={p.name}
-                      />
-                      <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Plus size={24} className="text-text scale-75 group-hover:scale-100 transition-transform" />
+              {activeSidebarTab === 'library' && (
+                <div className="flex flex-col gap-6">
+                  {/* Categories UI */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-text/30">Collections</h4>
+                      {!isMobile && <span className="text-[10px] font-bold text-text/20 uppercase tracking-widest">{filteredLibraryProducts.length} Items</span>}
+                    </div>
+
+                    <div className="relative group/select">
+                      <select
+                        value={libraryCategory}
+                        onChange={(e) => setLibraryCategory(e.target.value)}
+                        className="w-full bg-[var(--background)] border border-[var(--border-light)] rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest focus:ring-1 focus:ring-primary appearance-none cursor-pointer transition-all hover:bg-[var(--card-bg)] text-[var(--text)]"
+                      >
+                        {categories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text)]/30">
+                        <ChevronRight size={16} className="rotate-90" />
                       </div>
+                    </div>
+
+                    {libraryCategory !== 'All' && subCategories.length > 1 && (
+                      <div className="flex flex-wrap sm:flex-nowrap sm:overflow-x-auto no-scrollbar gap-2 animate-in slide-in-from-top-2 duration-300">
+                        {subCategories.map(sub => (
+                          <button
+                            key={sub}
+                            onClick={() => setLibrarySubcategory(sub)}
+                            className={`whitespace-nowrap px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest transition-all border ${librarySubcategory.toLowerCase() === sub.toLowerCase() ? 'bg-primary border-primary text-background shadow-[0_4px_10px_rgba(193,200,228,0.3)]' : 'bg-text/5 border-text/10 text-text/30 hover:text-text hover:border-text/20'}`}
+                          >
+                            {sub}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 xs:grid-cols-3 gap-3 sm:gap-4 pb-10">
+                    {filteredLibraryProducts.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => addItemToPlacement(p)}
+                        onMouseEnter={(e) => handleProductHover(e, p)}
+                        onMouseLeave={() => setHoveredProduct(null)}
+                        className="aspect-square group bg-secondary/30 rounded-2xl sm:rounded-3xl p-3 sm:p-5 hover:bg-background hover:shadow-2xl hover:shadow-text/5 transition-all relative border border-transparent hover:border-text/5 overflow-hidden"
+                      >
+                        <img
+                          src={p.image}
+                          className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                          alt={p.name}
+                        />
+                        <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Plus size={24} className="text-text scale-75 group-hover:scale-100 transition-transform" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* PC Bottom Controls */}
+            {!isMobile && (
+              <div className="mt-auto p-8 border-t border-text/5 bg-background/50 backdrop-blur-xl">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text/20">Project Inventory</p>
+                    <span className="text-[9px] font-bold text-primary/40 uppercase tracking-widest">{items.length} ITEMS</span>
+                  </div>
+
+                  <div className="flex items-baseline justify-between py-2">
+                    <span className="text-2xl font-bold tracking-tighter text-text">
+                      ₹{items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0).toLocaleString()}
+                    </span>
+                    <button
+                      onClick={() => setIsBillOpen(true)}
+                      className="text-[9px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors underline underline-offset-8 decoration-primary/20"
+                    >
+                      View Statement
                     </button>
-                  ))}
+                  </div>
                 </div>
               </div>
             )}
-          </div>
+          </aside>
+        )}
 
-          {/* Red Box - Anchored Bottom Controls (PC) */}
-          {!isMobile && (
-            <div className="mt-auto p-8 border-t border-text/5 bg-background/50 backdrop-blur-xl">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text/20">Project Inventory</p>
-                  <span className="text-[9px] font-bold text-primary/40 uppercase tracking-widest">{items.length} ITEMS</span>
-                </div>
-
-                <div className="flex items-baseline justify-between py-2">
-                  <span className="text-2xl font-bold tracking-tighter text-text">
-                    ₹{items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0).toLocaleString()}
-                  </span>
-                  <button
-                    onClick={() => setIsBillOpen(true)}
-                    className="text-[9px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors underline underline-offset-8 decoration-primary/20"
-                  >
-                    View Statement
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </aside>
-      )}
-
-      <section
-        className="w-full mt-20 architect-canvas relative transition-all duration-500"
-        style={isPreviewActive
-          ? { height: '100%', marginTop: 0, paddingTop: 0 }
-          : {
-            height: isMobile ? (isSidebarOpen ? 'calc(100% - 380px)' : 'calc(100% - 5rem)') : 'calc(100% - 5rem)',
-            paddingLeft: (!isMobile && isSidebarOpen) ? '550px' : '0',
-            paddingRight: '0',
-            paddingBottom: '0'
+        <section
+          className="w-full mt-20 architect-canvas relative transition-all duration-500"
+          style={isPreviewActive
+            ? { height: '100%', marginTop: 0, paddingTop: 0 }
+            : {
+              height: isMobile ? (isSidebarOpen ? 'calc(100% - 380px)' : 'calc(100% - 5rem)') : 'calc(100% - 5rem)',
+              paddingLeft: (!isMobile && isSidebarOpen) ? '550px' : '0',
+              paddingRight: '0',
+              paddingBottom: '0'
+            }
           }
-        }
-      >
-        <div
-          ref={canvasContainerRef}
-          className={`w-full h-full overflow-hidden transition-all duration-700 ${isPreviewActive ? 'rounded-none shadow-none' : 'canvas-3d'
-            }`}
         >
-          <DesignerRoom
-            ref={designerRef}
-            roomData={roomData}
-            items={items}
-            setItems={setItems}
-            selectedItemId={selectedItemId}
-            setSelectedItemId={setSelectedItemId}
-            viewMode={viewMode}
-            placingProduct={placingProduct}
-            onPlaceItem={handlePlaceItem}
-            onCancelPlacement={() => setPlacingProduct(null)}
-            onWallClick={handleWallClick}
-            isPreviewActive={isPreviewActive}
-            showWalls={showWalls}
-            isMobile={isMobile}
-          />
+          <div
+            ref={canvasContainerRef}
+            className={`w-full h-full overflow-hidden transition-all duration-700 ${isPreviewActive ? 'rounded-none shadow-none' : 'canvas-3d'
+              }`}
+          >
+            <DesignerRoom
+              ref={designerRef}
+              roomData={roomData}
+              items={items}
+              setItems={setItems}
+              selectedItemId={selectedItemId}
+              setSelectedItemId={setSelectedItemId}
+              viewMode={viewMode}
+              placingProduct={placingProduct}
+              onPlaceItem={handlePlaceItem}
+              onCancelPlacement={() => setPlacingProduct(null)}
+              onWallClick={handleWallClick}
+              isPreviewActive={isPreviewActive}
+              showWalls={showWalls}
+              isMobile={isMobile}
+            />
 
-          {/* Architectural Controls & Bill Buttons */}
-          {!isPreviewActive && (
-            <div className="absolute top-4 right-4 z-[100] flex flex-col gap-3 items-end">
-              {/* Mode & Visibility Toggles - Expandable Menu */}
-              <div className="flex flex-col gap-2 items-end">
-                <motion.div
-                  initial={false}
-                  animate={{
-                    height: isToolbarExpanded ? 'auto' : 0,
-                    opacity: isToolbarExpanded ? 1 : 0,
-                    marginBottom: isToolbarExpanded ? 8 : 0
-                  }}
-                  className="overflow-hidden flex flex-col gap-2 p-1 bg-background/80 backdrop-blur-xl border border-text/5 rounded-3xl shadow-2xl"
-                >
-                  <button
-                    onClick={() => setViewMode('TOP')}
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${viewMode === 'TOP' ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
-                      }`}
-                    title="Plan View"
+            {!isPreviewActive && (
+              <div className="absolute top-4 right-4 z-[100] flex flex-col gap-3 items-end">
+                <div className="flex flex-col gap-2 items-end">
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      height: isToolbarExpanded ? 'auto' : 0,
+                      opacity: isToolbarExpanded ? 1 : 0,
+                      marginBottom: isToolbarExpanded ? 8 : 0
+                    }}
+                    className="overflow-hidden flex flex-col gap-2 p-1 bg-background/80 backdrop-blur-xl border border-text/5 rounded-3xl shadow-2xl"
                   >
-                    <Maximize size={18} />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('3D')}
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${viewMode === '3D' ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
-                      }`}
-                    title="3D Room View"
-                  >
-                    <Box size={18} />
-                  </button>
-                  <div className="w-5 h-px bg-text/10 mx-auto my-1" />
-                  <button
-                    onClick={() => setShowWalls(!showWalls)}
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${showWalls ? 'bg-highlight text-background ring-4 ring-highlight/10 shadow-[0_0_25px_rgba(248,232,193,0.5)]' : 'bg-background/40 text-text/20 hover:text-text/40 border border-text/10'
-                      }`}
-                    title={showWalls ? "Hide Walls" : "Show Walls"}
-                  >
-                    {showWalls ? <Eye size={18} className="animate-pulse" /> : <EyeOff size={18} />}
-                  </button>
-                  {isMobile && (
-                    <>
-                      <div className="w-5 h-px bg-text/10 mx-auto my-1" />
-                      <button
-                        onClick={() => setIsBillOpen(true)}
-                        className="w-10 h-10 rounded-2xl flex items-center justify-center text-text/40 hover:text-text hover:bg-text/5 border border-text/10 transition-all"
-                        title="View Bill"
-                      >
-                        <Layout size={18} />
-                      </button>
-                    </>
-                  )}
-                </motion.div>
+                    <button
+                      onClick={() => setViewMode('TOP')}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${viewMode === 'TOP' ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
+                        }`}
+                      title="Plan View"
+                    >
+                      <Maximize size={18} />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('3D')}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${viewMode === '3D' ? 'bg-text text-highlight shadow-xl' : 'text-text/40 hover:text-text hover:bg-text/5'
+                        }`}
+                      title="3D Room View"
+                    >
+                      <Box size={18} />
+                    </button>
+                    <div className="w-5 h-px bg-text/10 mx-auto my-1" />
+                    <button
+                      onClick={() => setShowWalls(!showWalls)}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${showWalls ? 'bg-highlight text-background ring-4 ring-highlight/10 shadow-[0_0_25px_rgba(248,232,193,0.5)]' : 'bg-background/40 text-text/20 hover:text-text/40 border border-text/10'
+                        }`}
+                      title={showWalls ? "Hide Walls" : "Show Walls"}
+                    >
+                      {showWalls ? <Eye size={18} className="animate-pulse" /> : <EyeOff size={18} />}
+                    </button>
+                    {isMobile && (
+                      <>
+                        <div className="w-5 h-px bg-text/10 mx-auto my-1" />
+                        <button
+                          onClick={() => setIsBillOpen(true)}
+                          className="w-10 h-10 rounded-2xl flex items-center justify-center text-text/40 hover:text-text hover:bg-text/5 border border-text/10 transition-all"
+                          title="View Bill"
+                        >
+                          <Layout size={18} />
+                        </button>
+                      </>
+                    )}
+                  </motion.div>
 
-                <button
-                  onClick={() => setIsToolbarExpanded(!isToolbarExpanded)}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-xl border border-text/5 ${isToolbarExpanded ? 'bg-text text-highlight' : 'bg-background/80 text-text'
-                    }`}
-                  title="Studio Settings"
-                >
-                  <Layers size={20} />
-                </button>
+                  <button
+                    onClick={() => setIsToolbarExpanded(!isToolbarExpanded)}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-xl border border-text/5 ${isToolbarExpanded ? 'bg-text text-highlight' : 'bg-background/80 text-text'
+                      }`}
+                    title="Studio Settings"
+                  >
+                    <Layers size={20} />
+                  </button>
+                </div>
               </div>
+            )}
 
+            <AnimatePresence>
+              {(selectedItemId || placingProduct) && (
+                isMobile ? (
+                  <div className={`absolute ${isSidebarOpen ? 'bottom-28' : 'bottom-5'} inset-x-0 flex justify-center z-[200] px-6 pointer-events-none`}>
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: 20, opacity: 0 }}
+                      className="pointer-events-auto flex items-center bg-background/95 backdrop-blur-xl p-3 rounded-[32px] border border-text/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] gap-2 w-full max-w-[340px]"
+                    >
+                      <div className="flex flex-col px-4 border-r border-text/5">
+                        <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-0.5">Editing</span>
+                        <h4 className="text-[10px] font-bold text-text truncate max-w-[120px] lg:max-w-[200px]">
+                          {placingProduct?.name || items.find(it => it.id === selectedItemId)?.type || 'Object'}
+                        </h4>
+                      </div>
 
-            </div>
-          )}
+                      <div className="flex items-center gap-1.5 lg:gap-2 px-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const id = placingProduct ? 'placing' : selectedItemId;
+                            if (id && id !== 'placing') {
+                              setItems(prev => prev.map(f => f.id === id ? { ...f, rotation: ((f.rotation || 0) + 45) % 360 } : f));
+                            }
+                          }}
+                          className="p-3 bg-text/5 hover:bg-text/10 rounded-2xl transition-all group"
+                          title="Rotate Object"
+                        >
+                          <RotateCw size={20} className="text-text/40 group-hover:text-text group-hover:rotate-90 transition-transform" />
+                        </button>
 
-          {/* Action Panel - Positioned at Bottom Center of Canvas */}
-          <AnimatePresence>
-            {(selectedItemId || placingProduct) && (
-              isMobile ? (
-                <div className={`absolute ${isSidebarOpen ? 'bottom-28' : 'bottom-5'} inset-x-0 flex justify-center z-[200] px-6 pointer-events-none`}>
+                        <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else if (selectedItemId) { setItems(items.filter(it => it.id !== selectedItemId)); setSelectedItemId(null); } }} className="p-3 bg-[#E11D48]/5 hover:bg-[#E11D48]/10 rounded-2xl transition-all group">
+                          <X size={20} className="text-[#E11D48]/40 group-hover:text-[#E11D48]" />
+                        </button>
+
+                        <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else setSelectedItemId(null); }} className="p-3 bg-primary/10 hover:bg-primary/20 rounded-2xl transition-all group">
+                          <Check size={20} className="text-primary group-hover:scale-110 transition-transform" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                ) : (
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 20, opacity: 0 }}
-                    className="pointer-events-auto flex items-center bg-background/95 backdrop-blur-xl p-3 rounded-[32px] border border-text/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] gap-2 w-full max-w-[340px]"
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center bg-background/80 backdrop-blur-xl p-2 rounded-[32px] border border-text/5 shadow-2xl gap-3"
                   >
                     <div className="flex flex-col px-4 border-r border-text/5">
                       <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-0.5">Editing</span>
-                      <h4 className="text-[10px] font-bold text-text truncate max-w-[120px] lg:max-w-[200px]">
+                      <h4 className="text-[10px] font-bold text-text truncate max-w-[200px]">
                         {placingProduct?.name || items.find(it => it.id === selectedItemId)?.type || 'Object'}
                       </h4>
                     </div>
-
-                    <div className="flex items-center gap-1.5 lg:gap-2 px-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const id = placingProduct ? 'placing' : selectedItemId;
-                          if (id === 'placing') {
-                            // Rotation for ghost is local to placing state but not easy to track here
-                          } else if (id) {
-                            setItems(prev => prev.map(f => f.id === id ? { ...f, rotation: ((f.rotation || 0) + 45) % 360 } : f));
-                          }
-                        }}
-                        className="p-3 bg-text/5 hover:bg-text/10 rounded-2xl transition-all group"
-                        title="Rotate Object"
-                      >
-                        <RotateCw size={20} className="text-text/40 group-hover:text-text group-hover:rotate-90 transition-transform" />
+                    <div className="flex items-center gap-2 pr-4">
+                      <button onClick={(e) => { e.stopPropagation(); const id = placingProduct ? 'placing' : selectedItemId; if (id && id !== 'placing') setItems(prev => prev.map(f => f.id === id ? { ...f, rotation: ((f.rotation || 0) + 45) % 360 } : f)); }} className="w-12 h-12 bg-text/5 text-text rounded-2xl flex items-center justify-center hover:bg-text/10 transition-all border border-text/5">
+                        <RotateCw size={18} />
                       </button>
-
-                      <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else if (selectedItemId) { setItems(items.filter(it => it.id !== selectedItemId)); setSelectedItemId(null); } }} className="p-3 bg-[#E11D48]/5 hover:bg-[#E11D48]/10 rounded-2xl transition-all group">
-                        <X size={20} className="text-[#E11D48]/40 group-hover:text-[#E11D48]" />
+                      <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else if (selectedItemId) { setItems(items.filter(it => it.id !== selectedItemId)); setSelectedItemId(null); } }} className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all border border-red-500/10">
+                        <Trash2 size={18} />
                       </button>
-
-                      <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else setSelectedItemId(null); }} className="p-3 bg-primary/10 hover:bg-primary/20 rounded-2xl transition-all group">
-                        <Check size={20} className="text-primary group-hover:scale-110 transition-transform" />
+                      <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else setSelectedItemId(null); }} className="w-12 h-12 bg-text border border-text text-background rounded-2xl flex items-center justify-center hover:scale-105 transition-all">
+                        <Check size={18} />
                       </button>
                     </div>
                   </motion.div>
-                </div>
-              ) : (
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 20, opacity: 0 }}
-                  className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center bg-background/80 backdrop-blur-xl p-2 rounded-[32px] border border-text/5 shadow-2xl gap-3"
-                >
-                  <div className="flex flex-col px-4 border-r border-text/5">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-text/20 mb-0.5">Editing</span>
-                    <h4 className="text-[10px] font-bold text-text truncate max-w-[200px]">
-                      {placingProduct?.name || items.find(it => it.id === selectedItemId)?.type || 'Object'}
-                    </h4>
-                  </div>
-                  <div className="flex items-center gap-2 pr-4">
-                    <button onClick={(e) => { e.stopPropagation(); const id = placingProduct ? 'placing' : selectedItemId; if (id && id !== 'placing') setItems(prev => prev.map(f => f.id === id ? { ...f, rotation: ((f.rotation || 0) + 45) % 360 } : f)); }} className="w-12 h-12 bg-text/5 text-text rounded-2xl flex items-center justify-center hover:bg-text/10 transition-all border border-text/5">
-                      <RotateCw size={18} />
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else if (selectedItemId) { setItems(items.filter(it => it.id !== selectedItemId)); setSelectedItemId(null); } }} className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all border border-red-500/10">
-                      <Trash2 size={18} />
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); if (placingProduct) setPlacingProduct(null); else setSelectedItemId(null); }} className="w-12 h-12 bg-text border border-text text-background rounded-2xl flex items-center justify-center hover:scale-105 transition-all">
-                      <Check size={18} />
-                    </button>
-                  </div>
-                </motion.div>
-              )
-            )}
-          </AnimatePresence>
-        </div>
-
-        {placingProduct && (
-          <div className="absolute top-12 left-1/2 -translate-x-1/2 z-40 bg-highlight text-background px-8 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-bounce">
-            <MousePointer2 size={16} />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-              Click floor to place {placingProduct.name}
-            </span>
-          </div>
-        )}
-      </section>
-    </div>
-
-    {/* Bill of Materials Dialog */}
-    <AnimatePresence>
-      {isBillOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsBillOpen(false)}
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-          />
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 30 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 30 }}
-            className="relative w-full max-w-2xl bg-background rounded-[48px] shadow-[0_50px_100px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[85vh] border border-text/5"
-          >
-            <div className="p-6 lg:p-10 border-b border-text/5 flex items-center justify-between bg-background">
-              <div>
-                <h3 className="text-xl lg:text-2xl font-serif text-text">Your Curated Bill</h3>
-                <div className="flex flex-wrap items-center gap-2 mt-2">
-                  <span className="text-[7px] lg:text-[8px] font-black uppercase tracking-[0.2em] text-text/30 px-2 lg:px-3 py-1 bg-text/5 rounded-full">
-                    Project: {roomData.projectTitle}
-                  </span>
-                  <span className="text-[7px] lg:text-[8px] font-black uppercase tracking-[0.2em] text-text/30 px-2 lg:px-3 py-1 bg-text/5 rounded-full">
-                    {items.length} Products
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsBillOpen(false)}
-                className="p-3 lg:p-4 hover:bg-text/5 rounded-full transition-all hover:rotate-90 group"
-              >
-                <X size={20} className="lg:w-6 lg:h-6 text-text/20 group-hover:text-text" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-4 lg:space-y-6 custom-scrollbar bg-background/50">
-              {items.length === 0 ? (
-                <div className="py-16 lg:py-24 text-center space-y-4">
-                  <div className="w-16 h-16 lg:w-20 lg:h-20 bg-text/5 rounded-full flex items-center justify-center mx-auto">
-                    <Plus size={24} className="lg:w-8 lg:h-8 text-text/10" />
-                  </div>
-                  <div>
-                    <p className="text-base lg:text-lg font-serif text-text/40">Your receipt is empty</p>
-                    <p className="text-[8px] lg:text-[10px] font-black uppercase tracking-widest text-text/20 mt-1">Add items from the library to build your project</p>
-                  </div>
-                </div>
-              ) : (
-                items.map((item) => {
-                  const product = PRODUCTS.find(p => p.name === item.type);
-                  return (
-                    <div key={item.id} className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-5 lg:p-6 rounded-[28px] lg:rounded-[32px] bg-background border border-text/5 shadow-sm hover:shadow-xl hover:shadow-text/[0.02] transition-all group">
-                      {/* Image only on PC */}
-                      <div className="hidden lg:block w-24 h-24 bg-secondary/30 rounded-[24px] overflow-hidden p-4 group-hover:scale-105 transition-transform duration-500">
-                        <img src={product?.image} className="w-full h-full object-contain" alt={item.type} />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center justify-between lg:block">
-                          <span className="text-[8px] lg:text-[9px] font-black uppercase tracking-[0.2em] text-text/30">{product?.category}</span>
-                          <span className="lg:hidden text-lg font-bold tracking-tighter text-text">₹{product?.price}</span>
-                        </div>
-                        <h4 className="text-base lg:text-lg font-serif leading-tight text-text">{item.type}</h4>
-                        <div className="flex items-center gap-3 pt-1">
-                          <span className="text-[8px] lg:text-[9px] font-bold text-text/40">ID: {item.id}</span>
-                          <div className="w-1 h-1 rounded-full bg-text/10" />
-                          <span className="text-[8px] lg:text-[9px] font-bold text-text/40">Status: In Scene</span>
-                        </div>
-                      </div>
-                      <div className="hidden lg:block text-right">
-                        <span className="text-xl font-bold tracking-tighter text-text">₹{product?.price}</span>
-                      </div>
-                    </div>
-                  );
-                })
+                )
               )}
-            </div>
+            </AnimatePresence>
+          </div>
 
-            <div className="p-6 lg:p-10 bg-background border-t border-text/5">
-              <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-8 lg:mb-10 px-2 lg:px-4 gap-4">
-                <div className="space-y-1">
-                  <span className="text-[8px] lg:text-[9px] font-black uppercase tracking-[0.2em] text-text/20 block">Statement Total</span>
-                  <span className="text-[7px] font-bold text-[#1AA06D] uppercase tracking-widest opacity-80">Inclusive of all taxes</span>
+          {placingProduct && (
+            <div className="absolute top-12 left-1/2 -translate-x-1/2 z-40 bg-highlight text-background px-8 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-bounce">
+              <MousePointer2 size={16} />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                Click floor to place {placingProduct.name}
+              </span>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <AnimatePresence>
+        {isBillOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsBillOpen(false)}
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 30 }}
+              className="relative w-full max-w-2xl bg-background rounded-[48px] shadow-[0_50px_100px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[85vh] border border-text/5"
+            >
+              <div className="p-6 lg:p-10 border-b border-text/5 flex items-center justify-between bg-background">
+                <div>
+                  <h3 className="text-xl lg:text-2xl font-serif text-text">Your Curated Bill</h3>
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span className="text-[7px] lg:text-[8px] font-black uppercase tracking-[0.2em] text-text/30 px-2 lg:px-3 py-1 bg-text/5 rounded-full">
+                      Project: {roomData.projectTitle}
+                    </span>
+                    <span className="text-[7px] lg:text-[8px] font-black uppercase tracking-[0.2em] text-text/30 px-2 lg:px-3 py-1 bg-text/5 rounded-full">
+                      {items.length} Products
+                    </span>
+                  </div>
                 </div>
-                <span className="text-2xl lg:text-3xl font-bold tracking-tighter text-text">
-                  ₹{items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0).toLocaleString()}
-                </span>
-              </div>
-              <div className="flex flex-col-reverse lg:flex-row gap-3 lg:gap-4">
                 <button
                   onClick={() => setIsBillOpen(false)}
-                  className="w-full lg:flex-1 py-5 lg:py-6 rounded-[20px] lg:rounded-[24px] border border-text/10 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-text/5 transition-all text-text/40 hover:text-text"
+                  className="p-3 lg:p-4 hover:bg-text/5 rounded-full transition-all hover:rotate-90 group"
                 >
-                  Back to Design
-                </button>
-                <button
-                  onClick={() => {
-                    toast.success("Design catalog added to cart!");
-                    setIsBillOpen(false);
-                  }}
-                  className="w-full lg:flex-[1.5] py-5 lg:py-6 rounded-[20px] lg:rounded-[24px] bg-highlight text-background text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-highlight/20 flex items-center justify-center gap-3"
-                >
-                  <Plus size={16} />
-                  Checkout All
+                  <X size={20} className="lg:w-6 lg:h-6 text-text/20 group-hover:text-text" />
                 </button>
               </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
-  </div>
-);
+
+              <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-4 lg:space-y-6 custom-scrollbar bg-background/50">
+                {items.length === 0 ? (
+                  <div className="py-16 lg:py-24 text-center space-y-4">
+                    <div className="w-16 h-16 lg:w-20 lg:h-20 bg-text/5 rounded-full flex items-center justify-center mx-auto">
+                      <Plus size={24} className="lg:w-8 lg:h-8 text-text/10" />
+                    </div>
+                    <div>
+                      <p className="text-base lg:text-lg font-serif text-text/40">Your receipt is empty</p>
+                      <p className="text-[8px] lg:text-[10px] font-black uppercase tracking-widest text-text/20 mt-1">Add items from the library to build your project</p>
+                    </div>
+                  </div>
+                ) : (
+                  items.map((item) => {
+                    const product = PRODUCTS.find(p => p.name === item.type);
+                    return (
+                      <div key={item.id} className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-5 lg:p-6 rounded-[28px] lg:rounded-[32px] bg-background border border-text/5 shadow-sm hover:shadow-xl hover:shadow-text/[0.02] transition-all group">
+                        <div className="hidden lg:block w-24 h-24 bg-secondary/30 rounded-[24px] overflow-hidden p-4 group-hover:scale-105 transition-transform duration-500">
+                          <img src={product?.image} className="w-full h-full object-contain" alt={item.type} />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center justify-between lg:block">
+                            <span className="text-[8px] lg:text-[9px] font-black uppercase tracking-[0.2em] text-text/30">{product?.category}</span>
+                            <span className="lg:hidden text-lg font-bold tracking-tighter text-text">₹{product?.price}</span>
+                          </div>
+                          <h4 className="text-base lg:text-lg font-serif leading-tight text-text">{item.type}</h4>
+                          <div className="flex items-center gap-3 pt-1">
+                            <span className="text-[8px] lg:text-[9px] font-bold text-text/40">ID: {item.id}</span>
+                            <div className="w-1 h-1 rounded-full bg-text/10" />
+                            <span className="text-[8px] lg:text-[9px] font-bold text-text/40">Status: In Scene</span>
+                          </div>
+                        </div>
+                        <div className="hidden lg:block text-right">
+                          <span className="text-xl font-bold tracking-tighter text-text">₹{product?.price}</span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <div className="p-6 lg:p-10 bg-background border-t border-text/5">
+                <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-8 lg:mb-10 px-2 lg:px-4 gap-4">
+                  <div className="space-y-1">
+                    <span className="text-[8px] lg:text-[9px] font-black uppercase tracking-[0.2em] text-text/20 block">Statement Total</span>
+                    <span className="text-[7px] font-bold text-[#1AA06D] uppercase tracking-widest opacity-80">Inclusive of all taxes</span>
+                  </div>
+                  <span className="text-2xl lg:text-3xl font-bold tracking-tighter text-text">
+                    ₹{items.reduce((acc, it) => acc + (PRODUCTS.find((p) => p.name === it.type)?.price || 0), 0).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex flex-col-reverse lg:flex-row gap-3 lg:gap-4">
+                  <button
+                    onClick={() => setIsBillOpen(false)}
+                    className="w-full lg:flex-1 py-5 lg:py-6 rounded-[20px] lg:rounded-[24px] border border-text/10 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-text/5 transition-all text-text/40 hover:text-text"
+                  >
+                    Back to Design
+                  </button>
+                  <button
+                    onClick={() => {
+                      toast.success("Design catalog added to cart!");
+                      setIsBillOpen(false);
+                    }}
+                    className="w-full lg:flex-[1.5] py-5 lg:py-6 rounded-[20px] lg:rounded-[24px] bg-highlight text-background text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-highlight/20 flex items-center justify-center gap-3"
+                  >
+                    <Plus size={16} />
+                    Checkout All
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <SaveConfirmationModal
+        isOpen={showExitConfirm}
+        onClose={() => setShowExitConfirm(false)}
+        onSave={handleSaveAndExit}
+        onDiscard={handleDiscardAndExit}
+        description="Leaving will discard your unsaved changes. Would you like to save your project first?"
+      />
+    </div>
+  );
 };
 
 export default BlueprintDesigner;

@@ -5,6 +5,7 @@ import { Product } from '../types';
 import { geminiService } from '../services/geminiService';
 import { uploadToAppScript } from '../services/exporter';
 import { toast } from 'sonner';
+import SaveConfirmationModal from './SaveConfirmationModal';
 
 interface AIBuilderModalProps {
   product: Product | null;
@@ -16,6 +17,7 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
   const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -82,9 +84,41 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
     }
   };
 
+  const handleCloseAttempt = () => {
+    if (result || image) {
+      setShowExitConfirm(true);
+    } else {
+      onClose();
+    }
+  };
+
+  const handleSaveAndExit = async () => {
+    if (result) {
+      const id = toast.loading("Saving design to Google Drive...");
+      try {
+        const resp = await fetch(result);
+        const blob = await resp.blob();
+        await uploadToAppScript(blob, `AI_Design_${Date.now()}.png`, 'image/png');
+        toast.success("Design saved!", { id });
+        onClose();
+      } catch (err) {
+        console.error("Save failed:", err);
+        toast.error("Failed to save design", { id });
+      }
+    } else {
+      onClose();
+    }
+  };
+
+  const handleDiscardAndExit = () => {
+    setImage(null);
+    setResult(null);
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={handleCloseAttempt} />
       <div className="relative bg-background w-[95%] max-w-5xl h-auto max-h-[85vh] rounded-[40px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-8 duration-500 flex flex-col md:flex-row border border-text/5">
 
         {/* Left Panel: Preview / Viewport */}
@@ -163,7 +197,7 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
                 <h3 className="text-2xl font-bold tracking-tight text-text">AI Studio</h3>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-text/30 mt-1">Spatial Engine v3.0</p>
               </div>
-              <button onClick={onClose} className="p-2.5 rounded-full hover:bg-text/5 transition-all active:scale-90 text-text">
+              <button onClick={handleCloseAttempt} className="p-2.5 rounded-full hover:bg-text/5 transition-all active:scale-90 text-text">
                 <X size={20} />
               </button>
             </div>
@@ -257,6 +291,13 @@ const AIBuilderModal: React.FC<AIBuilderModalProps> = ({ product, onClose }) => 
           </div>
         </div>
       </div>
+      <SaveConfirmationModal
+        isOpen={showExitConfirm}
+        onClose={() => setShowExitConfirm(false)}
+        onSave={handleSaveAndExit}
+        onDiscard={handleDiscardAndExit}
+        description="Leaving will discard your current AI design and clear the session cache. Would you like to save it first?"
+      />
     </div >
   );
 };
