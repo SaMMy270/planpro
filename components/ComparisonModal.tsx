@@ -71,7 +71,7 @@ const NeuralPulseLoader: React.FC<{ productImage: string }> = ({ productImage })
           />
         ))}
       </div>
-      <p className="text-[10px]" style={{ color: 'rgba(160,170,184,0.5)' }}>
+      <p className="text-[10px]" style={{ color: 'rgba(24, 24, 25, 0.5)' }}>
         Scanning market data across retailers…
       </p>
     </div>
@@ -88,18 +88,6 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
     const fetchData = async () => {
       setLoading(true);
       setCardsVisible(false);
-
-      // Fetch Gemini data
-      try {
-        const geminiResult = await geminiService.compareProducts(product.name, product.category);
-        setData(geminiResult);
-      } catch (err) {
-        console.error('Gemini comparison failed:', err);
-        setData({
-          text: 'Market analysis currently unavailable. Please check your connection or API configuration.',
-          links: [],
-        });
-      }
 
       // Fetch local market data
       try {
@@ -193,9 +181,8 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                       .map((m: any, idx: number) => (
                         <PricingCard.Card
                           key={`${m.site}-${idx}`}
-                          className={`flex flex-col rounded-[28px] overflow-hidden group transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] ${
-                            cardsVisible ? 'animate-spring-reveal' : 'opacity-0'
-                          }`}
+                          className={`flex flex-col rounded-[28px] overflow-hidden group transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] ${cardsVisible ? 'animate-spring-reveal' : 'opacity-0'
+                            }`}
                           style={{
                             background: 'var(--secondary)',
                             border: '1px solid rgba(193,200,228,0.07)',
@@ -232,10 +219,10 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                                     m.site === 'IKEA'
                                       ? '#FACC15'
                                       : m.site === 'Amazon'
-                                      ? '#FB923C'
-                                      : m.site === 'Flipkart'
-                                      ? '#60A5FA'
-                                      : 'var(--primary)',
+                                        ? '#FB923C'
+                                        : m.site === 'Flipkart'
+                                          ? '#60A5FA'
+                                          : 'var(--primary)',
                                 }}
                               />
                               <span
@@ -336,47 +323,6 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ product, onClose }) =
                   </div>
                 )}
 
-                {/* Data Sources */}
-                <div
-                  className="space-y-5 pt-8"
-                  style={{ borderTop: '1px solid rgba(193,200,228,0.06)' }}
-                >
-                  <h5
-                    className="text-[10px] font-bold uppercase tracking-[0.2em]"
-                    style={{ color: 'var(--secondary-text)' }}
-                  >
-                    Intelligence Data Sources
-                  </h5>
-                  <div className="flex flex-wrap gap-2">
-                    {data?.links?.map((chunk: any, i: number) => {
-                      if (!chunk?.web) return null;
-                      return (
-                        <a
-                          key={`link-${i}`}
-                          href={chunk.web.uri}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 active:scale-95"
-                          style={{
-                            background: 'var(--secondary)',
-                            border: '1px solid rgba(193,200,228,0.08)',
-                            color: 'var(--secondary-text)',
-                          }}
-                          onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.color = 'var(--primary)';
-                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(193,200,228,0.2)';
-                          }}
-                          onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.color = 'var(--secondary-text)';
-                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(193,200,228,0.08)';
-                          }}
-                        >
-                          <span>{chunk.web.title}</span>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </div>
               </div>
             )}
           </div>

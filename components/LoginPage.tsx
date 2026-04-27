@@ -14,26 +14,41 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-
-    if (!isLogin && !fullName.trim()) {
-      newErrors.fullName = 'Please enter your full name';
-    }
-
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
+    if (!isLogin && !fullName) newErrors.fullName = 'Full name is required';
+    if (!email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
 
     if (!password) {
       newErrors.password = 'Password is required';
+    } else if (!isLogin) {
+      const emailName = email.split('@')[0].toLowerCase();
+      const firstName = fullName.split(' ')[0].toLowerCase();
+      
+      // Professional constraints for Signup
+      if (password.length < 8) {
+        newErrors.password = 'Minimum 8 characters required';
+      } else if (!/[A-Z]/.test(password) || !/[a-z]/.test(password)) {
+        newErrors.password = 'Must include upper and lower case';
+      } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        newErrors.password = 'Must include a special character';
+      } else if (emailName.length >= 4 && password.toLowerCase().includes(emailName)) {
+        newErrors.password = 'Cannot contain your email name';
+      } else if (firstName.length >= 4 && password.toLowerCase().includes(firstName)) {
+        newErrors.password = 'Cannot contain your first name';
+      }
+
+      if (password !== confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      }
     } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = 'Minimum 6 characters required';
     }
 
     setErrors(newErrors);
@@ -169,7 +184,50 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
                   required
                 />
                 {errors.password && <p className="text-[10px] text-red-500 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.password}</p>}
+                
+                {/* Real-time Password Requirements Checklist for Signup */}
+                {!isLogin && password.length > 0 && (
+                  <div className="mt-3 px-2 grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-500">
+                    <div className={`text-[9px] font-bold flex items-center gap-1.5 ${password.length >= 8 ? 'text-green-500' : 'text-primary/30'}`}>
+                      <div className={`w-1 h-1 rounded-full ${password.length >= 8 ? 'bg-green-500' : 'bg-primary/30'}`} />
+                      8+ CHARACTERS
+                    </div>
+                    <div className={`text-[9px] font-bold flex items-center gap-1.5 ${( /[A-Z]/.test(password) && /[a-z]/.test(password) ) ? 'text-green-500' : 'text-primary/30'}`}>
+                      <div className={`w-1 h-1 rounded-full ${( /[A-Z]/.test(password) && /[a-z]/.test(password) ) ? 'bg-green-500' : 'bg-primary/30'}`} />
+                      UPPER & LOWER CASE
+                    </div>
+                    <div className={`text-[9px] font-bold flex items-center gap-1.5 ${/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'text-green-500' : 'text-primary/30'}`}>
+                      <div className={`w-1 h-1 rounded-full ${/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'bg-green-500' : 'bg-primary/30'}`} />
+                      SPECIAL CHARACTER
+                    </div>
+                    <div className={`text-[9px] font-bold flex items-center gap-1.5 ${(!password.toLowerCase().includes(email.split('@')[0].toLowerCase()) || email.split('@')[0].length < 4) ? 'text-green-500' : 'text-red-400'}`}>
+                      <div className={`w-1 h-1 rounded-full ${(!password.toLowerCase().includes(email.split('@')[0].toLowerCase()) || email.split('@')[0].length < 4) ? 'bg-green-500' : 'bg-red-400'}`} />
+                      NO PERSONAL INFO
+                    </div>
+                    <div className={`text-[9px] font-bold flex items-center gap-1.5 ${password === confirmPassword && confirmPassword.length > 0 ? 'text-green-500' : 'text-primary/30'}`}>
+                      <div className={`w-1 h-1 rounded-full ${password === confirmPassword && confirmPassword.length > 0 ? 'bg-green-500' : 'bg-primary/30'}`} />
+                      PASSWORDS MATCH
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {!isLogin && (
+                <div className="space-y-1.5 animate-in fade-in slide-in-from-top-4 duration-700">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-4">Confirm Password</label>
+                  <div className="relative group">
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className={`w-full pl-6 pr-6 py-3.5 md:py-4 bg-background border ${errors.confirmPassword ? 'border-red-500/50' : 'border-text/10'} focus:border-primary/50 rounded-[20px] md:rounded-[24px] outline-none transition-all text-sm font-medium text-text placeholder:text-text/20 shadow-sm`}
+                      required
+                    />
+                    {errors.confirmPassword && <p className="text-[10px] text-red-500 font-bold mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1">{errors.confirmPassword}</p>}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between gap-4 text-[10px] md:text-[11px] px-1 py-1">
@@ -180,7 +238,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLoginSuccess }) => {
                 />
                 <span className="text-body/50 font-semibold group-hover:text-primary transition-colors">Remember me</span>
               </label>
-              <button type="button" className="font-bold text-primary hover:opacity-60 transition-opacity">Forgot Password?</button>
+              {isLogin && <button type="button" className="font-bold text-primary hover:opacity-60 transition-opacity">Forgot Password?</button>}
             </div>
 
             <button

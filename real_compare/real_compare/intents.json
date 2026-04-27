@@ -122,7 +122,12 @@
       "furniture storage","premium storage","budget storage","storage furniture","cabinet storage"
     ],
     "subtypes": {
-
+      "shelf": [
+        "shelf","shelves","wall shelf","wood shelf","metal shelf",
+        "book shelf","display shelf","storage shelf","decor shelf","floating shelf",
+        "corner shelf","open shelf","home shelf","room shelf","compact shelf",
+        "large shelf","modern shelf","classic shelf","utility shelf","organizing shelf"
+      ],
       "cupboard": [
         "cupboard","wardrobe cupboard","storage cupboard","wood cupboard","metal cupboard",
         "kitchen cupboard","bedroom cupboard","clothes cupboard","home cupboard","modern cupboard",

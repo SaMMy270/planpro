@@ -3,18 +3,25 @@ import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { ComparisonResult } from "../types";
 
 // Always use named parameters for initializing GoogleGenAI with the direct environment key string.
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+const getAI = () => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
+    console.error("Gemini API Key missing! Add VITE_GEMINI_API_KEY to your .env.local file.");
+  }
+  return new GoogleGenAI({ apiKey: apiKey || "" });
+};
 
 export const geminiService = {
   async compareProducts(productName: string, category: string): Promise<{ text: string, links: any[] }> {
+    console.log("Initializing Gemini with model: gemini-1.5-flash");
     const ai = getAI();
-    // Complex market comparison and reasoning task using gemini-1.5-pro
+    // Complex market comparison and reasoning task using gemini-1.5-flash
     const prompt = `Research and compare the furniture product "${productName}" in the category "${category}" with at least 3 similar products from high-end competitors (like West Elm, Restoration Hardware, or Herman Miller). 
     Provide a concise comparison of price, materials, and design aesthetic.
     Use Google Search to find current data and mention how PlanPro's offering compares in terms of value.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }]

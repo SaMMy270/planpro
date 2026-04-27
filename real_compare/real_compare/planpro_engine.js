@@ -295,8 +295,8 @@ function adaptRealProduct(p) {
     null, // 5
     p.Type || p.type || null, // 6
     p.SubType || p.subtype || null, // 7
-    p.ImageURL || p.imageUrl || p.imageurl || p.Image || null, // 9
-    p.ProductURL || p.productUrl || p.producturl || null // 10
+    p.ImageURL || p.imageUrl || p.imageurl || p.Image || null, // 8
+    p.ProductURL || p.productUrl || p.producturl || null // 9
   ];
 }
 
@@ -310,8 +310,8 @@ function adaptPlanProProduct(p) {
     null,
     p.Type,
     p.SubType,
-    p.ImageURL || null,
-    p.ProductURL || null
+    p.ImageURL || null, // 8
+    p.ProductURL || null  // 9
   ];
 }
 
@@ -336,8 +336,8 @@ function compare(planProduct, datasets) {
       results[site].push({
         id: cand[0],
         name: cand[1],
-        imageUrl: cand[9],
-        productUrl: cand[10],
+        imageUrl: cand[8],
+        productUrl: cand[9],
         dimension: cand[2],
         site,
         price: cand[3],
